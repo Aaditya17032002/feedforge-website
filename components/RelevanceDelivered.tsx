@@ -17,7 +17,7 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
       </svg>
     ),
-    title: 'Optimized recall',
+    title: 'Optimized Recall',
     description: 'Benchmark leading algorithms maximize recall with low latency.',
     underlined: 'maximize recall with low latency',
   },
@@ -37,7 +37,7 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     ),
-    title: 'Full-text search',
+    title: 'Full-Text Search',
     description: 'Get an exact keyword match with sparse indexes when semantic search isn\'t enough.',
     underlined: 'sparse indexes',
   },
@@ -70,8 +70,8 @@ export default function RelevanceDelivered() {
       <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
         {/* Header */}
         <div className="mb-12">
-          <div className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">
-            SEARCH
+          <div className="mb-4 text-xs font-semibold tracking-wider text-gray-400">
+            Search
           </div>
           <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
             Relevance, Delivered

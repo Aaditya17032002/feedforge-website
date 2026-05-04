@@ -60,8 +60,8 @@ export default function AISolution() {
             </span>
           </div>
           <h2 className="mb-4 text-balance text-2xl font-bold leading-tight text-gray-900 sm:text-3xl lg:text-4xl">
-            Feed Management is{' '}
-            <span className="text-accent">Complex, Error-Prone, and Time-Consuming</span>
+            Feed Management Is{' '}
+            <span className="text-accent">Complex, Error-Prone, And Time-Consuming</span>
           </h2>
           <p className="mx-auto max-w-2xl text-sm leading-relaxed text-gray-600">
             Legacy rule-based systems can't keep up. FeedForge uses AI to build and optimize your product feeds across Google, Meta, and the AI search platforms where your customers are increasingly discovering products.

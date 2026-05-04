@@ -73,7 +73,7 @@ export default function CatalogPerfection() {
                       : 'text-gray-500 hover:text-accent'
                   }`}
                 >
-                  EXAMPLES
+                  Examples
                 </button>
                 <button
                   onClick={() => setActiveTab('try')}
@@ -83,7 +83,7 @@ export default function CatalogPerfection() {
                       : 'text-gray-500 hover:text-accent'
                   }`}
                 >
-                  TRY YOUR PRODUCT
+                  Try Your Product
                 </button>
               </div>
 
@@ -93,8 +93,8 @@ export default function CatalogPerfection() {
                   <div className="space-y-6">
                     {/* Raw Data Input */}
                     <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-400">
-                        RAW DATA INPUT
+                      <label className="mb-2 block text-xs font-semibold tracking-wider text-gray-400">
+                        Raw Data Input
                       </label>
                       <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 transition-all duration-500 hover:border-gray-300 hover:bg-gray-100">
                         <div>
@@ -114,8 +114,8 @@ export default function CatalogPerfection() {
                         <svg className="h-4 w-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <label className="text-xs font-semibold uppercase tracking-wider text-accent">
-                          AI OPTIMIZED OUTPUT
+                        <label className="text-xs font-semibold tracking-wider text-accent">
+                          AI Optimized Output
                         </label>
                       </div>
                       <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 transition-all duration-500 hover:border-gray-300 hover:bg-gray-100 hover:shadow-md">
@@ -143,8 +143,8 @@ export default function CatalogPerfection() {
                 ) : (
                   <div className="space-y-6">
                     <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-400">
-                        YOUR PRODUCT DATA
+                      <label className="mb-2 block text-xs font-semibold tracking-wider text-gray-400">
+                        Your Product Data
                       </label>
                       
                       <div className="space-y-4">
@@ -183,7 +183,7 @@ export default function CatalogPerfection() {
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                       </svg>
-                      GENERATE AI FEED
+                      Generate AI Feed
                     </button>
 
                     <div className="flex items-center justify-center gap-2 text-sm text-gray-400">

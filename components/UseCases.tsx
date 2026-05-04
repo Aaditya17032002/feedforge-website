@@ -33,7 +33,7 @@ export default function UseCases() {
       <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
       <div className="mb-12 text-center">
         <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
-          Trusted in production
+          Trusted In Production
         </h2>
         <p className="mx-auto max-w-2xl text-lg text-gray-600">
           The world's most innovative companies are already in production with FeedForge.

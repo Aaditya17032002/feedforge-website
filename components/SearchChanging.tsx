@@ -42,7 +42,7 @@ export default function SearchChanging() {
           <div className="min-w-0">
             <div className="mb-4 flex items-center justify-center lg:justify-start">
               <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-900">
-                • Market Shift in Progress
+                • Market Shift In Progress
               </span>
             </div>
             <h2 className="mb-4 text-balance text-2xl font-bold leading-tight text-gray-900 sm:text-3xl lg:text-4xl xl:text-5xl">

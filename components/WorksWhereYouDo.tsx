@@ -55,7 +55,7 @@ export default function WorksWhereYouDo() {
           {/* Left Column - Works where you do */}
           <div className="min-w-0">
             <h2 className="mb-3 text-balance text-xl font-bold text-accent sm:text-2xl lg:text-3xl">
-              Works where you do
+              Works Where You Do
             </h2>
             <p className="mb-4 text-sm text-gray-600">
               Use FeedForge with your favorite cloud provider, data sources, models, and frameworks.
@@ -102,7 +102,7 @@ export default function WorksWhereYouDo() {
           {/* Right Column - Enterprise-ready AI */}
           <div className="min-w-0">
             <h2 className="mb-3 text-balance text-xl font-bold text-accent sm:text-2xl lg:text-3xl">
-              Enterprise-ready AI
+              Enterprise-Ready AI
             </h2>
             <p className="mb-4 text-sm text-gray-600">
               Meet security and operational requirements to bring AI products to market faster.

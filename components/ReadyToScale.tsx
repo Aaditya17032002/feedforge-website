@@ -24,7 +24,7 @@ export default function ReadyToScale() {
 
           {/* Main Heading */}
           <h2 className="mb-6 text-4xl font-bold text-gray-900 lg:text-5xl">
-            ready to scale?
+            Ready To Scale?
           </h2>
 
           {/* Description */}

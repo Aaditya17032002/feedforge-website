@@ -12,13 +12,13 @@ export default function Hero() {
             <span className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border border-gray-200 bg-gray-100 px-3 py-1 text-[0.6875rem] font-medium text-gray-900 sm:text-xs">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gray-900"></span>
               <span className="min-w-0 text-pretty">
-                AI-powered product feeds for every channel
+                AI-Powered Product Feeds For Every Channel
               </span>
             </span>
           </div>
           
           <h1 className="mb-4 text-balance text-xl font-bold leading-tight text-gray-900 sm:text-2xl lg:text-3xl xl:text-4xl">
-            Your product feed, <span className="text-accent">AI optimized</span>
+            Your Product Feed, <span className="text-accent">AI Optimized</span>
           </h1>
 
           <p className="mb-8 text-pretty text-sm text-gray-600 sm:text-base">
@@ -35,7 +35,7 @@ export default function Hero() {
               <span className="absolute -right-1 -top-1 h-2 w-2 border-r-2 border-t-2 border-gray-900"></span>
               <span className="absolute -left-1 -bottom-1 h-2 w-2 border-l-2 border-b-2 border-gray-900"></span>
               <span className="absolute -right-1 -bottom-1 h-2 w-2 border-r-2 border-b-2 border-gray-900"></span>
-              <span className="relative">Request a Demo</span>
+              <span className="relative">Request A Demo</span>
             </a>
             <button className="relative border border-gray-300 bg-white px-5 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
               {/* Corner markers */}

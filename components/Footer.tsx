@@ -105,7 +105,7 @@ export default function Footer() {
               id="footer-quick-links-heading"
               className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500"
             >
-              Quick links
+              Quick Links
             </h3>
             <ul className="flex flex-col gap-1">
               {footerLinks.map(({ href, label }) => {

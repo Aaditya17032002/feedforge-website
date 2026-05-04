@@ -110,14 +110,14 @@ export default function FaqsPage() {
 
             <div className="mx-auto mt-20 max-w-4xl overflow-hidden rounded-xl border border-accent/25 bg-gradient-to-br from-accent/[0.07] via-white to-accent/[0.04] px-8 py-12 text-center shadow-sm transition-shadow duration-500 hover:shadow-lg hover:shadow-accent/10 md:px-12">
               <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
-                Ready to Scale Your <span className="text-accent">Product Feeds</span>?
+                Ready To Scale Your <span className="text-accent">Product Feeds</span>?
               </h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-600">
                 Book a guided demo to see how FeedForge can improve feed quality, reduce manual
                 work, and automate delivery across your channels.
               </p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-gray-700 sm:gap-3">
-                <span className="rounded-full border border-gray-200 bg-white px-3 py-1">Import in Minutes</span>
+                <span className="rounded-full border border-gray-200 bg-white px-3 py-1">Import In Minutes</span>
                 <span className="rounded-full border border-gray-200 bg-white px-3 py-1">AI Enrichment</span>
                 <span className="rounded-full border border-gray-200 bg-white px-3 py-1">Automated Delivery</span>
               </div>
@@ -126,7 +126,7 @@ export default function FaqsPage() {
                   href="/#request-demo"
                   className="inline-flex items-center justify-center border border-accent bg-accent px-8 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#070066] hover:shadow-md hover:shadow-accent/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                 >
-                  Request a Demo
+                  Request A Demo
                 </Link>
                 <Link
                   href="/pricing"

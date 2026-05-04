@@ -61,8 +61,8 @@ export default function ComplexTechnology() {
           </div>
           
           <h2 className="mb-4 text-balance text-2xl font-bold leading-tight text-gray-900 sm:text-3xl lg:text-4xl">
-            Complex technology,{' '}
-            <span className="text-accent">simple growth.</span>
+            Complex Technology,{' '}
+            <span className="text-accent">Simple Growth.</span>
           </h2>
           
           <p className="text-pretty text-sm text-gray-600 sm:text-base">

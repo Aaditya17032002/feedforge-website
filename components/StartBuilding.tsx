@@ -11,7 +11,7 @@ export default function StartBuilding() {
           {/* Left Column */}
           <div className="min-w-0">
             <h2 className="mb-1 text-balance text-base font-bold leading-tight text-gray-900 sm:text-lg lg:text-xl">
-              Get Your AI Readiness Score for Free
+              Get Your AI Readiness Score For Free
             </h2>
             <p className="text-xs text-gray-600">
               Discover feed gaps, improve catalog quality, and launch faster with AI-powered
@@ -25,13 +25,13 @@ export default function StartBuilding() {
               href="/#request-demo"
               className="inline-flex items-center justify-center bg-accent px-5 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-[#070066]"
             >
-              Request a Demo
+              Request A Demo
             </Link>
             <Link
               href="/#request-demo"
               className="inline-flex items-center justify-center border border-accent bg-white px-5 py-2 text-sm font-medium text-accent transition-colors duration-300 hover:bg-accent hover:text-white"
             >
-              Start for Free
+              Start For Free
             </Link>
           </div>
         </div>

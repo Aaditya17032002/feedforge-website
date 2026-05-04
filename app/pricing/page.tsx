@@ -37,19 +37,19 @@ function SolidAccentCheck() {
 
 const starterWorkloads = [
   {
-    title: 'Recommendation engine',
+    title: 'Recommendation Engine',
     contextLabel: 'Given an e-commerce site with:',
     inputs: ['50K products', '10KB metadata per product', 'Using 1024 dimensions embeddings'],
     outputs: ['~ 44K recommendations per day', '~ 2K product updates per day'],
   },
   {
-    title: 'Semantic search',
+    title: 'Semantic Search',
     contextLabel: 'Given a knowledge base of:',
     inputs: ['~ 30K documents', '20KB document size on average', 'Using 1024 dimensions embeddings'],
     outputs: ['~ 15k searches per day', '~ 660 document updates per day'],
   },
   {
-    title: 'Forum answering bot (RAG)',
+    title: 'Forum Answering Bot (RAG)',
     contextLabel: 'Given a user forum with:',
     inputs: ['~ 10 categories', '5KB post size on average', 'Using 1024 dimensions embeddings'],
     outputs: ['~ 130K category-scoped chats per day', '~ 3K messages indexed per day'],
@@ -77,8 +77,8 @@ export default function PricingPage() {
               </span>
             </div>
             <h1 className="mb-4 text-center text-3xl font-bold leading-tight text-gray-900 lg:text-4xl">
-              Plans that scale with your{' '}
-              <span className="text-accent">catalog</span>
+              Plans That Scale With Your{' '}
+              <span className="text-accent">Catalog</span>
             </h1>
             <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-gray-600 lg:text-base">
               Start free, then scale with pay-as-you-go pricing. Every tier includes FeedForge AI for
@@ -100,7 +100,7 @@ export default function PricingPage() {
                     type="button"
                     className="w-full border border-gray-900 bg-white px-4 py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50"
                   >
-                    Start for Free
+                    Start For Free
                   </button>
                 </div>
                 <div className="order-4 max-lg:border-b-0 px-6 sm:px-8 lg:order-none lg:col-start-1 lg:row-start-4 lg:border-r lg:border-gray-200">
@@ -295,7 +295,7 @@ export default function PricingPage() {
             {/* What you can build — Starter plan examples */}
             <div className="mx-auto mt-16 max-w-6xl lg:mt-24">
               <h2 className="mb-6 text-left text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">
-                What you can build on the Starter plan
+                What You Can Build On The Starter Plan
               </h2>
               <div className="border border-gray-200 bg-white">
                 <div className="grid grid-cols-1 divide-y divide-gray-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0">

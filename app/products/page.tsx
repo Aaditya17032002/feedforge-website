@@ -21,7 +21,7 @@ export default function ProductsPage() {
               </span>
             </div>
             <h1 className="mb-4 text-center text-3xl font-bold leading-tight text-gray-900 lg:text-4xl">
-              <span className="text-accent">Coming soon</span>
+              <span className="text-accent">Coming Soon</span>
             </h1>
             <p className="mx-auto max-w-md text-center text-sm leading-relaxed text-gray-600 lg:text-base">
               We&apos;re building something new. Check back soon, or explore the rest of the site in
@@ -32,13 +32,13 @@ export default function ProductsPage() {
                 href="/"
                 className="inline-flex border border-accent bg-accent px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#070066] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
-                Back to home
+                Back To Home
               </Link>
               <Link
                 href="/pricing"
                 className="inline-flex border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:border-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
-                View pricing
+                View Pricing
               </Link>
             </div>
           </div>

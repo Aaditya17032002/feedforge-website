@@ -90,8 +90,8 @@ export default function CustomersPage() {
               </span>
             </div>
             <h1 className="mb-4 text-center text-3xl font-bold leading-tight text-gray-900 lg:text-4xl">
-              Built for teams who ship{' '}
-              <span className="text-accent">great product data</span>
+              Built For Teams Who Ship{' '}
+              <span className="text-accent">Great Product Data</span>
             </h1>
             <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-gray-600 lg:text-base">
               FeedForge helps merchants and partners keep feeds accurate, complete, and ready for
@@ -100,7 +100,7 @@ export default function CustomersPage() {
 
             <div className="mt-14">
               <p className="mb-6 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Trusted by teams like yours
+                Trusted By Teams Like Yours
               </p>
               <div className="relative h-[300px] overflow-hidden md:h-[280px]">
                 <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white to-transparent md:w-24" />
@@ -143,7 +143,7 @@ export default function CustomersPage() {
 
             <div className="mx-auto mt-20 max-w-3xl overflow-hidden rounded-xl border border-accent/25 bg-gradient-to-br from-accent/[0.07] via-white to-accent/[0.04] px-8 py-12 text-center shadow-sm transition-shadow duration-500 hover:shadow-lg hover:shadow-accent/10 md:px-12">
               <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
-                Start your journey with{' '}
+                Start Your Journey With{' '}
                 <span className="text-accent transition-colors duration-300 hover:text-[#070066]">
                   FeedForge
                 </span>
@@ -156,7 +156,7 @@ export default function CustomersPage() {
                 href="/pricing"
                 className="mt-8 inline-flex items-center justify-center border border-accent bg-accent px-8 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#070066] hover:shadow-md hover:shadow-accent/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
-                Start now
+                Start Now
               </Link>
             </div>
           </div>

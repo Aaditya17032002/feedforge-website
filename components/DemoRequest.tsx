@@ -31,7 +31,7 @@ export default function DemoRequest() {
           {/* Left Side - Form */}
           <div className="min-w-0">
             <h2 className="mb-6 text-balance text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl">
-              Request a Demo
+              Request A Demo
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -115,7 +115,7 @@ export default function DemoRequest() {
             </div>
 
             <h3 className="mb-4 text-xl font-bold text-gray-900 lg:text-2xl">
-              See FeedForge in Action
+              See FeedForge In Action
             </h3>
 
             <p className="mb-6 text-sm text-gray-600 sm:text-base">
