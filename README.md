@@ -18,6 +18,20 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+Create a `.env.local` file with:
+
+```bash
+SENDGRID_API_KEY=your_sendgrid_api_key
+CONTACT_TO_EMAIL=team@yourcompany.com
+SENDGRID_FROM_EMAIL="verified@yourdomain.com"
+OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=openai/gpt-oss-120b:free
+```
+
+For Twilio SendGrid delivery:
+- `SENDGRID_FROM_EMAIL` must be a verified sender identity (single sender or domain-authenticated address) in your SendGrid account.
+- Sending from an unverified address is rejected by SendGrid.
+
 ## Features
 
 - **Hero Section**: Clean, modern design with value proposition and interactive charts
