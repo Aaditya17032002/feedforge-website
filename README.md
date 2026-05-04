@@ -24,8 +24,8 @@ Create a `.env.local` file with:
 SENDGRID_API_KEY=your_sendgrid_api_key
 CONTACT_TO_EMAIL=team@yourcompany.com
 SENDGRID_FROM_EMAIL="verified@yourdomain.com"
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-3-flash-preview
+OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=openai/gpt-oss-120b:free
 ```
 
 For Twilio SendGrid delivery:
