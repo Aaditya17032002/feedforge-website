@@ -1,4 +1,6 @@
 import sgMail from '@sendgrid/mail'
+import { requireText } from '@/lib/shared/strings'
+import { isValidEmail } from '@/lib/shared/validation'
 
 export type EmailFormType = 'demo-request' | 'contact'
 
@@ -70,14 +72,6 @@ Thanks for reaching out to FeedForge. We've received your message and a team mem
   },
 }
 
-export function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-}
-
-export function requireText(value: unknown): string {
-  return typeof value === 'string' ? value.trim() : ''
-}
-
 function buildTeamBody(formType: EmailFormType, fields: Record<string, string>) {
   const headerSubject = FORM_CONFIG[formType].getTeamSubject(fields)
 
@@ -146,3 +140,5 @@ export async function sendFormNotification({ formType, fields }: SendFormNotific
     throw new Error(`SendGrid send failed: ${message}`)
   }
 }
+
+export { isValidEmail, requireText }

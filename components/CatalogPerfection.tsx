@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { postJson } from '@/lib/shared/http'
 
 export default function CatalogPerfection() {
   const [activeTab, setActiveTab] = useState<'examples' | 'try'>('examples')
@@ -30,26 +31,21 @@ export default function CatalogPerfection() {
     setGeneratedOutput(null)
 
     try {
-      const response = await fetch('/api/try-product', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productTitle,
-          description,
-        }),
-      })
-      const result = await response.json()
+      const result = await postJson<
+        { optimizedTitle: string; optimizedDescription: string; tags?: string[]; message?: string },
+        { productTitle: string; description: string }
+      >('/api/try-product', { productTitle, description })
 
-      if (!response.ok) {
+      if (!result.ok) {
         setStatusType('error')
         setStatusMessage(result.message || 'Could not generate AI feed. Please try again.')
         return
       }
 
       setGeneratedOutput({
-        optimizedTitle: result.optimizedTitle,
-        optimizedDescription: result.optimizedDescription,
-        tags: result.tags || [],
+        optimizedTitle: result.data.optimizedTitle,
+        optimizedDescription: result.data.optimizedDescription,
+        tags: result.data.tags || [],
       })
       setStatusType('success')
       setStatusMessage('AI feed generated successfully.')

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { postJson } from '@/lib/shared/http'
 
 type ContactFormData = {
   fullName: string
@@ -29,14 +30,9 @@ export default function ContactForm() {
     setStatusType('')
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
-      const result = await response.json()
+      const result = await postJson<{ message?: string }, ContactFormData>('/api/contact', formData)
 
-      if (!response.ok) {
+      if (!result.ok) {
         setStatusType('error')
         setStatusMessage(result.message || 'Could not send your message. Please try again.')
         return

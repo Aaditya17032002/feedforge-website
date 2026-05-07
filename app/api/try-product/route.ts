@@ -1,32 +1,25 @@
-import { NextResponse } from 'next/server'
-import { requireText } from '@/lib/email/email'
+import { requireText } from '@/lib/shared/strings'
 import { generateTryProductFeed } from '@/lib/ai/openrouter'
+import { jsonError, jsonOk, readJsonBody } from '@/lib/server/api'
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    const body = await readJsonBody(request)
+    if (!body || typeof body !== 'object') {
+      return jsonError('Invalid JSON body.', 400)
+    }
     const productTitle = requireText(body?.productTitle)
     const description = requireText(body?.description)
 
     if (!productTitle) {
-      return NextResponse.json(
-        { success: false, message: 'Product title is required.' },
-        { status: 400 }
-      )
+      return jsonError('Product title is required.', 400)
     }
 
     const result = await generateTryProductFeed({ productTitle, description })
 
-    return NextResponse.json({
-      success: true,
-      message: 'AI feed generated successfully.',
-      ...result,
-    })
+    return jsonOk({ message: 'AI feed generated successfully.', ...result })
   } catch (error) {
     console.error('POST /api/try-product failed', error)
-    return NextResponse.json(
-      { success: false, message: 'Could not generate AI feed right now. Please try again.' },
-      { status: 500 }
-    )
+    return jsonError('Could not generate AI feed right now. Please try again.', 500)
   }
 }

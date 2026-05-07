@@ -1,4 +1,4 @@
-import { requireText } from '@/lib/email/email'
+import { requireText } from '@/lib/shared/strings'
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL

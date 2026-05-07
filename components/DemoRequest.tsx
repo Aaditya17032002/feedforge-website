@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { postJson } from '@/lib/shared/http'
 
 export default function DemoRequest() {
   const [formData, setFormData] = useState({
@@ -27,15 +28,9 @@ export default function DemoRequest() {
     setStatusType('')
 
     try {
-      const response = await fetch('/api/demo-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
+      const result = await postJson<{ message?: string }, typeof formData>('/api/demo-request', formData)
 
-      const result = await response.json()
-
-      if (!response.ok) {
+      if (!result.ok) {
         setStatusType('error')
         setStatusMessage(result.message || 'Could not send demo request. Please try again.')
         return
