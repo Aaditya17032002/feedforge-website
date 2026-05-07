@@ -6,14 +6,14 @@ import FaqAccordion from './FaqAccordion'
 
 export const metadata: Metadata = {
   title: 'FAQs · FeedForge',
-  description: 'Answers to common questions about FeedForge setup, pricing, and support.',
+  description: 'Answers to common questions about FeedForge product feeds, integrations, AI enrichment, and pricing.',
 }
 
 const faqItems = [
   {
     question: 'What is FeedForge?',
     answer:
-      'FeedForge is an AI-powered product feed management platform that helps eCommerce businesses import, optimize, validate, and export product feeds from a single dashboard.',
+      'FeedForge is an AI-native product feed management platform built for how product discovery actually works today. It handles everything from feed import, validation, and export to AI-powered enrichment that optimizes your catalog for traditional channels like Google Shopping and Meta — and increasingly for AI search surfaces like ChatGPT, Perplexity, and Google AI Overviews.',
   },
   {
     question: 'How does FeedForge improve product feed quality?',
@@ -23,7 +23,7 @@ const faqItems = [
   {
     question: 'Which platforms and data sources can I import from?',
     answer:
-      'You can import product data into FeedForge using CSV upload, Shopify integration, SFTP/FTP, and HTTPS pull endpoints.',
+      'You can import product data into FeedForge using CSV upload, Shopify integration, WooCommerce integration, SFTP/FTP, and HTTPS pull endpoints.',
   },
   {
     question: 'Does FeedForge support Shopify product feed integration?',
@@ -38,7 +38,7 @@ const faqItems = [
   {
     question: 'What is AI product feed enrichment?',
     answer:
-      'AI product feed enrichment uses machine learning to enhance product attributes like titles, descriptions, and categories to make listings more accurate and channel-ready.',
+      'FeedForge uses large language models to rewrite and enhance product titles, descriptions, and attributes — optimizing them not just for Google and Meta, but for the way AI search engines interpret and surface products. That means clearer intent signals, better semantic structure, and higher discoverability across both traditional and AI-powered channels.',
   },
   {
     question: 'Can I review AI-generated feed changes before publishing?',
@@ -53,7 +53,7 @@ const faqItems = [
   {
     question: 'What export formats does FeedForge support?',
     answer:
-      'FeedForge supports export in common formats such as CSV and JSON, including Google Merchant-style feed exports.',
+      'FeedForge supports exports in CSV, JSON, and channel-specific formats including Google Merchant Center, Meta product catalogs, and structured AI-readable schemas. New channel templates are added on an ongoing basis.',
   },
   {
     question: 'Can FeedForge deliver feeds automatically to external systems?',
@@ -73,7 +73,7 @@ const faqItems = [
   {
     question: 'Is FeedForge secure for production use?',
     answer:
-      'FeedForge is designed with secure authentication and production hardening practices to support reliable and secure feed operations.',
+      "FeedForge uses OAuth-based authentication, encrypted data transfer, and role-based access controls. The platform is built with production-security standards to protect your product data and integrations.",
   },
   {
     question: 'Can I track feed processing and transfer status?',
@@ -83,7 +83,22 @@ const faqItems = [
   {
     question: 'Why choose FeedForge for eCommerce feed management?',
     answer:
-      'FeedForge combines AI enrichment, automated validation, flexible import/export options, and team-ready workflows to reduce manual effort and improve product feed performance.',
+      "Most feed management platforms were built for a world where Google Shopping was the destination. FeedForge is built for what comes next. Unlike legacy tools that rely on static, rule-based systems to generate feed content, FeedForge uses large language models to produce rich, natural-sounding product copy that performs better across every channel — not just technically compliant, but genuinely compelling. Add to that a growing layer of AI search optimization and a proprietary AI Search Readiness Score that makes your progress measurable, and you have a platform that doesn't just manage your feeds — it actively improves them.",
+  },
+  {
+    question: 'What is the AI Search Readiness Score?',
+    answer:
+      'The AI Search Readiness Score is a proprietary 0–100 metric that evaluates how well your product catalog is optimized for AI search discovery. It measures factors like semantic clarity, attribute completeness, and conversational language quality — the signals that AI engines use to understand and surface products. Most merchants start between 40–60; FeedForge’s enrichment tools are designed to push that score meaningfully higher over time.',
+  },
+  {
+    question: 'How is FeedForge different from Feedonomics or DataFeedWatch?',
+    answer:
+      'Feedonomics and DataFeedWatch are established platforms with strong track records in Google Shopping and traditional ad channel management. The key difference is in how feed content is generated. Both platforms rely on static, rule-based systems — typically regex-driven transformations — that require ongoing manual maintenance, can’t automatically adapt to changes in your product data, and tend to produce copy that feels mechanical rather than market-ready. FeedForge replaces that approach with LLM-powered enrichment that generates product content dynamically: titles and descriptions that read naturally, adjust intelligently to data changes, and are optimized not only for traditional channels but also for the way AI search surfaces like ChatGPT, Perplexity, and Google AI Overviews evaluate and cite products.',
+  },
+  {
+    question: 'What pricing plans does FeedForge offer?',
+    answer:
+      'FeedForge offers tiered pricing designed for mid-market eCommerce merchants, with plans starting at $49/month. Each tier scales with catalog size, channel count, and access to advanced AI features. Contact us for details or to discuss a plan that fits your needs.',
   },
 ] as const
 
