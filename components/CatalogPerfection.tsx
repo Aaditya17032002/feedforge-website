@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { postJson } from '@/lib/shared/http'
+import { sanitizeText } from '@/lib/shared/strings'
 
 export default function CatalogPerfection() {
   const [activeTab, setActiveTab] = useState<'examples' | 'try'>('examples')
@@ -31,10 +32,13 @@ export default function CatalogPerfection() {
     setGeneratedOutput(null)
 
     try {
+      const sanitizedTitle = sanitizeText(productTitle, { maxLen: 200 })
+      const sanitizedDescription = sanitizeText(description, { maxLen: 5000, preserveNewlines: true })
+
       const result = await postJson<
         { optimizedTitle: string; optimizedDescription: string; tags?: string[]; message?: string },
         { productTitle: string; description: string }
-      >('/api/try-product', { productTitle, description })
+      >('/api/try-product', { productTitle: sanitizedTitle, description: sanitizedDescription })
 
       if (!result.ok) {
         setStatusType('error')

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { postJson } from '@/lib/shared/http'
+import { sanitizeText } from '@/lib/shared/strings'
 
 export default function DemoRequest() {
   const [formData, setFormData] = useState({
@@ -28,7 +29,14 @@ export default function DemoRequest() {
     setStatusType('')
 
     try {
-      const result = await postJson<{ message?: string }, typeof formData>('/api/demo-request', formData)
+      const sanitized = {
+        name: sanitizeText(formData.name, { maxLen: 120 }),
+        email: sanitizeText(formData.email, { maxLen: 254, toLowerCase: true }),
+        company: sanitizeText(formData.company, { maxLen: 120 }),
+        message: sanitizeText(formData.message, { maxLen: 4000, preserveNewlines: true }),
+      }
+
+      const result = await postJson<{ message?: string }, typeof formData>('/api/demo-request', sanitized)
 
       if (!result.ok) {
         setStatusType('error')

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { postJson } from '@/lib/shared/http'
+import { sanitizeText } from '@/lib/shared/strings'
 
 type ContactFormData = {
   fullName: string
@@ -30,7 +31,14 @@ export default function ContactForm() {
     setStatusType('')
 
     try {
-      const result = await postJson<{ message?: string }, ContactFormData>('/api/contact', formData)
+      const sanitized: ContactFormData = {
+        fullName: sanitizeText(formData.fullName, { maxLen: 120 }),
+        email: sanitizeText(formData.email, { maxLen: 254, toLowerCase: true }),
+        company: sanitizeText(formData.company, { maxLen: 120 }),
+        message: sanitizeText(formData.message, { maxLen: 4000, preserveNewlines: true }),
+      }
+
+      const result = await postJson<{ message?: string }, ContactFormData>('/api/contact', sanitized)
 
       if (!result.ok) {
         setStatusType('error')

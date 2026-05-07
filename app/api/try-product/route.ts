@@ -1,15 +1,17 @@
-import { requireText } from '@/lib/shared/strings'
+import { sanitizeText } from '@/lib/shared/strings'
 import { generateTryProductFeed } from '@/lib/ai/openrouter'
 import { jsonError, jsonOk, readJsonBody } from '@/lib/server/api'
 
 export async function POST(request: Request) {
   try {
     const body = await readJsonBody(request)
-    if (!body || typeof body !== 'object') {
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return jsonError('Invalid JSON body.', 400)
     }
-    const productTitle = requireText(body?.productTitle)
-    const description = requireText(body?.description)
+    const data = body as Record<string, unknown>
+
+    const productTitle = sanitizeText(data.productTitle, { maxLen: 200 })
+    const description = sanitizeText(data.description, { maxLen: 5000, preserveNewlines: true })
 
     if (!productTitle) {
       return jsonError('Product title is required.', 400)

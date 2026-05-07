@@ -1,18 +1,20 @@
 import { sendFormNotification } from '@/lib/email/email'
-import { requireText } from '@/lib/shared/strings'
+import { sanitizeText } from '@/lib/shared/strings'
 import { isValidEmail } from '@/lib/shared/validation'
 import { jsonError, jsonOk, readJsonBody } from '@/lib/server/api'
 
 export async function POST(request: Request) {
   try {
     const body = await readJsonBody(request)
-    if (!body || typeof body !== 'object') {
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return jsonError('Invalid JSON body.', 400)
     }
-    const fullName = requireText(body?.fullName)
-    const email = requireText(body?.email)
-    const company = requireText(body?.company)
-    const message = requireText(body?.message)
+    const data = body as Record<string, unknown>
+
+    const fullName = sanitizeText(data.fullName, { maxLen: 120 })
+    const email = sanitizeText(data.email, { maxLen: 254, toLowerCase: true })
+    const company = sanitizeText(data.company, { maxLen: 120 })
+    const message = sanitizeText(data.message, { maxLen: 4000, preserveNewlines: true })
 
     if (!fullName || !email || !message) {
       return jsonError('Full name, email, and message are required.', 400)
