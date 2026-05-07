@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireText } from '@/lib/email'
+import { requireText } from '@/lib/email/email'
 import { generateTryProductFeed } from '@/lib/ai/openrouter'
 
 export async function POST(request: Request) {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { isValidEmail, requireText, sendFormNotification } from '@/lib/email'
+import { isValidEmail, requireText, sendFormNotification } from '@/lib/email/email'
 
 export async function POST(request: Request) {
   try {

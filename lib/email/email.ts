@@ -1,10 +1,5 @@
 import sgMail from '@sendgrid/mail'
 
-/**
- * SendGrid dual send per submission:
- * - Demo form (`demo-request`): notify `DEMO_TEAM_EMAIL` (set to e.g. support@yourdomain.com) with all fields; auto-reply to the submitter's `email`.
- * - Contact form (`contact`): notify `CONTACT_TEAM_EMAIL` (e.g. contact@yourdomain.com) with all fields; auto-reply to the submitter's `email`.
- */
 export type EmailFormType = 'demo-request' | 'contact'
 
 type SendFormNotificationInput = {

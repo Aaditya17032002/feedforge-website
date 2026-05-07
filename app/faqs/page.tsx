@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import FaqAccordion from './FaqAccordion'
-import faqItems from '@/content/faqs/faqs.json'
+import faqItems from '@/lib/content/faqs/faqs.json'
 
 export const metadata: Metadata = {
   title: 'FAQs · FeedForge',
