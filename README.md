@@ -22,8 +22,9 @@ Create a `.env.local` file with:
 
 ```bash
 SENDGRID_API_KEY=your_sendgrid_api_key
-CONTACT_TO_EMAIL=team@yourcompany.com
 SENDGRID_FROM_EMAIL="verified@yourdomain.com"
+DEMO_TEAM_EMAIL=support@yourdomain.com
+CONTACT_TEAM_EMAIL=contact@yourdomain.com
 OPENROUTER_API_KEY=your_openrouter_api_key
 OPENROUTER_MODEL=openai/gpt-oss-120b:free
 ```
@@ -31,6 +32,7 @@ OPENROUTER_MODEL=openai/gpt-oss-120b:free
 For Twilio SendGrid delivery:
 - `SENDGRID_FROM_EMAIL` must be a verified sender identity (single sender or domain-authenticated address) in your SendGrid account.
 - Sending from an unverified address is rejected by SendGrid.
+- Each form submission triggers two emails: one to the team inbox (`DEMO_TEAM_EMAIL` for demo requests, `CONTACT_TEAM_EMAIL` for contact messages) and an auto-reply to the customer's submitted email.
 
 ## Features
 
