@@ -98,24 +98,55 @@ export async function generateTryProductFeed(input: TryProductInput): Promise<Tr
   ].filter((value, index, arr): value is string => Boolean(value) && arr.indexOf(value) === index)
 
   const prompt = `
-You are an ecommerce feed optimization assistant.
-Given the product data, produce optimized content for product feeds and ad channels.
+You are an expert ecommerce feed optimization assistant trained on Google Shopping, Meta Commerce, and marketplace feed standards.
 
-Input title: ${input.productTitle}
-Input description: ${input.description || '(not provided)'}
+Your job: take a raw product title and optional description, and return an optimized title, description, and tags that maximize search visibility, click-through rate, and feed approval rates — while strictly following platform validation rules.
 
-Return only valid JSON with this exact shape:
+=================== INPUT ===================
+Title: ${input.productTitle}
+Description: ${input.description || '(not provided)'}
+
+=================== OUTPUT ===================
+Return ONLY valid JSON (no markdown, no code fences, no commentary, no text before or after) with this EXACT shape:
+
 {
   "optimizedTitle": "string",
   "optimizedDescription": "string",
   "tags": ["TAG_ONE", "TAG_TWO", "TAG_THREE"]
 }
 
-Rules:
-- optimizedTitle should be concise, descriptive, and conversion-friendly.
-- optimizedDescription should be 1-3 sentences and highlight value.
-- tags should be 3 to 6 uppercase short tags.
-- No markdown, no extra text outside JSON.
+=================== RULES ===================
+
+OPTIMIZED TITLE
+- Length: 50-150 characters. Ideal range 70-100. Hard max 150.
+- Front-load the most important keyword in the first 70 characters (mobile truncation point).
+- Preferred structure when info is available: [Brand] [Product Type] [Key Attribute: color/size/material] [Model/Variant]. Skip any part not present in input — never invent it.
+- Use Title Case or sentence case. No ALL CAPS words (brand acronyms like "HP", "IBM" are allowed).
+- No emojis. No promotional language ("Best", "#1", "Sale", "Cheap", "Free Shipping", "Guaranteed", "Miracle", "%off", "!!!").
+- No repeated words, no keyword stuffing, no special characters except - & , / ( ).
+- Must be meaningfully different from and clearer than the input title.
+
+OPTIMIZED DESCRIPTION
+- Length: 300-1000 characters. Hard min 150, hard max 5000.
+- Plain text only. No HTML, no markdown, no emojis, no bullet symbols.
+- Structure: lead with the primary benefit and use case, then features, then specs/details. Use 2-4 short paragraphs separated by a single newline.
+- Write in active voice, second person ("you"), benefit-driven tone.
+- Naturally include the main keyword from the title 1-2 times and 2-3 related secondary keywords. No stuffing.
+- No pricing claims, no shipping claims, no superlatives, no medical/health claims unless present in the input.
+- Do NOT invent facts (materials, certifications, awards, specs, dimensions) that are not in or clearly inferable from the input. When unsure, write generally rather than fabricating.
+
+TAGS
+- Return 5 to 8 tags (not 3-6 — more tags improve discoverability while staying within feed limits).
+- Format: UPPERCASE, A-Z 0-9 and underscore only, max 20 characters each.
+- Coverage mix: at least one category tag, one attribute tag (color/material/size/style if known), one audience or use-case tag.
+- No duplicates, no stop-words (THE, AND, FOR, WITH), no brand tag unless brand is clearly in the input.
+- Tags should reflect real shopper search intent, not internal jargon.
+
+=================== HARD CONSTRAINTS ===================
+- Output MUST be valid JSON parseable by JSON.parse. No trailing commas. No comments. No code fences.
+- No text before or after the JSON object.
+- Match the language of the input. If mixed or unclear, default to English.
+- If the input is too sparse to optimize meaningfully, still return the best possible output — never return an error message inside the JSON.
 `.trim()
 
   let lastError: unknown = null
