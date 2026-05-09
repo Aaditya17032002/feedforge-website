@@ -15,11 +15,11 @@ export default function SiteLogo({
     <Link
       href="/"
       className={`inline-flex min-w-0 shrink-0 items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${className ?? ''}`}
-      aria-label="FeedForge home"
+      aria-label="FeedForge AI home"
     >
       <img
         src="/images/icon-1.svg"
-        alt="FeedForge logo mark"
+        alt="FeedForge AI logo mark"
         width={189}
         height={44}
         className={`${imgClassName} object-contain object-left dark:hidden`}
@@ -27,7 +27,7 @@ export default function SiteLogo({
       />
       <img
         src="/images/icon-2.svg"
-        alt="FeedForge logo mark"
+        alt="FeedForge AI logo mark"
         width={189}
         height={44}
         className={`${imgClassName} hidden object-contain object-left dark:block`}
