@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 
 type SiteLogoProps = {
@@ -10,7 +9,7 @@ type SiteLogoProps = {
 
 export default function SiteLogo({
   className,
-  imgClassName = 'h-7 w-auto sm:h-8',
+  imgClassName = 'h-11 w-auto sm:h-11',
 }: SiteLogoProps) {
   return (
     <Link
@@ -18,25 +17,25 @@ export default function SiteLogo({
       className={`inline-flex min-w-0 shrink-0 items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${className ?? ''}`}
       aria-label="FeedForge home"
     >
-      <Image
-        src="/images/feedforge-triangle.svg"
+      <img
+        src="/images/icon-1.svg"
         alt="FeedForge logo mark"
-        width={40}
-        height={40}
+        width={189}
+        height={44}
         className={`${imgClassName} object-contain object-left dark:hidden`}
-        priority
+        draggable={false}
       />
-      <Image
-        src="/images/feedforge-triangle-white.svg"
+      <img
+        src="/images/icon-2.svg"
         alt="FeedForge logo mark"
-        width={40}
-        height={40}
+        width={189}
+        height={44}
         className={`${imgClassName} hidden object-contain object-left dark:block`}
-        priority
+        draggable={false}
       />
-      <span className="ml-2 text-base font-light uppercase tracking-[0.14em] text-[#586487] dark:text-white sm:text-lg">
+      {/* <span className="ml-2 text-base font-light uppercase tracking-[0.14em] text-[#586487] dark:text-white sm:text-lg">
         FEEDFORGE.AI
-      </span>
+      </span> */}
     </Link>
   )
 }
