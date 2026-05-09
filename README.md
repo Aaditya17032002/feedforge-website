@@ -27,6 +27,7 @@ DEMO_TEAM_EMAIL=support@yourdomain.com
 CONTACT_TEAM_EMAIL=contact@yourdomain.com
 OPENROUTER_API_KEY=your_openrouter_api_key
 OPENROUTER_MODEL=openai/gpt-oss-120b:free
+NEXT_PUBLIC_CHATBOT_ENABLED=false
 ```
 
 For Twilio SendGrid delivery:

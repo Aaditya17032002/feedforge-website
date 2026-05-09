@@ -12,6 +12,7 @@ import WorksWhereYouDo from '@/components/WorksWhereYouDo'
 import StartBuilding from '@/components/StartBuilding'
 import DemoRequest from '@/components/DemoRequest'
 import Footer from '@/components/Footer'
+import ChatbotMount from '@/components/chatbot/ChatbotMount'
 
 export default function Home() {
   return (
@@ -30,6 +31,7 @@ export default function Home() {
       <DemoRequest />
       <StartBuilding />
       <Footer />
+      <ChatbotMount />
     </main>
   )
 }
