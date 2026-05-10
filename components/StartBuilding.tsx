@@ -20,12 +20,18 @@ export default function StartBuilding() {
 
           {/* Right Column - Buttons */}
           <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-            <button className="bg-accent px-5 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-[#070066]">
+            <Link
+              href="/pricing"
+              className="inline-flex items-center justify-center bg-accent px-5 py-2 text-center text-sm font-medium text-white transition-colors duration-300 hover:bg-[#070066]"
+            >
               Start Building
-            </button>
-            <button className="border border-accent bg-white px-5 py-2 text-sm font-medium text-accent transition-colors duration-300 hover:bg-accent hover:text-white">
+            </Link>
+            <Link
+              href="/#request-demo"
+              className="inline-flex items-center justify-center border border-accent bg-white px-5 py-2 text-center text-sm font-medium text-accent transition-colors duration-300 hover:bg-accent hover:text-white"
+            >
               Get a Demo
-            </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -3,12 +3,18 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import SiteLogo from '@/components/SiteLogo'
+import {
+  CONTACT_ADDRESS_LINES,
+  CONTACT_EMAIL,
+  CONTACT_SALES_PHONE,
+  CONTACT_SUPPORT_HOURS,
+} from '@/lib/content/contact'
 
 const footerLinks = [
   { href: '/', label: 'Home' },
   { href: '/faqs', label: 'FAQs' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/#request-demo', label: 'Get Started' },
+  { href: '/contact', label: 'Contact Us' },
 ] as const
 
 const socialLinks = [
@@ -69,6 +75,11 @@ function linkIsActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
+function telHref(displayPhone: string) {
+  const digits = displayPhone.replace(/\D/g, '')
+  return digits ? `tel:+${digits}` : ''
+}
+
 export default function Footer() {
   const pathname = usePathname()
   const currentYear = new Date().getFullYear()
@@ -76,7 +87,7 @@ export default function Footer() {
   return (
     <footer className="mt-auto border-t border-gray-200 bg-white">
       <div className="mx-auto max-w-7xl min-w-0 px-4 py-10 sm:px-6 sm:py-12 lg:py-14">
-        <div className="grid min-w-0 gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-24">
+        <div className="grid min-w-0 gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] lg:items-start xl:gap-16">
           <div className="min-w-0">
             <SiteLogo imgClassName="h-8 w-auto sm:h-9" />
             <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-600">
@@ -97,24 +108,64 @@ export default function Footer() {
             </div>
           </div>
 
+          <section
+            className="min-w-0"
+            aria-labelledby="footer-contact-heading"
+          >
+            <h3
+              id="footer-contact-heading"
+              className="mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-500"
+            >
+              Contact
+            </h3>
+            <address className="not-italic">
+              <ul className="flex flex-col gap-2 text-sm leading-snug text-gray-700">
+                <li>
+                  <a
+                    href={telHref(CONTACT_SALES_PHONE)}
+                    className="w-fit rounded-sm font-medium text-gray-900 transition-colors hover:text-accent"
+                  >
+                    {CONTACT_SALES_PHONE}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`mailto:${CONTACT_EMAIL}`}
+                    className="w-fit rounded-sm transition-colors hover:text-accent"
+                  >
+                    {CONTACT_EMAIL}
+                  </a>
+                </li>
+                <li className="leading-relaxed text-gray-700">
+                  {CONTACT_ADDRESS_LINES.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </li>
+              </ul>
+              <p className="mt-2 text-xs leading-relaxed text-gray-500">{CONTACT_SUPPORT_HOURS}</p>
+            </address>
+          </section>
+
           <nav
-            className="nav-family flex min-w-0 flex-col items-stretch gap-0 lg:max-w-xs lg:justify-self-end"
+            className="nav-family flex min-w-0 flex-col items-start gap-0 lg:justify-self-start"
             aria-labelledby="footer-quick-links-heading"
           >
             <h3
               id="footer-quick-links-heading"
-              className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500"
+              className="mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-500"
             >
               Quick Links
             </h3>
-            <ul className="flex flex-col gap-1">
+            <ul className="flex w-full flex-col gap-0">
               {footerLinks.map(({ href, label }) => {
                 const active = linkIsActive(pathname, href)
                 return (
                   <li key={`${href}-${label}`}>
                     <Link
                       href={href}
-                      className={`flex items-center rounded-md px-3 py-2 text-sm transition-colors ${
+                      className={`flex w-fit items-center rounded-md py-1 text-sm leading-snug transition-colors ${
                         active
                           ? 'font-semibold text-accent'
                           : 'font-medium text-gray-700 hover:bg-gray-50 hover:text-accent'

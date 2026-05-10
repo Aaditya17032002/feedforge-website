@@ -47,7 +47,7 @@ export default function Header() {
     >
       <div className="mx-auto flex max-w-7xl min-w-0 items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
         {/* Logo */}
-        <SiteLogo className="flex min-w-0" />
+        <SiteLogo className="flex min-w-0" imgClassName="h-[2.625rem] w-auto sm:h-[2.625rem]" />
 
         {/* Navigation */}
         <nav className="hidden items-center gap-8 md:flex nav-family">

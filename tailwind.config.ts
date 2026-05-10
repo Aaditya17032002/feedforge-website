@@ -19,6 +19,10 @@ const config: Config = {
         vector: ['Segoe UI', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif'],
       },
       keyframes: {
+        'page-enter': {
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
         scroll: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-33.333%)' },
@@ -33,6 +37,7 @@ const config: Config = {
         },
       },
       animation: {
+        'page-enter': 'page-enter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both',
         scroll: 'scroll 30s linear infinite',
         'scroll-reverse': 'scroll-reverse 30s linear infinite',
         bounce: 'bounce 2s ease-in-out infinite',

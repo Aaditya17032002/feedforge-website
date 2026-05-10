@@ -71,7 +71,7 @@ export default function ContactForm() {
           value={formData.fullName}
           onChange={(e) => setFormData((prev) => ({ ...prev, fullName: e.target.value }))}
           required
-          className="w-full border border-gray-300 px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-accent"
+          className="w-full border border-gray-300 px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors hover:border-gray-400 hover:shadow-sm focus:border-accent"
           placeholder="Enter your name"
         />
       </div>
@@ -87,7 +87,7 @@ export default function ContactForm() {
           value={formData.email}
           onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
           required
-          className="w-full border border-gray-300 px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-accent"
+          className="w-full border border-gray-300 px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors hover:border-gray-400 hover:shadow-sm focus:border-accent"
           placeholder="you@company.com"
         />
       </div>
@@ -102,7 +102,7 @@ export default function ContactForm() {
           type="text"
           value={formData.company}
           onChange={(e) => setFormData((prev) => ({ ...prev, company: e.target.value }))}
-          className="w-full border border-gray-300 px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-accent"
+          className="w-full border border-gray-300 px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors hover:border-gray-400 hover:shadow-sm focus:border-accent"
           placeholder="Your company"
         />
       </div>
@@ -118,7 +118,7 @@ export default function ContactForm() {
           value={formData.message}
           onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
           required
-          className="w-full resize-y border border-gray-300 px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors focus:border-accent"
+          className="w-full resize-y border border-gray-300 px-3 py-2.5 text-sm text-gray-900 outline-none transition-colors hover:border-gray-400 hover:shadow-sm focus:border-accent"
           placeholder="Tell us about your channels, feed challenges, and goals."
         />
       </div>

@@ -59,7 +59,7 @@ export default function SearchChanging() {
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="relative box-border flex aspect-square w-full max-w-[11rem] items-center justify-center rounded-full border border-gray-200 bg-white px-3 py-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-900 hover:shadow-md sm:max-w-[13rem] sm:px-4 sm:py-5 md:max-w-full md:px-3 md:py-4 lg:max-w-[12rem] lg:px-4 lg:py-5"
+                className="relative box-border flex aspect-square w-full max-w-[11rem] items-center justify-center rounded-full border border-accent bg-white px-3 py-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#070066] hover:shadow-md sm:max-w-[13rem] sm:px-4 sm:py-5 md:max-w-full md:px-3 md:py-4 lg:max-w-[12rem] lg:px-4 lg:py-5"
               >
                 <div className="flex max-w-[90%] flex-col items-center justify-center text-center">
                   <div className="mb-1.5 shrink-0 text-gray-900" aria-hidden>

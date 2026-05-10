@@ -44,7 +44,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="border border-gray-200 bg-white p-6 shadow-sm transition-shadow transition-colors duration-200 hover:border-gray-300 hover:shadow-md sm:p-8">
               <ContactForm />
             </div>
           </div>
