@@ -28,6 +28,97 @@ const quickPrompts = [
   'How does AI enrichment work?',
 ] as const
 
+/** Injected via dangerouslySetInnerHTML so SSR does not HTML-escape apostrophes in style text (avoids hydration mismatch). */
+const CHATBOT_WIDGET_STYLES = `
+        .ff-widget {
+          --accent: #0800A0;
+          --accent-hover: #06007a;
+          --accent-light: #eeeeff;
+          --radius-chat: 18px;
+          font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        .ff-panel {
+          animation: ff-slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @keyframes ff-slide-up {
+          from { opacity: 0; transform: translateY(16px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .ff-fab {
+          animation: ff-pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes ff-pop-in {
+          from { opacity: 0; transform: scale(0.7); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+
+        /* typing dots */
+        .typing-dot {
+          display: block;
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #9ca3af;
+          animation: ff-bounce 1.1s var(--delay, 0ms) infinite ease-in-out;
+        }
+        @keyframes ff-bounce {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+          30%            { transform: translateY(-5px); opacity: 1; }
+        }
+
+        /* bot avatar gradient */
+        .bot-avatar {
+          background: linear-gradient(135deg, #0800A0 0%, #5b21b6 100%);
+          letter-spacing: -0.02em;
+        }
+
+        /* quick prompt chips */
+        .ff-chip {
+          transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
+        }
+        .ff-chip:hover:not(:disabled) {
+          background: var(--accent-light);
+          border-color: var(--accent);
+          color: var(--accent);
+          transform: translateY(-1px);
+        }
+        .ff-chip:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
+        /* send button pulse while sending */
+        .ff-btn-sending {
+          animation: ff-pulse 1.4s infinite;
+        }
+        @keyframes ff-pulse {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0.65; }
+        }
+
+        /* textarea focus ring */
+        .ff-textarea:focus {
+          outline: none;
+          border-color: var(--accent) !important;
+          box-shadow: 0 0 0 3px rgba(8,0,160,0.1);
+        }
+
+        /* scrollbar */
+        .ff-scroll::-webkit-scrollbar { width: 5px; }
+        .ff-scroll::-webkit-scrollbar-track { background: transparent; }
+        .ff-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+
+        /* message bubble entrance */
+        .ff-bubble {
+          animation: ff-bubble-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @keyframes ff-bubble-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `
+
 function makeId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
@@ -149,98 +240,9 @@ export default function ChatbotWidget() {
 
   return (
     <>
-      {/* ── Scoped styles ── */}
-      <style>{`
-        .ff-widget {
-          --accent: #0800A0;
-          --accent-hover: #06007a;
-          --accent-light: #eeeeff;
-          --radius-chat: 18px;
-          font-family: 'Inter', system-ui, sans-serif;
-        }
+      <style dangerouslySetInnerHTML={{ __html: CHATBOT_WIDGET_STYLES }} />
 
-        .ff-panel {
-          animation: ff-slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-        @keyframes ff-slide-up {
-          from { opacity: 0; transform: translateY(16px) scale(0.97); }
-          to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .ff-fab {
-          animation: ff-pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-        }
-        @keyframes ff-pop-in {
-          from { opacity: 0; transform: scale(0.7); }
-          to   { opacity: 1; transform: scale(1); }
-        }
-
-        /* typing dots */
-        .typing-dot {
-          display: block;
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: #9ca3af;
-          animation: ff-bounce 1.1s var(--delay, 0ms) infinite ease-in-out;
-        }
-        @keyframes ff-bounce {
-          0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-          30%            { transform: translateY(-5px); opacity: 1; }
-        }
-
-        /* bot avatar gradient */
-        .bot-avatar {
-          background: linear-gradient(135deg, #0800A0 0%, #5b21b6 100%);
-          letter-spacing: -0.02em;
-        }
-
-        /* quick prompt chips */
-        .ff-chip {
-          transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
-        }
-        .ff-chip:hover:not(:disabled) {
-          background: var(--accent-light);
-          border-color: var(--accent);
-          color: var(--accent);
-          transform: translateY(-1px);
-        }
-        .ff-chip:active:not(:disabled) {
-          transform: translateY(0);
-        }
-
-        /* send button pulse while sending */
-        .ff-btn-sending {
-          animation: ff-pulse 1.4s infinite;
-        }
-        @keyframes ff-pulse {
-          0%, 100% { opacity: 1; }
-          50%       { opacity: 0.65; }
-        }
-
-        /* textarea focus ring */
-        .ff-textarea:focus {
-          outline: none;
-          border-color: var(--accent) !important;
-          box-shadow: 0 0 0 3px rgba(8,0,160,0.1);
-        }
-
-        /* scrollbar */
-        .ff-scroll::-webkit-scrollbar { width: 5px; }
-        .ff-scroll::-webkit-scrollbar-track { background: transparent; }
-        .ff-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
-
-        /* message bubble entrance */
-        .ff-bubble {
-          animation: ff-bubble-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-        @keyframes ff-bubble-in {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-
-      <div className="ff-widget fixed bottom-4 right-4 z-50 flex flex-col items-end sm:bottom-6 sm:right-6">
+      <div className="ff-widget fixed bottom-4 right-4 z-[100] flex flex-col items-end sm:bottom-6 sm:right-6">
 
         {/* ── Chat panel ── */}
         {isOpen && (

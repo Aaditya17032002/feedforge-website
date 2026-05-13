@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import ChatbotMount from '@/components/chatbot/ChatbotMount'
 import './globals.css'
 
 const siteTitle = 'FeedForge | AI-Optimized Product Feeds for Every Channel'
@@ -80,7 +81,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <ChatbotMount />
+      </body>
     </html>
   )
 }
