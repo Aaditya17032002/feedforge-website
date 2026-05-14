@@ -104,6 +104,15 @@ function parseModelJson(text: string): ChatbotModelOutput | null {
   }
 }
 
+/** If the model returns plain text (common after long chats), still return a useful reply. */
+function fallbackFromRawText(text: string): ChatbotModelOutput {
+  const answer = sanitizeText(text, { maxLen: 2000, preserveNewlines: true })
+  return {
+    answer: answer || 'Sorry — I could not format a reply. Please try again or contact us.',
+    escalation: 'none',
+  }
+}
+
 async function chatCompletion(model: string, messages: ChatMessage[]): Promise<string> {
   const res = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
     method: 'POST',
@@ -160,7 +169,9 @@ export async function POST(request: Request) {
       if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return []
       const { role, content } = entry as Record<string, unknown>
       const safeRole: ChatRole = role === 'assistant' ? 'assistant' : 'user'
-      const safeContent = sanitizeText(content, { maxLen: 1200, preserveNewlines: true })
+      // Assistant replay payloads are JSON strings and can exceed a single user bubble length.
+      const maxHist = safeRole === 'assistant' ? 2400 : 1200
+      const safeContent = sanitizeText(content, { maxLen: maxHist, preserveNewlines: true })
       if (!safeContent) return []
       return [{ role: safeRole, content: safeContent }]
     })
@@ -205,11 +216,14 @@ ${faqContext}
         ])
 
         const parsed = parseModelJson(responseText)
+        const out = parsed ?? fallbackFromRawText(responseText)
         if (!parsed) {
-          throw new Error(`Model output could not be parsed for model: ${modelName}`)
+          console.warn(
+            `[chat] Non-JSON model output for ${modelName}; using plain-text fallback (${responseText.length} chars)`
+          )
         }
 
-        return jsonOk({ answer: parsed.answer, escalation: parsed.escalation })
+        return jsonOk({ answer: out.answer, escalation: out.escalation })
       } catch (error) {
         lastError = error
       }

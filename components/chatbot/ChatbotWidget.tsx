@@ -16,6 +16,8 @@ type ChatMessage = {
   id: string
   role: ChatRole
   content: string
+  /** Present on assistant bubbles from the API so replay history matches JSON-only output. */
+  escalation?: EscalationKind
 }
 
 type EscalationKind = 'none' | 'contact' | 'demo'
@@ -259,14 +261,24 @@ export default function ChatbotWidget() {
     }
   }, [isOpen])
 
-  const apiHistory = useMemo(
-    () =>
-      messages
-        .filter((m) => m.role === 'user' || m.role === 'assistant')
-        .map((m) => ({ role: m.role, content: clampText(m.content, 1200) }))
-        .slice(-10),
-    [messages]
-  )
+  const apiHistory = useMemo(() => {
+    const all = messages.filter((m) => m.role === 'user' || m.role === 'assistant')
+    const withoutWelcome =
+      all.length > 0 && all[0].role === 'assistant' ? all.slice(1) : all
+    const trimmed = withoutWelcome.slice(-10)
+
+    return trimmed.flatMap((m): { role: ChatRole; content: string }[] => {
+      if (m.role === 'assistant') {
+        const payload = {
+          answer: clampText(m.content, 1000),
+          escalation: m.escalation === 'contact' || m.escalation === 'demo' ? m.escalation : 'none',
+        }
+        return [{ role: 'assistant', content: JSON.stringify(payload) }]
+      }
+
+      return [{ role: 'user', content: clampText(m.content, 1200) }]
+    })
+  }, [messages])
 
   /* auto-scroll */
   useEffect(() => {
@@ -315,7 +327,12 @@ export default function ChatbotWidget() {
       setEscalation(toEscalation(data))
       setMessages((prev) => [
         ...prev,
-        { id: makeId(), role: 'assistant', content: data.answer },
+        {
+          id: makeId(),
+          role: 'assistant',
+          content: data.answer,
+          escalation: toEscalation(data),
+        },
       ])
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Chat request failed.')
