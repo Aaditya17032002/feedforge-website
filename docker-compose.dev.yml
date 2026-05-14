@@ -1,0 +1,31 @@
+# Local: http://localhost:3000
+# docker compose -f docker-compose.dev.yml up --build
+#
+# Runtime env: .env.local (below). For ${VAR} substitution in this file, use:
+#   docker compose --env-file .env.local -f docker-compose.dev.yml up --build
+# Next.js also reads .env.local from the bind-mounted project root.
+
+name: feedforge-portal
+
+services:
+  portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: feedforge_portal_dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+    volumes:
+      - .:/app
+      - portal_node_modules:/app/node_modules
+
+volumes:
+  portal_node_modules:
