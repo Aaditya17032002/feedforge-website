@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import SiteLogo from '@/components/SiteLogo'
 
 export default function Header() {
@@ -10,11 +10,22 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
   const navLinkClass = (href: string) =>
     `text-sm font-medium transition-colors ${
       pathname === href ? 'text-accent' : 'text-gray-700 hover:text-accent'
     }`
+
+  const navigateToFeedDemo = () => {
+    if (pathname === '/') {
+      window.history.pushState(null, '', '#try-your-product')
+      document.getElementById('try-your-product')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      window.dispatchEvent(new Event('feedforge:nav-try-product'))
+    } else {
+      router.push('/#try-your-product')
+    }
+  }
 
   useEffect(() => {
     const stored = localStorage.getItem('feedforge-theme')
@@ -93,6 +104,14 @@ export default function Header() {
               </svg>
             )}
           </button>
+          <button
+            type="button"
+            onClick={navigateToFeedDemo}
+            className="flex h-10 shrink-0 items-center border border-r-0 border-gray-300 bg-white px-3 text-sm font-medium text-accent transition-colors hover:bg-accent/5 sm:px-4"
+            aria-label="Open the AI product feed demo on the home page"
+          >
+            Try It Free
+          </button>
           <button className="flex h-10 items-center border border-r-0 border-gray-300 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
             Log in
           </button>
@@ -128,6 +147,14 @@ export default function Header() {
                 />
               </svg>
             )}
+          </button>
+          <button
+            type="button"
+            onClick={navigateToFeedDemo}
+            className="flex h-10 max-w-[7.5rem] shrink-0 items-center border border-gray-300 bg-white px-2 text-xs font-medium text-accent transition-colors hover:bg-accent/5 min-[400px]:max-w-none min-[400px]:px-3 sm:text-sm"
+            aria-label="Open the AI product feed demo on the home page"
+          >
+            <span className="truncate">Try It Free</span>
           </button>
           <button className="flex h-10 items-center border border-accent bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-[#070066] sm:px-4 sm:text-sm">
             Sign up
@@ -169,6 +196,16 @@ export default function Header() {
             </Link>
           </nav>
           <div className="mt-4 flex flex-col gap-2 border-t border-gray-200 pt-4">
+            <button
+              type="button"
+              className="flex h-10 items-center justify-center border border-accent/40 bg-white text-sm font-medium text-accent transition-colors hover:bg-accent/5"
+              onClick={() => {
+                navigateToFeedDemo()
+                setMenuOpen(false)
+              }}
+            >
+             Try It Free
+            </button>
             <a
               href="#"
               className="flex h-10 items-center justify-center border border-gray-300 bg-white text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
