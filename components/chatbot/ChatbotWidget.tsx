@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CONTACT_EMAIL,
   CONTACT_PAGE_HREF,
   CONTACT_SALES_PHONE,
   CONTACT_SUPPORT_HOURS,
+  DEMO_FORM_HREF,
 } from '@/lib/content/contact'
 
 type ChatRole = 'user' | 'assistant'
@@ -17,14 +18,24 @@ type ChatMessage = {
   content: string
 }
 
+type EscalationKind = 'none' | 'contact' | 'demo'
+
 type ChatApiResponse =
-  | { success: true; answer: string; shouldEscalate: boolean }
+  | { success: true; answer: string; escalation: EscalationKind }
   | { success: false; message: string }
+
+function toEscalation(data: ChatApiResponse): EscalationKind {
+  if (!data || data.success === false) return 'none'
+  const e = data.escalation
+  if (e === 'contact' || e === 'demo' || e === 'none') return e
+  return 'none'
+}
 
 const quickPrompts = [
   'Pricing & plans',
   'Integrations',
   'Request a demo',
+  'Contact us',
   'How does AI enrichment work?',
 ] as const
 
@@ -128,6 +139,63 @@ function clampText(value: string, maxLen: number) {
   return text.length > maxLen ? `${text.slice(0, maxLen).trim()}…` : text
 }
 
+/**
+ * Renders model CTAs like "Or visit: /contact" as plain "Or visit: " plus a link on **Contact Us**;
+ * "Or visit: /#request-demo" becomes plain prefix plus **Request a demo** (path not shown as raw text).
+ */
+function AssistantMessageBody({ content }: { content: string }) {
+  const visitPattern =
+    /(-?\s*)(Or visit\s*:\s*)(\/#request-demo|\/contact)\b/gi
+
+  type Segment =
+    | { type: 'text'; value: string }
+    | { type: 'cta'; prefix: string; href: string; label: string }
+  const segments: Segment[] = []
+  let last = 0
+  let match: RegExpExecArray | null
+  while ((match = visitPattern.exec(content)) !== null) {
+    if (match.index > last) {
+      segments.push({ type: 'text', value: content.slice(last, match.index) })
+    }
+    const path = match[3] ?? ''
+    const href = path.includes('#') ? DEMO_FORM_HREF : CONTACT_PAGE_HREF
+    const label = path.includes('#') ? 'Request a demo' : 'Contact us'
+    segments.push({
+      type: 'cta',
+      prefix: `${match[1] ?? ''}${match[2] ?? ''}`,
+      href,
+      label,
+    })
+    last = match.index + match[0].length
+  }
+  if (last < content.length) {
+    segments.push({ type: 'text', value: content.slice(last) })
+  }
+  if (segments.length === 0) {
+    segments.push({ type: 'text', value: content })
+  }
+
+  return (
+    <>
+      {segments.map((seg, i) =>
+        seg.type === 'text' ? (
+          <Fragment key={i}>{seg.value}</Fragment>
+        ) : (
+          <Fragment key={i}>
+            {seg.prefix}
+            <Link
+              href={seg.href}
+              className="font-semibold text-[#0800A0] underline decoration-[#0800A0]/35 underline-offset-2 hover:text-[#06007a]"
+            >
+              {seg.label}
+            </Link>
+          </Fragment>
+        )
+      )}
+    </>
+  )
+}
+
 /* ── Typing indicator ── */
 function TypingIndicator() {
   return (
@@ -157,7 +225,7 @@ export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string>('')
-  const [shouldEscalate, setShouldEscalate] = useState(false)
+  const [escalation, setEscalation] = useState<EscalationKind>('none')
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -170,6 +238,26 @@ export default function ChatbotWidget() {
 
   const listRef = useRef<HTMLDivElement | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const widgetRef = useRef<HTMLDivElement | null>(null)
+
+  /* Close panel when clicking / tapping outside the widget (panel + FAB). */
+  useEffect(() => {
+    if (!isOpen) return
+    function handleOutside(event: MouseEvent | TouchEvent) {
+      const root = widgetRef.current
+      const target = event.target
+      if (!root || !(target instanceof Node)) return
+      if (!root.contains(target)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleOutside, true)
+    document.addEventListener('touchstart', handleOutside, true)
+    return () => {
+      document.removeEventListener('mousedown', handleOutside, true)
+      document.removeEventListener('touchstart', handleOutside, true)
+    }
+  }, [isOpen])
 
   const apiHistory = useMemo(
     () =>
@@ -186,7 +274,7 @@ export default function ChatbotWidget() {
     const node = listRef.current
     if (!node) return
     node.scrollTop = node.scrollHeight
-  }, [isOpen, messages.length, isSending, shouldEscalate, error])
+  }, [isOpen, messages.length, isSending, escalation, error])
 
   /* auto-grow textarea */
   function handleTextareaChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -201,7 +289,7 @@ export default function ChatbotWidget() {
     if (!content) return
 
     setError('')
-    setShouldEscalate(false)
+    setEscalation('none')
     setIsSending(true)
 
     const userMessage: ChatMessage = { id: makeId(), role: 'user', content }
@@ -224,7 +312,7 @@ export default function ChatbotWidget() {
         throw new Error(data && 'message' in data ? data.message : 'Chat request failed.')
       }
 
-      setShouldEscalate(Boolean(data.shouldEscalate))
+      setEscalation(toEscalation(data))
       setMessages((prev) => [
         ...prev,
         { id: makeId(), role: 'assistant', content: data.answer },
@@ -242,7 +330,10 @@ export default function ChatbotWidget() {
     <>
       <style dangerouslySetInnerHTML={{ __html: CHATBOT_WIDGET_STYLES }} />
 
-      <div className="ff-widget fixed bottom-4 right-4 z-[100] flex flex-col items-end sm:bottom-6 sm:right-6">
+      <div
+        ref={widgetRef}
+        className="ff-widget fixed bottom-4 right-4 z-[100] flex flex-col items-end sm:bottom-6 sm:right-6"
+      >
 
         {/* ── Chat panel ── */}
         {isOpen && (
@@ -280,7 +371,7 @@ export default function ChatbotWidget() {
                   key={prompt}
                   type="button"
                   className="ff-chip rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 disabled:opacity-40"
-                  onClick={() => sendMessage(prompt)}
+                  onClick={() => void sendMessage(prompt)}
                   disabled={isSending}
                 >
                   {prompt}
@@ -308,7 +399,7 @@ export default function ChatbotWidget() {
                         }`}
                         style={isUser ? { background: 'linear-gradient(135deg, #0800A0, #4c1d95)' } : {}}
                       >
-                        {m.content}
+                        {isUser ? m.content : <AssistantMessageBody content={m.content} />}
                       </div>
                     </div>
                   )
@@ -329,8 +420,8 @@ export default function ChatbotWidget() {
                   </div>
                 )}
 
-                {/* Escalation */}
-                {shouldEscalate && (
+                {/* Contact escalation */}
+                {escalation === 'contact' && (
                   <div className="ff-bubble rounded-2xl border px-4 py-3.5" style={{ borderColor: 'rgba(8,0,160,0.2)', background: 'rgba(8,0,160,0.04)' }}>
                     <p className="text-sm font-semibold text-gray-900">Need more help?</p>
                     <p className="mt-1 text-sm text-gray-600">
@@ -347,6 +438,31 @@ export default function ChatbotWidget() {
                         onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--accent)')}
                       >
                         Go to Contact page
+                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
+                {/* Demo escalation */}
+                {escalation === 'demo' && (
+                  <div className="ff-bubble rounded-2xl border px-4 py-3.5" style={{ borderColor: 'rgba(8,0,160,0.2)', background: 'rgba(8,0,160,0.04)' }}>
+                    <p className="text-sm font-semibold text-gray-900">Book a demo</p>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Tell us about your catalog on the demo form and we&apos;ll set up a personalized walkthrough.
+                    </p>
+                    <p className="mt-0.5 text-xs text-gray-500">{CONTACT_SUPPORT_HOURS}</p>
+                    <div className="mt-3">
+                      <Link
+                        href={DEMO_FORM_HREF}
+                        className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white transition-colors"
+                        style={{ background: 'var(--accent)' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent-hover)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--accent)')}
+                      >
+                        Open demo form
                         <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7" />
                         </svg>

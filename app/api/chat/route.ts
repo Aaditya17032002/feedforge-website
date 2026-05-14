@@ -1,5 +1,5 @@
 import faqItems from '@/lib/content/faqs/faqs.json'
-import { CONTACT_EMAIL, CONTACT_PAGE_HREF, CONTACT_SALES_PHONE } from '@/lib/content/contact'
+import { CONTACT_EMAIL, CONTACT_PAGE_HREF, CONTACT_SALES_PHONE, DEMO_FORM_HREF } from '@/lib/content/contact'
 import { sanitizeText } from '@/lib/shared/strings'
 import { jsonError, jsonOk, readJsonBody } from '@/lib/server/api'
 
@@ -15,9 +15,11 @@ type OpenRouterChatResponse = {
   error?: { message?: string }
 }
 
+type EscalationKind = 'none' | 'contact' | 'demo'
+
 type ChatbotModelOutput = {
   answer: string
-  shouldEscalate: boolean
+  escalation: EscalationKind
 }
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
@@ -63,6 +65,13 @@ function buildFaqContext(maxItems = 18): string {
     .join('\n\n')
 }
 
+function parseEscalation(value: unknown): EscalationKind {
+  if (value === 'contact' || value === 'demo' || value === 'none') {
+    return value
+  }
+  return 'none'
+}
+
 function parseModelJson(text: string): ChatbotModelOutput | null {
   const cleaned = text.replace(/```json|```/g, '').trim()
   const firstBrace = cleaned.indexOf('{')
@@ -77,15 +86,19 @@ function parseModelJson(text: string): ChatbotModelOutput | null {
   try {
     const parsed = JSON.parse(jsonSlice) as {
       answer?: unknown
+      escalation?: unknown
       shouldEscalate?: unknown
     }
 
     const answer = sanitizeText(parsed.answer, { maxLen: 2000, preserveNewlines: true })
-    const shouldEscalate = typeof parsed.shouldEscalate === 'boolean' ? parsed.shouldEscalate : false
-
     if (!answer) return null
 
-    return { answer, shouldEscalate }
+    let escalation = parseEscalation(parsed.escalation)
+    if (escalation === 'none' && parsed.shouldEscalate === true) {
+      escalation = 'contact'
+    }
+
+    return { answer, escalation }
   } catch {
     return null
   }
@@ -158,15 +171,20 @@ export async function POST(request: Request) {
 You are FeedForge's website assistant.
 
 You help answer questions about FeedForge (pricing, integrations, onboarding, feeds, enrichment, exports).
-Use ONLY the FAQ context below as ground truth. If the user's question is not answered by the FAQ context,
-or you are not confident, set shouldEscalate=true and guide them to contact the team.
+Use ONLY the FAQ context below as ground truth.
 
 Output MUST be ONLY valid JSON with this exact shape:
-{ "answer": "string", "shouldEscalate": true|false }
+{ "answer": "string", "escalation": "none"|"contact"|"demo" }
 
-When shouldEscalate=true, include this CTA at the end of the answer:
-- Contact: ${CONTACT_EMAIL} / ${CONTACT_SALES_PHONE}
-- Or visit: ${CONTACT_PAGE_HREF}
+escalation rules:
+- "none": the FAQ context fully answers the user with confidence.
+- "contact": the user needs human help (support, billing, unclear question, not in FAQ, partnership, etc.). Do NOT discuss booking a product demo as the main path. At the end of answer include ONLY this contact block (no demo URL):
+  - Contact: ${CONTACT_EMAIL} / ${CONTACT_SALES_PHONE}
+  - Or visit: ${CONTACT_PAGE_HREF}
+- "demo": the user wants a demo, walkthrough, "see it in action", or to talk with sales about seeing the product. At the end of answer include ONLY this demo block (do not add ${CONTACT_PAGE_HREF} or the contact block lines above):
+  - Or visit: ${DEMO_FORM_HREF}
+
+If both contact and demo could apply, prefer "contact" unless the user clearly asked to see a demo or schedule one.
 
 FAQ CONTEXT:
 ${faqContext}
@@ -191,7 +209,7 @@ ${faqContext}
           throw new Error(`Model output could not be parsed for model: ${modelName}`)
         }
 
-        return jsonOk({ answer: parsed.answer, shouldEscalate: parsed.shouldEscalate })
+        return jsonOk({ answer: parsed.answer, escalation: parsed.escalation })
       } catch (error) {
         lastError = error
       }
