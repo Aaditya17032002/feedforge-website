@@ -1,4 +1,5 @@
 import { sendFormNotification } from '@/lib/email/email'
+import { createLead } from '@/lib/server/leads-api'
 import { sanitizeText } from '@/lib/shared/strings'
 import { isValidEmail } from '@/lib/shared/validation'
 import { jsonError, jsonOk, readJsonBody } from '@/lib/server/api'
@@ -24,15 +25,30 @@ export async function POST(request: Request) {
       return jsonError('Please enter a valid email.', 400)
     }
 
-    await sendFormNotification({
-      formType: 'contact',
-      fields: {
-        fullName,
-        email,
-        company,
-        message,
-      },
+    const lead = await createLead({
+      leadType: 'CONTACT',
+      fullName,
+      workEmail: email,
+      companyName: company || undefined,
+      message,
     })
+    if (!lead.ok) {
+      return jsonError('Could not save your message. Please try again.', 500)
+    }
+
+    try {
+      await sendFormNotification({
+        formType: 'contact',
+        fields: {
+          fullName,
+          email,
+          company,
+          message,
+        },
+      })
+    } catch (emailErr) {
+      console.error('Contact email notification failed (lead saved)', emailErr)
+    }
 
     return jsonOk({ message: 'Message sent successfully.' })
   } catch (error) {

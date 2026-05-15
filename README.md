@@ -49,6 +49,9 @@ cp .env.example .env.local
 | `OPENROUTER_API_KEY` | Chatbot API | Key from [OpenRouter](https://openrouter.ai/) |
 | `OPENROUTER_MODEL` | Chatbot API | Model id (default in example: `openai/gpt-oss-120b:free`) |
 | `NEXT_PUBLIC_CHATBOT_ENABLED` | Chatbot UI | `true` / `1` / `yes` / `on` to show the widget; otherwise hidden |
+| `LANDING_PORTAL_API_KEY` | Contact & demo forms | Shared secret with Application backend (header `X-Landing-Api-Key`) |
+| `BACKEND_INTERNAL_URL` | Contact & demo forms | Application API inside Docker (e.g. `http://feedforge_backend:8000`) |
+| `BACKEND_API_URL` | Contact & demo forms | Fallback for local `npm run dev` (e.g. `http://localhost:8000`) |
 
 Optional:
 
@@ -59,7 +62,9 @@ Optional:
 
 **SendGrid:** Unverified `SENDGRID_FROM_EMAIL` addresses are rejected. Each successful submission sends a team notification and a customer auto-reply.
 
-**Production:** Use **`.env.prod`** with Docker Compose (see below). That file is gitignored; keep secrets out of version control.
+**Production:** Use **`.env.prod`** with Docker Compose (copy from **`.env.prod.example`**). Set `LANDING_PORTAL_API_KEY` to the **same value** as in Application `.env`. That file is gitignored; keep secrets out of version control.
+
+**Lead storage:** Contact and demo submissions call Application `POST /api/v1/leads` from server route handlers, then send email via SendGrid. The browser never sees the API key.
 
 ---
 
@@ -87,22 +92,26 @@ docker compose --env-file .env.local -f docker-compose.dev.yml up --build
 
 Compose variable substitution uses the file passed with `--env-file`. The app container bind-mounts the project and uses `.env.local` as `env_file`. Next.js also reads `.env.local` from the mounted tree.
 
-### Production (standalone Next.js, host port 3002)
+### Production (via edge proxy on port 80)
 
-Build and run with **`.env.prod`** (set `APP_URL` to your public URL, e.g. `http://<SERVER_IP>:3002` if you expose that port):
+Build and run with **`.env.prod`** (`APP_URL` = public site URL, e.g. `http://<SERVER_IP>`):
 
 ```bash
+cp .env.prod.example .env.prod
+# Edit .env.prod — set LANDING_PORTAL_API_KEY (same as Application) and SendGrid vars
 docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
 ```
 
-The image uses `output: 'standalone'` from `next.config.js`. Build arg **`NEXT_PUBLIC_CHATBOT_ENABLED`** is passed through Compose (default `false`).
+Requires **`edge_net`** and a running Application backend. The portal container reaches the API at `http://feedforge_backend:8000`.
+
+The image uses `output: 'standalone'`. Build arg **`NEXT_PUBLIC_CHATBOT_ENABLED`** is passed through Compose (default `false`).
 
 ---
 
 ## Features
 
 - Marketing pages with hero, stats, product narrative, and demo CTA
-- **Contact** and **demo** flows backed by `/api/contact` and `/api/demo-request` (SendGrid)
+- **Contact** and **demo** flows: save to Application DB via `/api/v1/leads`, then email via SendGrid (`/api/contact`, `/api/demo-request`)
 - Optional **AI chatbot** (`/api/chat`, OpenRouter) gated by `NEXT_PUBLIC_CHATBOT_ENABLED`
 - Responsive layout and charts (**Recharts**)
 
