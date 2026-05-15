@@ -1,12 +1,9 @@
-# Server: http://<SERVER_IP>:3002 (avoids collision with Platform on host :80)
+# Production portal — internal only; public HTTP via Proxy stack on edge_net.
 #
-# Recommended:
 #   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
 #
-# Runtime env is loaded from .env.prod (env_file below). Compose variable
-# substitution (${...}) also uses the file passed with --env-file, not .env.
-#
-# Set APP_URL=http://<SERVER_IP>:3002 (and other vars) in .env.prod before first run.
+# Public URL (via edge proxy): http://<SERVER_IP>/
+# Set APP_URL and related vars in .env.prod to match your server IP or future domain.
 
 name: feedforge-portal
 
@@ -20,7 +17,12 @@ services:
         NEXT_PUBLIC_CHATBOT_ENABLED: ${NEXT_PUBLIC_CHATBOT_ENABLED:-false}
     container_name: feedforge_portal
     restart: always
-    ports:
-      - "3002:3000"
     env_file:
       - .env.prod
+    networks:
+      - edge_net
+
+networks:
+  edge_net:
+    external: true
+    name: edge_net
