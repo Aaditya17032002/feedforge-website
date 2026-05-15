@@ -1,4 +1,5 @@
 import { sendFormNotification } from '@/lib/email/email'
+import { createLead } from '@/lib/server/leads-api'
 import { sanitizeText } from '@/lib/shared/strings'
 import { isValidEmail } from '@/lib/shared/validation'
 import { jsonError, jsonOk, readJsonBody } from '@/lib/server/api'
@@ -24,15 +25,30 @@ export async function POST(request: Request) {
       return jsonError('Please enter a valid email.', 400)
     }
 
-    await sendFormNotification({
-      formType: 'demo-request',
-      fields: {
-        name,
-        email,
-        company,
-        message,
-      },
+    const lead = await createLead({
+      leadType: 'DEMO_REQUEST',
+      fullName: name,
+      workEmail: email,
+      companyName: company || undefined,
+      message: message || undefined,
     })
+    if (!lead.ok) {
+      return jsonError('Could not save your request. Please try again.', 500)
+    }
+
+    try {
+      await sendFormNotification({
+        formType: 'demo-request',
+        fields: {
+          name,
+          email,
+          company,
+          message,
+        },
+      })
+    } catch (emailErr) {
+      console.error('Demo email notification failed (lead saved)', emailErr)
+    }
 
     return jsonOk({ message: 'Demo request sent successfully.' })
   } catch (error) {

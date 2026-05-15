@@ -3,7 +3,7 @@
 #   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
 #
 # Public URL (via edge proxy): http://<SERVER_IP>/
-# Set APP_URL and related vars in .env.prod to match your server IP or future domain.
+# Copy .env.prod.example → .env.prod and set LANDING_PORTAL_API_KEY (same as Application .env).
 
 name: feedforge-portal
 
