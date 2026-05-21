@@ -16,6 +16,19 @@ const GENERATION_STEPS = [
 // FIX: minimum visible duration per step so fast API responses don't feel abrupt
 const MIN_GENERATION_MS = GENERATION_STEPS.length * 2200
 
+const AD_DOMAIN = 'feedforge.shop'
+
+function toSlug(value: string): string {
+  return (
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60) || 'product'
+  )
+}
+
 export default function CatalogPerfection() {
   const pathname = usePathname()
   const [activeTab, setActiveTab] = useState<'examples' | 'try'>('examples')
@@ -36,6 +49,8 @@ export default function CatalogPerfection() {
   } | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [portalReady, setPortalReady] = useState(false)
+  const [expandedAfter, setExpandedAfter] = useState(false)
+  const [expandedBefore, setExpandedBefore] = useState(false)
 
   const stepIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const generationStartRef = useRef<number | null>(null)
@@ -127,6 +142,8 @@ export default function CatalogPerfection() {
     setGeneratedOutput(null)
     setComparison(null)
     setIsModalOpen(false)
+    setExpandedAfter(false)
+    setExpandedBefore(false)
 
     const apiStart = Date.now()
 
@@ -545,159 +562,78 @@ export default function CatalogPerfection() {
                 if (e.target === e.currentTarget) setIsModalOpen(false)
               }}
             >
-          <div className="flex w-full max-h-[min(92vh,900px)] max-w-[min(96vw,1200px)] flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
-            <div className="flex shrink-0 items-start justify-between gap-3 border-b border-gray-200 px-4 py-2.5 sm:px-5">
-              <div className="min-w-0 py-0.5">
-                <div className="text-sm font-semibold leading-tight text-gray-900">Try Your Product</div>
-                <div className="mt-0.5 text-xs leading-snug text-gray-500">
-                  {comparison
-                    ? 'Before vs After + Feed Health Score'
-                    : 'AI optimized title, description, and tags'}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="-mr-1 shrink-0 rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
-                aria-label="Close"
-              >
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+          <div className="relative flex w-full max-h-[min(95vh,920px)] max-w-[min(96vw,1100px)] flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="absolute right-3 top-3 z-10 rounded-full bg-white/80 p-2 text-gray-500 backdrop-blur transition-colors hover:bg-gray-100 hover:text-gray-900"
+              aria-label="Close"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
 
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5">
-              <div className="grid gap-4 lg:grid-cols-2">
-              <div className="flex min-w-0 flex-col rounded-lg border border-gray-200 bg-gray-50 p-3 sm:p-4">
-                <div className="mb-2 flex shrink-0 items-center justify-between gap-3">
-                  <div className="text-xs font-semibold tracking-wider text-gray-500">BEFORE</div>
-                  {comparison ? (
-                    <div className="inline-flex items-baseline gap-1 rounded-full bg-gray-900 px-3 py-1 text-white">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Score</span>
-                      <span className="text-base font-bold leading-none tabular-nums">
-                        {comparison.before.score}
-                      </span>
-                      <span className="text-[11px] font-medium text-gray-400">/100</span>
-                    </div>
-                  ) : null}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <div className="border-b border-gray-200 bg-white px-6 pb-4 pt-5 sm:px-10">
+                <div className="relative flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                  <div className="sm:absolute sm:left-0 sm:top-1/2 sm:-translate-y-1/2">
+                    <GoogleLogo />
+                  </div>
+                  <GoogleSearchBar query={productTitle.trim() || generatedOutput.optimizedTitle} />
                 </div>
-                <div className="flex flex-col gap-2.5">
-                  <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                    <div className="border-b border-gray-200 bg-gray-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Title
-                    </div>
-                    <div className="px-3 py-2 break-words text-sm font-semibold text-gray-900">
-                      {productTitle.trim() || '—'}
-                    </div>
-                  </div>
-                  <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                    <div className="border-b border-gray-200 bg-gray-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Description
-                    </div>
-                    <div className="px-3 py-2 whitespace-pre-wrap break-words text-sm text-gray-800">
-                      {description.trim() || '—'}
-                    </div>
-                  </div>
-
-                  {comparison ? (
-                    <>
-                      <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                        <div className="border-b border-gray-200 bg-gray-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-gray-800">
-                          Summary
-                        </div>
-                        <div className="px-3 py-2 text-sm text-gray-800">{comparison.before.summary}</div>
-                      </div>
-                      <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                        <div className="border-b border-gray-200 bg-gray-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-gray-800">
-                          Top issues
-                        </div>
-                        <ul className="space-y-1.5 px-3 py-2 text-sm text-gray-800">
-                          {comparison.before.issues.map((issue, idx) => (
-                            <li key={`${issue}-${idx}`} className="flex gap-2">
-                              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gray-400" />
-                              <span className="min-w-0 break-words">{issue}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </>
-                  ) : null}
+                <div className="mt-3 text-xs text-[#5f6368]">
+                  About 1,240,000 results (0.42 seconds)
                 </div>
               </div>
 
-              <div className="flex min-w-0 flex-col rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
-                <div className="mb-2 flex shrink-0 items-center justify-between gap-3">
-                  <div className="text-xs font-semibold tracking-wider text-accent">AFTER</div>
-                  {comparison ? (
-                    <div className="inline-flex items-baseline gap-1 rounded-full bg-accent px-3 py-1 text-white motion-safe:animate-score-glow">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70">Score</span>
-                      <span className="text-base font-bold leading-none tabular-nums">
-                        {comparison.after.score}
-                      </span>
-                      <span className="text-[11px] font-medium text-white/70">/100</span>
-                    </div>
-                  ) : null}
-                </div>
-                <div className="flex flex-col gap-2.5">
-                  <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                    <div className="border-b border-accent/20 bg-accent/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-accent">
-                      Optimized Title
-                    </div>
-                    <div className="px-3 py-2 break-words text-sm font-semibold text-gray-900">
-                      {generatedOutput.optimizedTitle}
-                    </div>
-                  </div>
-                  <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                    <div className="border-b border-accent/20 bg-accent/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-accent">
-                      Optimized Description
-                    </div>
-                    <div className="px-3 py-2 whitespace-pre-wrap break-words text-sm text-gray-800">
-                      {generatedOutput.optimizedDescription}
-                    </div>
-                  </div>
-                  <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                    <div className="border-b border-accent/20 bg-accent/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-accent">
-                      Tags
-                    </div>
-                    <div className="flex flex-wrap gap-2 px-3 py-2">
-                      {generatedOutput.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-md bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+              <div className="bg-white px-6 py-5 sm:px-10">
+                <div className="flex flex-col gap-6">
+                  <AdSlot label="Optimized by FeedForge AI" labelTone="accent">
+                    <GoogleTextAd
+                      title={generatedOutput.optimizedTitle}
+                      description={generatedOutput.optimizedDescription}
+                      sitelinks={generatedOutput.tags}
+                      expanded={expandedAfter}
+                      onToggleExpanded={() => setExpandedAfter((v) => !v)}
+                    />
+                  </AdSlot>
 
-                  {comparison ? (
-                    <>
-                      <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                        <div className="border-b border-accent/20 bg-accent/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-accent">
-                          Summary
-                        </div>
-                        <div className="px-3 py-2 text-sm text-gray-800">{comparison.after.summary}</div>
-                      </div>
-                      <div className="shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
-                        <div className="border-b border-accent/20 bg-accent/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-accent">
-                          Top issues
-                        </div>
-                        <ul className="space-y-1.5 px-3 py-2 text-sm text-gray-800">
-                          {comparison.after.issues.map((issue, idx) => (
-                            <li key={`${issue}-${idx}`} className="flex gap-2">
-                              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent/70" />
-                              <span className="min-w-0 break-words">{issue}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </>
-                  ) : null}
+                  <AdSlot label="Your original ad" labelTone="neutral">
+                    <GoogleTextAd
+                      title={productTitle.trim() || 'Untitled product'}
+                      description={description.trim()}
+                      expanded={expandedBefore}
+                      onToggleExpanded={() => setExpandedBefore((v) => !v)}
+                    />
+                  </AdSlot>
                 </div>
               </div>
-              </div>
+
+              {comparison ? (
+                <div className="border-t border-gray-200 bg-gray-50 px-6 py-5 sm:px-10">
+                  <div className="mb-3 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-gray-900">Performance Analysis</h3>
+                    <span className="text-xs text-gray-500">— Before vs After</span>
+                  </div>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <AnalysisCard
+                      tone="neutral"
+                      heading="Before"
+                      score={comparison.before.score}
+                      summary={comparison.before.summary}
+                      issues={comparison.before.issues}
+                    />
+                    <AnalysisCard
+                      tone="accent"
+                      heading="After"
+                      score={comparison.after.score}
+                      summary={comparison.after.summary}
+                      issues={comparison.after.issues}
+                    />
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             {comparison ? (
@@ -756,5 +692,253 @@ export default function CatalogPerfection() {
           )
         : null}
     </section>
+  )
+}
+
+function GoogleLogo() {
+  return (
+    <div
+      className="select-none text-[26px] font-medium leading-none sm:text-[30px]"
+      style={{ fontFamily: '"Google Sans", "Product Sans", Arial, sans-serif', letterSpacing: '-0.5px' }}
+      aria-label="Google"
+    >
+      <span style={{ color: '#4285F4' }}>G</span>
+      <span style={{ color: '#EA4335' }}>o</span>
+      <span style={{ color: '#FBBC05' }}>o</span>
+      <span style={{ color: '#4285F4' }}>g</span>
+      <span style={{ color: '#34A853' }}>l</span>
+      <span style={{ color: '#EA4335' }}>e</span>
+    </div>
+  )
+}
+
+function GoogleSearchBar({ query }: { query: string }) {
+  return (
+    <div className="flex w-full max-w-[560px] items-center gap-3 rounded-full border border-[#dfe1e5] bg-white px-4 py-2.5 shadow-[0_1px_6px_rgba(32,33,36,0.08)] transition-shadow hover:shadow-[0_1px_8px_rgba(32,33,36,0.14)]">
+      <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0 text-[#9aa0a6]" fill="none" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+      </svg>
+      <div className="min-w-0 flex-1 truncate text-[15px] text-[#202124]" aria-label="Search query">
+        {query || 'product search'}
+      </div>
+      <div className="flex shrink-0 items-center gap-3">
+        <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+          <path
+            fill="#4285F4"
+            d="M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z"
+          />
+          <path
+            fill="#34A853"
+            d="M19 11a1 1 0 10-2 0 5 5 0 01-10 0 1 1 0 10-2 0 7 7 0 006 6.92V20H8a1 1 0 100 2h8a1 1 0 100-2h-3v-2.08A7 7 0 0019 11z"
+          />
+        </svg>
+        <svg viewBox="0 0 192 192" className="h-5 w-5" aria-hidden>
+          <circle cx="96" cy="96" r="20" fill="#FBBC04" />
+          <circle cx="96" cy="96" r="40" fill="none" stroke="#34A853" strokeWidth="14" strokeDasharray="60 200" />
+          <circle cx="96" cy="96" r="40" fill="none" stroke="#EA4335" strokeWidth="14" strokeDasharray="60 200" strokeDashoffset="-80" />
+          <circle cx="96" cy="96" r="40" fill="none" stroke="#4285F4" strokeWidth="14" strokeDasharray="60 200" strokeDashoffset="-160" />
+        </svg>
+      </div>
+    </div>
+  )
+}
+
+function AdSlot({
+  label,
+  labelTone,
+  children,
+}: {
+  label: string
+  labelTone: 'accent' | 'neutral'
+  children: React.ReactNode
+}) {
+  const isAccent = labelTone === 'accent'
+  return (
+    <div className="relative">
+      <div className="mb-1.5 flex items-center gap-2 px-1">
+        <span
+          className={`inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider ${
+            isAccent ? 'text-accent' : 'text-gray-500'
+          }`}
+        >
+          {isAccent ? (
+            <svg viewBox="0 0 24 24" className="h-3 w-3" fill="currentColor" aria-hidden>
+              <path d="M12 2l2.39 5.72L20 8.27l-4.5 3.9L17 18l-5-3.27L7 18l1.5-5.83L4 8.27l5.61-.55L12 2z" />
+            </svg>
+          ) : null}
+          {label}
+        </span>
+      </div>
+      <div
+        className={`rounded-lg border bg-white p-3 sm:p-4 ${
+          isAccent ? 'border-accent/30 shadow-sm ring-1 ring-accent/10' : 'border-gray-200'
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function AnalysisCard({
+  tone,
+  heading,
+  score,
+  summary,
+  issues,
+}: {
+  tone: 'accent' | 'neutral'
+  heading: string
+  score: number
+  summary: string
+  issues: string[]
+}) {
+  const isAccent = tone === 'accent'
+  return (
+    <div
+      className={`flex flex-col rounded-lg border bg-white p-4 ${
+        isAccent ? 'border-accent/30 ring-1 ring-accent/10' : 'border-gray-200'
+      }`}
+    >
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <span
+          className={`text-[11px] font-semibold uppercase tracking-wider ${
+            isAccent ? 'text-accent' : 'text-gray-500'
+          }`}
+        >
+          {heading}
+        </span>
+        <span
+          className={`inline-flex items-baseline gap-1 rounded-full px-3 py-1 text-white ${
+            isAccent ? 'bg-accent motion-safe:animate-score-glow' : 'bg-gray-900'
+          }`}
+        >
+          <span className="text-[10px] font-semibold uppercase tracking-wider opacity-70">Score</span>
+          <span className="text-base font-bold leading-none tabular-nums">{score}</span>
+          <span className="text-[11px] font-medium opacity-70">/100</span>
+        </span>
+      </div>
+
+      <div className="mb-3">
+        <div
+          className={`mb-1 text-[10px] font-semibold uppercase tracking-wider ${
+            isAccent ? 'text-accent' : 'text-gray-500'
+          }`}
+        >
+          Summary
+        </div>
+        <p className="text-sm leading-snug text-gray-800">{summary}</p>
+      </div>
+
+      <div>
+        <div
+          className={`mb-1 text-[10px] font-semibold uppercase tracking-wider ${
+            isAccent ? 'text-accent' : 'text-gray-500'
+          }`}
+        >
+          Top Issues
+        </div>
+        {issues.length > 0 ? (
+          <ul className="space-y-1 text-sm text-gray-800">
+            {issues.map((issue, idx) => (
+              <li key={`${heading}-${issue}-${idx}`} className="flex gap-1.5">
+                <span
+                  className={`mt-2 h-1 w-1 flex-shrink-0 rounded-full ${
+                    isAccent ? 'bg-accent/70' : 'bg-gray-400'
+                  }`}
+                />
+                <span className="min-w-0 break-words leading-snug">{issue}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm italic text-gray-500">No remaining issues.</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function GoogleTextAd({
+  title,
+  description,
+  sitelinks,
+  expanded,
+  onToggleExpanded,
+}: {
+  title: string
+  description: string
+  sitelinks?: string[]
+  expanded: boolean
+  onToggleExpanded: () => void
+}) {
+  const slug = toSlug(title)
+  const hasDescription = description.trim().length > 0
+  const visibleSitelinks = sitelinks?.filter(Boolean).slice(0, 4) ?? []
+
+  return (
+    <div className="bg-white" role="group" aria-label="Google text ad preview">
+      <div className="flex items-center gap-2">
+        <div
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gray-200 to-gray-300 text-[10px] font-bold text-gray-700 ring-1 ring-gray-200"
+          aria-hidden
+        >
+          FF
+        </div>
+        <div className="flex min-w-0 flex-col leading-tight">
+          <span className="text-sm font-medium text-gray-900">Sponsored</span>
+          <span className="truncate text-xs text-[#5f6368]">{AD_DOMAIN}</span>
+        </div>
+      </div>
+
+      <a
+        href="#ad-preview"
+        onClick={(e) => e.preventDefault()}
+        className="mt-2 block break-words text-[18px] font-normal leading-snug text-[#1a0dab] hover:underline visited:text-[#681da8] sm:text-[20px]"
+      >
+        {title}
+      </a>
+
+      <div className="mt-0.5 truncate text-xs text-[#5f6368]">
+        {AD_DOMAIN} <span className="px-1">›</span> products <span className="px-1">›</span> {slug}
+      </div>
+
+      {hasDescription ? (
+        <div className="mt-1.5 text-sm leading-snug text-[#4d5156]">
+          <p
+            className={`whitespace-pre-wrap break-words ${expanded ? '' : 'line-clamp-2'}`}
+          >
+            {description}
+          </p>
+          <button
+            type="button"
+            onClick={onToggleExpanded}
+            className="mt-0.5 text-sm font-medium text-[#1a0dab] hover:underline focus:outline-none focus-visible:underline"
+            aria-expanded={expanded}
+          >
+            {expanded ? 'See less' : 'See more'}
+          </button>
+        </div>
+      ) : (
+        <div className="mt-1.5 text-sm italic leading-snug text-gray-400">
+          No description — Google may shorten or skip this ad.
+        </div>
+      )}
+
+      {visibleSitelinks.length > 0 ? (
+        <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
+          {visibleSitelinks.map((label) => (
+            <a
+              key={label}
+              href="#ad-preview"
+              onClick={(e) => e.preventDefault()}
+              className="text-xs text-[#1a0dab] hover:underline"
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      ) : null}
+    </div>
   )
 }
