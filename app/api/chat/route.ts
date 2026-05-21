@@ -20,25 +20,168 @@ type EscalationKind = 'none' | 'contact' | 'demo'
 type ChatbotModelOutput = {
   answer: string
   escalation: EscalationKind
+  schedulingIntent?: boolean
 }
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
-const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL
+// ── Cal.com types ──────────────────────────────────────────────────────────────
+
+export type Slot = {
+  start: string   // ISO string
+  end: string     // ISO string
+}
+
+export type Booking = {
+  uid: string
+  start: string   // ISO string
+  meetingUrl?: string
+}
+
+type CalSlotsResponse = {
+  status?: string
+  data?: Record<string, Array<{ start: string; end: string }>>
+  error?: { message?: string }
+  message?: string
+}
+
+type CalBookingResponse = {
+  status?: string
+  data?: {
+    uid?: string
+    start?: string
+    meetingUrl?: string
+    location?: string
+  }
+  error?: { message?: string }
+  message?: string
+}
+
+// ── Cal.com config ─────────────────────────────────────────────────────────────
+
+const CAL_API_KEY       = process.env.CAL_API_KEY ?? ''
+const CAL_USERNAME      = process.env.CAL_USERNAME ?? ''
+const CAL_EVENT_TYPE_ID = process.env.CAL_EVENT_TYPE_ID ?? ''
+const CAL_BASE_URL      = 'https://api.cal.com/v2'
+const CAL_TIMEZONE      = (process.env.CAL_TIMEZONE ?? 'UTC').split('#')[0].trim()
+const CAL_SLOTS_VERSION = '2024-09-04'
+const CAL_BOOKINGS_VERSION = '2024-08-13'
+
+function calAuthHeaders(apiVersion: string): HeadersInit {
+  return {
+    Authorization:  `Bearer ${CAL_API_KEY}`,
+    'cal-api-version': apiVersion,
+    'Content-Type': 'application/json',
+  }
+}
+
+// ── Cal.com helpers ────────────────────────────────────────────────────────────
+
+async function fetchAvailableSlots(): Promise<Slot[]> {
+  const now   = new Date()
+  const start = now.toISOString().slice(0, 10)
+  const end   = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+
+  const params = new URLSearchParams({
+    eventTypeId: CAL_EVENT_TYPE_ID,
+    start,
+    end,
+    timeZone: CAL_TIMEZONE,
+    format:   'range',
+  })
+
+  const res  = await fetch(`${CAL_BASE_URL}/slots?${params.toString()}`, {
+    headers: calAuthHeaders(CAL_SLOTS_VERSION),
+  })
+  const data = (await res.json()) as CalSlotsResponse
+
+  if (!res.ok) {
+    const msg = data.error?.message ?? data.message ?? res.statusText
+    throw new Error(`Cal.com slots error: ${msg}`)
+  }
+
+  const slots: Slot[] = []
+  const slotMap = data.data ?? {}
+
+  for (const daySlots of Object.values(slotMap)) {
+    for (const s of daySlots) {
+      if (slots.length >= 6) break
+      slots.push({
+        start: new Date(s.start).toISOString(),
+        end:   new Date(s.end).toISOString(),
+      })
+    }
+    if (slots.length >= 6) break
+  }
+
+  return slots
+}
+
+async function createBooking(params: {
+  start: string
+  name:  string
+  email: string
+}): Promise<Booking> {
+  const res = await fetch(`${CAL_BASE_URL}/bookings`, {
+    method:  'POST',
+    headers: calAuthHeaders(CAL_BOOKINGS_VERSION),
+    body: JSON.stringify({
+      eventTypeId: Number(CAL_EVENT_TYPE_ID),
+      start:       params.start,
+      attendee: {
+        name:     params.name,
+        email:    params.email,
+        timeZone: CAL_TIMEZONE,
+        language: 'en',
+      },
+    }),
+  })
+
+  const data = (await res.json()) as CalBookingResponse
+
+  if (!res.ok) {
+    const msg = data.error?.message ?? data.message ?? res.statusText
+    throw new Error(`Cal.com booking error: ${msg}`)
+  }
+
+  const booking = data.data
+  if (!booking?.uid) throw new Error('Cal.com returned no booking uid')
+
+  const location =
+    typeof booking.location === 'string' && booking.location.startsWith('http')
+      ? booking.location
+      : undefined
+
+  return {
+    uid:        booking.uid,
+    start:      booking.start ?? params.start,
+    meetingUrl: booking.meetingUrl ?? location,
+  }
+}
+
+// Simple email validator
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+// ── OpenRouter config ──────────────────────────────────────────────────────────
+
+const OPENROUTER_API_KEY  = process.env.OPENROUTER_API_KEY
+const OPENROUTER_MODEL    = process.env.OPENROUTER_MODEL
 const OPENROUTER_BASE_URL =
   process.env.OPENROUTER_BASE_URL?.replace(/\/$/, '') ?? 'https://openrouter.ai/api/v1'
 
-// Best-effort, in-memory throttling (per runtime instance).
+// ── Rate limiting ──────────────────────────────────────────────────────────────
+
 const rateLimitBuckets = new Map<string, { windowStartMs: number; count: number }>()
 
 function getClientKey(request: Request): string {
   const forwardedFor = request.headers.get('x-forwarded-for')
-  const realIp = request.headers.get('x-real-ip')
-  const ip = (forwardedFor?.split(',')[0] ?? realIp ?? 'unknown').trim()
+  const realIp       = request.headers.get('x-real-ip')
+  const ip           = (forwardedFor?.split(',')[0] ?? realIp ?? 'unknown').trim()
   return ip || 'unknown'
 }
 
 function isRateLimited(key: string, nowMs: number): boolean {
-  const WINDOW_MS = 30_000
+  const WINDOW_MS    = 30_000
   const MAX_REQUESTS = 12
 
   const bucket = rateLimitBuckets.get(key)
@@ -52,12 +195,14 @@ function isRateLimited(key: string, nowMs: number): boolean {
   return bucket.count > MAX_REQUESTS
 }
 
+// ── FAQ helpers ────────────────────────────────────────────────────────────────
+
 function buildFaqContext(maxItems = 18): string {
   const items = Array.isArray(faqItems) ? faqItems.slice(0, maxItems) : []
   return items
     .map((item, index) => {
       const question = typeof item?.question === 'string' ? item.question.trim() : ''
-      const answer = typeof item?.answer === 'string' ? item.answer.trim() : ''
+      const answer   = typeof item?.answer   === 'string' ? item.answer.trim()   : ''
       if (!question || !answer) return ''
       return `FAQ_${index + 1}\nQ: ${question}\nA: ${answer}`
     })
@@ -65,65 +210,80 @@ function buildFaqContext(maxItems = 18): string {
     .join('\n\n')
 }
 
+// ── Model output parsing ───────────────────────────────────────────────────────
+
 function parseEscalation(value: unknown): EscalationKind {
-  if (value === 'contact' || value === 'demo' || value === 'none') {
-    return value
-  }
+  if (value === 'contact' || value === 'demo' || value === 'none') return value
   return 'none'
 }
 
 function parseModelJson(text: string): ChatbotModelOutput | null {
-  const cleaned = text.replace(/```json|```/g, '').trim()
+  const cleaned   = text.replace(/```json|```/g, '').trim()
   const firstBrace = cleaned.indexOf('{')
-  const lastBrace = cleaned.lastIndexOf('}')
+  const lastBrace  = cleaned.lastIndexOf('}')
 
-  if (firstBrace < 0 || lastBrace < 0 || firstBrace >= lastBrace) {
-    return null
-  }
+  if (firstBrace < 0 || lastBrace < 0 || firstBrace >= lastBrace) return null
 
   const jsonSlice = cleaned.slice(firstBrace, lastBrace + 1)
 
   try {
     const parsed = JSON.parse(jsonSlice) as {
-      answer?: unknown
-      escalation?: unknown
-      shouldEscalate?: unknown
+      answer?:           unknown
+      escalation?:       unknown
+      shouldEscalate?:   unknown
+      schedulingIntent?: unknown
     }
 
     const answer = sanitizeText(parsed.answer, { maxLen: 2000, preserveNewlines: true })
     if (!answer) return null
 
     let escalation = parseEscalation(parsed.escalation)
-    if (escalation === 'none' && parsed.shouldEscalate === true) {
-      escalation = 'contact'
-    }
+    if (escalation === 'none' && parsed.shouldEscalate === true) escalation = 'contact'
 
-    return { answer, escalation }
+    const schedulingIntent = parsed.schedulingIntent === true
+
+    return { answer, escalation, schedulingIntent }
   } catch {
     return null
   }
 }
 
-/** If the model returns plain text (common after long chats), still return a useful reply. */
+function stripInternalPathLines(text: string): string {
+  return text
+    .replace(/\s*-?\s*Or visit\s*:\s*\/?#?request-demo\b/gi, '')
+    .replace(/\s*-?\s*Or visit\s*:\s*\/contact\b/gi, '')
+    .replace(/\s*(?:please\s+)?visit\s+\/?#?request-demo\b/gi, '')
+    .replace(/\s*(?:please\s+)?visit\s+\/contact\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
+
 function fallbackFromRawText(text: string): ChatbotModelOutput {
   const answer = sanitizeText(text, { maxLen: 2000, preserveNewlines: true })
   return {
-    answer: answer || 'Sorry — I could not format a reply. Please try again or contact us.',
-    escalation: 'none',
+    answer:           answer || 'Sorry — I could not format a reply. Please try again or contact us.',
+    escalation:       'none',
+    schedulingIntent: false,
   }
 }
 
+// ── Scheduling intent detection (fast server-side pre-check) ─────────────────
+// Keep this list focused on EXPLICIT booking language so generic demo/info
+// questions don't accidentally launch the slot picker.
+
+const SCHEDULING_KEYWORDS =
+  /\b(book(?:\s+a)?\s+(?:call|meeting|demo|time|slot)|schedule(?:\s+a)?\s+(?:call|meeting|demo)|pick\s+a\s+time|reserve\s+a\s+slot|arrange\s+a\s+(?:call|meeting)|set\s+up\s+a\s+time)\b/i
+
+// ── OpenRouter chat helper ─────────────────────────────────────────────────────
+
 async function chatCompletion(model: string, messages: ChatMessage[]): Promise<string> {
   const res = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
-    method: 'POST',
+    method:  'POST',
     headers: {
-      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+      Authorization:  `Bearer ${OPENROUTER_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      model,
-      messages,
-    }),
+    body: JSON.stringify({ model, messages }),
   })
 
   const data = (await res.json()) as OpenRouterChatResponse
@@ -141,13 +301,13 @@ async function chatCompletion(model: string, messages: ChatMessage[]): Promise<s
   return text
 }
 
+// ── POST handler ───────────────────────────────────────────────────────────────
+
 export async function POST(request: Request) {
   try {
-    if (!OPENROUTER_API_KEY) {
-      return jsonError('Chat is not configured yet.', 500)
-    }
+    if (!OPENROUTER_API_KEY) return jsonError('Chat is not configured yet.', 500)
 
-    const now = Date.now()
+    const now       = Date.now()
     const clientKey = getClientKey(request)
     if (isRateLimited(clientKey, now)) {
       return jsonError('Too many requests. Please wait a moment and try again.', 429)
@@ -159,17 +319,70 @@ export async function POST(request: Request) {
     }
     const data = body as Record<string, unknown>
 
-    const message = sanitizeText(data.message, { maxLen: 1200, preserveNewlines: true })
-    if (!message) {
-      return jsonError('Message is required.', 400)
+    // ── Scheduling sub-actions ─────────────────────────────────────────────────
+
+    // GET SLOTS — triggered when the widget has detected scheduling intent
+    if (data.action === 'get_slots') {
+      if (!CAL_API_KEY || !CAL_EVENT_TYPE_ID) {
+        // Graceful fallback: return the direct booking link
+        return jsonOk({
+          schedulingAction: 'fallback_link',
+          bookingUrl: `https://cal.com/${CAL_USERNAME}`,
+        })
+      }
+      try {
+        const slots = await fetchAvailableSlots()
+        if (slots.length === 0) {
+          return jsonOk({
+            schedulingAction: 'no_slots',
+            bookingUrl: `https://cal.com/${CAL_USERNAME}`,
+          })
+        }
+        return jsonOk({ schedulingAction: 'show_slots', slots })
+      } catch {
+        return jsonOk({
+          schedulingAction: 'fallback_link',
+          bookingUrl: `https://cal.com/${CAL_USERNAME}`,
+        })
+      }
     }
+
+    // CREATE BOOKING — triggered when the user confirms name + email + slot
+    if (data.action === 'create_booking') {
+      const slotStart = typeof data.start === 'string' ? data.start.trim() : ''
+      const name      = sanitizeText(data.name,  { maxLen: 120 })
+      const email     = sanitizeText(data.email, { maxLen: 254 })?.toLowerCase() ?? ''
+
+      if (!slotStart) return jsonError('Missing slot start time.', 400)
+      if (!name)      return jsonError('Name is required.',        400)
+      if (!email || !isValidEmail(email)) return jsonError('A valid email is required.', 400)
+
+      if (!CAL_API_KEY || !CAL_EVENT_TYPE_ID) {
+        return jsonOk({
+          schedulingAction: 'fallback_link',
+          bookingUrl: `https://cal.com/${CAL_USERNAME}`,
+        })
+      }
+
+      try {
+        const booking = await createBooking({ start: slotStart, name, email })
+        return jsonOk({ schedulingAction: 'booking_confirmed', booking })
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Booking failed'
+        return jsonError(msg, 500)
+      }
+    }
+
+    // ── Normal chat flow ───────────────────────────────────────────────────────
+
+    const message = sanitizeText(data.message, { maxLen: 1200, preserveNewlines: true })
+    if (!message) return jsonError('Message is required.', 400)
 
     const incomingHistory = Array.isArray(data.history) ? (data.history as unknown[]) : []
     const history: ChatMessage[] = incomingHistory.slice(-10).flatMap((entry) => {
       if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return []
       const { role, content } = entry as Record<string, unknown>
       const safeRole: ChatRole = role === 'assistant' ? 'assistant' : 'user'
-      // Assistant replay payloads are JSON strings and can exceed a single user bubble length.
       const maxHist = safeRole === 'assistant' ? 2400 : 1200
       const safeContent = sanitizeText(content, { maxLen: maxHist, preserveNewlines: true })
       if (!safeContent) return []
@@ -185,17 +398,39 @@ You help answer questions about FeedForge (pricing, integrations, onboarding, fe
 Use ONLY the FAQ context below as ground truth.
 
 Output MUST be ONLY valid JSON with this exact shape:
-{ "answer": "string", "escalation": "none"|"contact"|"demo" }
+{ "answer": "string", "escalation": "none"|"contact"|"demo", "schedulingIntent": true|false }
 
-escalation rules:
-- "none": the FAQ context fully answers the user with confidence.
-- "contact": the user needs human help (support, billing, unclear question, not in FAQ, partnership, etc.). Do NOT discuss booking a product demo as the main path. At the end of answer include ONLY this contact block (no demo URL):
-  - Contact: ${CONTACT_EMAIL} / ${CONTACT_SALES_PHONE}
-  - Or visit: ${CONTACT_PAGE_HREF}
-- "demo": the user wants a demo, walkthrough, "see it in action", or to talk with sales about seeing the product. At the end of answer include ONLY this demo block (do not add ${CONTACT_PAGE_HREF} or the contact block lines above):
-  - Or visit: ${DEMO_FORM_HREF}
+Three mutually exclusive user intents drive the UI. Choose ONE primary intent per turn:
 
-If both contact and demo could apply, prefer "contact" unless the user clearly asked to see a demo or schedule one.
+1) schedulingIntent (true) — user explicitly wants to BOOK / SCHEDULE / PICK A TIME.
+   Examples: "book a call", "schedule a meeting", "pick a time", "set up a time tomorrow",
+   "reserve a slot", "I can do Tuesday at 3pm".
+   - answer: 1–2 sentence acknowledgement. Do NOT include URLs, paths, "visit" lines, or
+     mentions of a separate demo form. The chat UI opens a slot picker automatically.
+   - escalation MUST be "none".
+
+2) escalation = "demo" — user wants to LEARN about / SEE / REQUEST a product demo,
+   but has not asked to book a time yet.
+   Examples: "I want to see how it works", "can I get a demo?", "show me the product",
+   "what does a demo cover?".
+   - answer: short pitch (2–4 sentences) describing what the demo covers (catalog
+     walkthrough, integrations, pricing tailored to their use case). Do NOT include
+     URLs, paths, or "visit" lines — the UI shows the demo card automatically.
+   - schedulingIntent MUST be false.
+
+3) escalation = "contact" — user needs human help (support, billing, partnerships,
+   bug reports, "talk to someone", anything not covered by the FAQ).
+   - answer: address what you can from the FAQ, then end with ONLY this contact block:
+     - Contact: ${CONTACT_EMAIL} / ${CONTACT_SALES_PHONE}
+     - Or visit: ${CONTACT_PAGE_HREF}
+   - schedulingIntent MUST be false.
+
+If none of the above apply and the FAQ answers the user directly, use escalation "none".
+
+Tie-breakers:
+- "book a demo", "schedule a demo" → schedulingIntent: true (booking wins over demo info).
+- "tell me about your demo" → escalation: "demo".
+- Billing / support / unclear / partnership → escalation: "contact" (even if demo also mentioned).
 
 FAQ CONTEXT:
 ${faqContext}
@@ -216,14 +451,40 @@ ${faqContext}
         ])
 
         const parsed = parseModelJson(responseText)
-        const out = parsed ?? fallbackFromRawText(responseText)
+        const out    = parsed ?? fallbackFromRawText(responseText)
         if (!parsed) {
           console.warn(
             `[chat] Non-JSON model output for ${modelName}; using plain-text fallback (${responseText.length} chars)`
           )
         }
 
-        return jsonOk({ answer: out.answer, escalation: out.escalation })
+        // Belt-and-suspenders: only the explicit booking regex (not generic
+        // "demo" mentions) forces schedulingIntent on top of the model output.
+        const schedulingIntent =
+          out.schedulingIntent === true || SCHEDULING_KEYWORDS.test(message)
+
+        // Intents are mutually exclusive. Booking wins over a soft demo
+        // escalation; both flows handle their CTAs inline so we strip stray
+        // URLs/paths the model might have left in the answer.
+        let answer = stripInternalPathLines(out.answer)
+        let escalation: EscalationKind = out.escalation
+        if (schedulingIntent) {
+          escalation = 'none'
+          if (!answer) {
+            answer = 'Great — pick a time below and we’ll get you booked.'
+          }
+        } else if (escalation === 'demo' && !answer) {
+          answer =
+            'Our demo is a quick walkthrough of how FeedForge enriches your catalog, the integrations we support, and pricing tailored to your stack.'
+        } else if (!answer) {
+          answer = 'Sorry — I could not format a reply. Please try again or contact us.'
+        }
+
+        return jsonOk({
+          answer,
+          escalation,
+          schedulingIntent,
+        })
       } catch (error) {
         lastError = error
       }
@@ -236,4 +497,3 @@ ${faqContext}
     return jsonError('Chat is unavailable right now. Please try again shortly.', 500)
   }
 }
-
