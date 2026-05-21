@@ -39,6 +39,14 @@ const config: Config = {
           '0%, 100%': { backgroundPosition: '15% 50%' },
           '50%': { backgroundPosition: '85% 50%' },
         },
+        'score-glow': {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(9, 0, 136, 0.45), 0 0 0 0 rgba(9, 0, 136, 0)' },
+          '50%': { boxShadow: '0 0 0 4px rgba(9, 0, 136, 0.15), 0 0 18px 2px rgba(9, 0, 136, 0.45)' },
+        },
+        'border-sweep': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '100%': { backgroundPosition: '200% 50%' },
+        },
       },
       animation: {
         'page-enter': 'page-enter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both',
@@ -46,6 +54,8 @@ const config: Config = {
         'scroll-reverse': 'scroll-reverse 30s linear infinite',
         bounce: 'bounce 2s ease-in-out infinite',
         'generate-btn-gradient': 'generate-btn-gradient 2.4s ease-in-out infinite',
+        'score-glow': 'score-glow 2.4s ease-in-out infinite',
+        'border-sweep': 'border-sweep 3s linear infinite',
       },
     },
   },

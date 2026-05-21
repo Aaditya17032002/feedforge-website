@@ -489,16 +489,38 @@ export default function CatalogPerfection() {
                     )}
 
                     {generatedOutput && !isGenerating ? (
-                      <button
-                        ref={optimizedFeedPreviewButtonRef}
-                        type="button"
-                        onClick={() => setIsModalOpen(true)}
-                        aria-haspopup="dialog"
-                        aria-expanded={isModalOpen}
-                        className="w-full rounded-md border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:border-accent hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
-                      >
-                        Preview optimized feed
-                      </button>
+                      <div className="relative rounded-md p-[1.5px] bg-[linear-gradient(110deg,#090088_0%,#5c45e8_25%,#a78bfa_50%,#5c45e8_75%,#090088_100%)] bg-[length:200%_100%] motion-safe:animate-border-sweep">
+                        <button
+                          ref={optimizedFeedPreviewButtonRef}
+                          type="button"
+                          onClick={() => setIsModalOpen(true)}
+                          aria-haspopup="dialog"
+                          aria-expanded={isModalOpen}
+                          className="group relative flex w-full items-center justify-center gap-2 rounded-[calc(0.375rem-1.5px)] bg-white px-4 py-2.5 text-sm font-semibold text-accent focus:outline-none focus:ring-2 focus:ring-accent/40 motion-safe:animate-score-glow"
+                        >
+                          <svg
+                            className="h-4 w-4 shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                          <span>Preview optimized feed</span>
+                        </button>
+                      </div>
                     ) : null}
                   </div>
                 )}
@@ -551,8 +573,12 @@ export default function CatalogPerfection() {
                 <div className="mb-2 flex shrink-0 items-center justify-between gap-3">
                   <div className="text-xs font-semibold tracking-wider text-gray-500">BEFORE</div>
                   {comparison ? (
-                    <div className="rounded-full bg-gray-900 px-2.5 py-0.5 text-xs font-semibold text-white">
-                      Score: {comparison.before.score}/100
+                    <div className="inline-flex items-baseline gap-1 rounded-full bg-gray-900 px-3 py-1 text-white">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Score</span>
+                      <span className="text-base font-bold leading-none tabular-nums">
+                        {comparison.before.score}
+                      </span>
+                      <span className="text-[11px] font-medium text-gray-400">/100</span>
                     </div>
                   ) : null}
                 </div>
@@ -604,8 +630,12 @@ export default function CatalogPerfection() {
                 <div className="mb-2 flex shrink-0 items-center justify-between gap-3">
                   <div className="text-xs font-semibold tracking-wider text-accent">AFTER</div>
                   {comparison ? (
-                    <div className="rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-white">
-                      Score: {comparison.after.score}/100
+                    <div className="inline-flex items-baseline gap-1 rounded-full bg-accent px-3 py-1 text-white motion-safe:animate-score-glow">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70">Score</span>
+                      <span className="text-base font-bold leading-none tabular-nums">
+                        {comparison.after.score}
+                      </span>
+                      <span className="text-[11px] font-medium text-white/70">/100</span>
                     </div>
                   ) : null}
                 </div>
@@ -672,15 +702,32 @@ export default function CatalogPerfection() {
 
             {comparison ? (
               <div className="shrink-0 border-t border-gray-200 bg-gray-50 px-4 py-2.5 sm:px-5">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="min-w-0 text-sm font-semibold text-gray-900">
-                    Feed Health Score change:{' '}
-                    <span className="text-accent">
-                      +{Math.max(0, comparison.after.score - comparison.before.score)}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
+                    <span className="text-sm font-semibold text-gray-900">Feed Health Score</span>
+                    <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
+                      <span className="rounded-md bg-gray-900 px-1.5 py-0.5 text-xs font-semibold text-white tabular-nums">
+                        {comparison.before.score}
+                      </span>
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="h-3.5 w-3.5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        aria-hidden
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                      <span className="rounded-md bg-accent px-1.5 py-0.5 text-xs font-semibold text-white tabular-nums">
+                        {comparison.after.score}
+                      </span>
                     </span>
-                    <span className="text-gray-500">
-                      {' '}
-                      (from {comparison.before.score} to {comparison.after.score})
+                    <span
+                      className="relative inline-flex items-center rounded-full p-[1.5px] bg-[linear-gradient(110deg,#090088_0%,#5c45e8_25%,#a78bfa_50%,#5c45e8_75%,#090088_100%)] bg-[length:200%_100%] motion-safe:animate-border-sweep"
+                    >
+                      <span className="inline-flex items-center rounded-full bg-white px-2 py-0.5 text-xs font-bold tabular-nums text-accent">
+                        +{Math.max(0, comparison.after.score - comparison.before.score)}
+                      </span>
                     </span>
                   </div>
                   <button
