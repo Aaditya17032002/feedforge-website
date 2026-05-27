@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import SiteLogo from '@/components/SiteLogo'
+import { LOGIN_URL, SIGNUP_URL } from '@/lib/shared/app-urls'
 
 export default function Header() {
   const [dark, setDark] = useState(false)
@@ -112,12 +113,22 @@ export default function Header() {
           >
             Try It Free
           </button>
-          <button className="flex h-10 items-center border border-r-0 border-gray-300 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
+          <a
+            href={LOGIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 items-center border border-r-0 border-gray-300 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
             Log in
-          </button>
-          <button className="flex h-10 items-center border border-l-0 border-accent bg-accent px-4 text-sm font-medium text-white transition-colors hover:bg-[#070066]">
+          </a>
+          <a
+            href={SIGNUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 items-center border border-l-0 border-accent bg-accent px-4 text-sm font-medium text-white transition-colors hover:bg-[#070066]"
+          >
             Sign up
-          </button>
+          </a>
         </div>
 
         {/* Mobile: compact actions + menu */}
@@ -156,9 +167,14 @@ export default function Header() {
           >
             <span className="truncate">Try It Free</span>
           </button>
-          <button className="flex h-10 items-center border border-accent bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-[#070066] sm:px-4 sm:text-sm">
+          <a
+            href={SIGNUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 items-center border border-accent bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-[#070066] sm:px-4 sm:text-sm"
+          >
             Sign up
-          </button>
+          </a>
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
@@ -213,13 +229,15 @@ export default function Header() {
             >
               Contact
             </a>
-            <button
-              type="button"
+            <a
+              href={LOGIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex h-10 items-center justify-center border border-gray-300 bg-white text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
               onClick={() => setMenuOpen(false)}
             >
               Log in
-            </button>
+            </a>
           </div>
         </div>
       )}

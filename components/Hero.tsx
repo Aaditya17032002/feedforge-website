@@ -1,5 +1,6 @@
 'use client'
 
+import { SIGNUP_URL } from '@/lib/shared/app-urls'
 import DashboardCards from './DashboardCards'
 
 export default function Hero() {
@@ -37,14 +38,19 @@ export default function Hero() {
               <span className="absolute -right-1 -bottom-1 h-2 w-2 border-r-2 border-b-2 border-gray-900"></span>
               <span className="relative">Request A Demo</span>
             </a>
-            <button className="relative border border-gray-300 bg-white px-5 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
+            <a
+              href={SIGNUP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative inline-flex border border-gray-300 bg-white px-5 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            >
               {/* Corner markers */}
               <span className="absolute -left-1 -top-1 h-2 w-2 border-l-2 border-t-2 border-gray-900"></span>
               <span className="absolute -right-1 -top-1 h-2 w-2 border-r-2 border-t-2 border-gray-900"></span>
               <span className="absolute -left-1 -bottom-1 h-2 w-2 border-l-2 border-b-2 border-gray-900"></span>
               <span className="absolute -right-1 -bottom-1 h-2 w-2 border-r-2 border-b-2 border-gray-900"></span>
               <span className="relative">Get Started</span>
-            </button>
+            </a>
           </div>
         </div>
 

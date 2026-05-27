@@ -27,10 +27,10 @@ export default function StartBuilding() {
               Start Building
             </Link>
             <Link
-              href="/#request-demo"
+              href="/#try-your-product"
               className="inline-flex items-center justify-center border border-accent bg-white px-5 py-2 text-center text-sm font-medium text-accent transition-colors duration-300 hover:bg-accent hover:text-white"
             >
-              Get a Demo
+              Try It Free
             </Link>
           </div>
         </div>
