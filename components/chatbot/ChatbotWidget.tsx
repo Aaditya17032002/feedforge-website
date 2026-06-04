@@ -19,6 +19,8 @@ type ChatMessage = {
   role: ChatRole
   content: string
   escalation?: EscalationKind
+  /** Marks a placeholder message that anchors the scheduling card to its position in the stream. */
+  kind?: 'scheduling'
 }
 
 type EscalationKind = 'none' | 'contact' | 'demo'
@@ -225,10 +227,10 @@ function AssistantMessageBody({ content }: { content: string }) {
 // ── Scheduling cards ───────────────────────────────────────────────────────────
 
 function SlotPickerCard({
-  slots, selected, onSelect, onConfirm, disabled,
+  slots, selected, onSelect, onConfirm, onCancel, disabled,
 }: {
   slots: Slot[]; selected: string | null
-  onSelect: (iso: string) => void; onConfirm: () => void; disabled: boolean
+  onSelect: (iso: string) => void; onConfirm: () => void; onCancel: () => void; disabled: boolean
 }) {
   return (
     <div className="ff-bubble rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
@@ -238,6 +240,13 @@ function SlotPickerCard({
           <path d="M16 2v4M8 2v4M3 10h18" strokeWidth={1.75} strokeLinecap="round" />
         </svg>
         <p className="text-sm font-semibold text-gray-900">Pick a time</p>
+        <button
+          type="button" onClick={onCancel} disabled={disabled} aria-label="Cancel scheduling"
+          className="ml-auto inline-flex h-6 w-6 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:opacity-40">
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
       <div className="flex flex-col gap-2">
         {slots.map((slot) => (
@@ -267,21 +276,30 @@ function SlotPickerCard({
 
 function BookingFormCard({
   slot, name, email, nameError, emailError, isSending,
-  onName, onEmail, onBack, onConfirm,
+  onName, onEmail, onBack, onCancel, onConfirm,
 }: {
   slot: string; name: string; email: string
   nameError: string; emailError: string; isSending: boolean
   onName: (v: string) => void; onEmail: (v: string) => void
-  onBack: () => void; onConfirm: () => void
+  onBack: () => void; onCancel: () => void; onConfirm: () => void
 }) {
   return (
     <div className="ff-bubble rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-      <button type="button" onClick={onBack} className="mb-3 flex items-center gap-1 text-xs text-gray-500 hover:text-gray-800">
-        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 18l-6-6 6-6" />
-        </svg>
-        Back
-      </button>
+      <div className="mb-3 flex items-center justify-between">
+        <button type="button" onClick={onBack} className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-800">
+          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 18l-6-6 6-6" />
+          </svg>
+          Back
+        </button>
+        <button
+          type="button" onClick={onCancel} disabled={isSending} aria-label="Cancel scheduling"
+          className="inline-flex h-6 w-6 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:opacity-40">
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
       <p className="mb-1 text-sm font-semibold text-gray-900">Your details</p>
       <p className="mb-3 text-xs text-gray-500">{formatSlot(slot)}</p>
       <div className="mb-3">
@@ -342,10 +360,19 @@ function BookingConfirmedCard({ booking, onDone }: { booking: Booking; onDone: (
   )
 }
 
-function FallbackLinkCard({ url }: { url: string }) {
+function FallbackLinkCard({ url, onCancel }: { url: string; onCancel: () => void }) {
   return (
     <div className="ff-bubble rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-      <p className="text-sm font-semibold text-gray-900">Book a meeting</p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-gray-900">Book a meeting</p>
+        <button
+          type="button" onClick={onCancel} aria-label="Dismiss"
+          className="inline-flex h-6 w-6 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700">
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
       <p className="mt-1 text-sm text-gray-600">Use our booking page to pick a time that works for you.</p>
       <a href={url} target="_blank" rel="noopener noreferrer"
         className="mt-3 inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white"
@@ -406,7 +433,7 @@ export default function ChatbotWidget() {
   }, [isOpen])
 
   const apiHistory = useMemo(() => {
-    const all = messages.filter((m) => m.role === 'user' || m.role === 'assistant')
+    const all = messages.filter((m) => m.kind !== 'scheduling' && (m.role === 'user' || m.role === 'assistant'))
     const withoutWelcome = all.length > 0 && all[0].role === 'assistant' ? all.slice(1) : all
     return withoutWelcome.slice(-10).flatMap((m): { role: ChatRole; content: string }[] => {
       if (m.role === 'assistant') {
@@ -440,6 +467,7 @@ export default function ChatbotWidget() {
     setGuestEmail('')
     setNameError('')
     setEmailError('')
+    setMessages((prev) => prev.filter((m) => m.kind !== 'scheduling'))
   }
 
   async function triggerSchedulingFlow() {
@@ -455,6 +483,7 @@ export default function ChatbotWidget() {
       const data = (await res.json()) as ChatApiResponse
       if (!data.success) throw new Error('message' in data ? data.message : 'Failed to load slots.')
       if ('schedulingAction' in data) {
+        setMessages((prev) => [...prev, { id: makeId(), role: 'assistant', content: '', kind: 'scheduling' }])
         if (data.schedulingAction === 'show_slots') {
           setAvailableSlots(data.slots)
           setSchedulingStep('slots')
@@ -543,7 +572,36 @@ export default function ChatbotWidget() {
     }
   }
 
-  const unreadCount = messages.filter((m) => m.role === 'assistant').length - 1
+  function renderSchedulingCard() {
+    let card: React.ReactNode = null
+    if (schedulingStep === 'slots' && availableSlots.length > 0) {
+      card = (
+        <SlotPickerCard slots={availableSlots} selected={selectedSlot}
+          onSelect={setSelectedSlot} onConfirm={() => setSchedulingStep('form')}
+          onCancel={resetScheduling} disabled={isSending} />
+      )
+    } else if (schedulingStep === 'form' && selectedSlot) {
+      card = (
+        <BookingFormCard slot={selectedSlot} name={guestName} email={guestEmail}
+          nameError={nameError} emailError={emailError} isSending={isSending}
+          onName={setGuestName} onEmail={setGuestEmail}
+          onBack={() => setSchedulingStep('slots')} onCancel={resetScheduling} onConfirm={submitBooking} />
+      )
+    } else if (schedulingStep === 'confirmed' && confirmedBooking) {
+      card = <BookingConfirmedCard booking={confirmedBooking} onDone={resetScheduling} />
+    } else if (schedulingStep === 'confirmed' && !confirmedBooking && fallbackUrl) {
+      card = <FallbackLinkCard url={fallbackUrl} onCancel={resetScheduling} />
+    }
+    if (!card) return null
+    return (
+      <div className="flex items-end gap-2">
+        <BotAvatar size={24} />
+        <div className="max-w-[90%] flex-1">{card}</div>
+      </div>
+    )
+  }
+
+  const unreadCount = messages.filter((m) => m.kind !== 'scheduling' && m.role === 'assistant').length - 1
 
   return (
     <>
@@ -588,6 +646,9 @@ export default function ChatbotWidget() {
             <div ref={listRef} className="ff-scroll flex-1 overflow-y-auto px-4 py-4" style={{ minHeight: 0 }}>
               <div className="space-y-3">
                 {messages.map((m) => {
+                  if (m.kind === 'scheduling') {
+                    return <Fragment key={m.id}>{renderSchedulingCard()}</Fragment>
+                  }
                   const isUser = m.role === 'user'
                   return (
                     <div key={m.id} className={`ff-bubble flex items-end gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -606,47 +667,6 @@ export default function ChatbotWidget() {
                   <div className="ff-bubble flex items-end gap-2">
                     <BotAvatar size={24} />
                     <TypingIndicator />
-                  </div>
-                )}
-
-                {/* ── Scheduling UI ── */}
-                {!isSending && schedulingStep === 'slots' && availableSlots.length > 0 && (
-                  <div className="flex items-end gap-2">
-                    <BotAvatar size={24} />
-                    <div className="max-w-[90%] flex-1">
-                      <SlotPickerCard slots={availableSlots} selected={selectedSlot}
-                        onSelect={setSelectedSlot} onConfirm={() => setSchedulingStep('form')} disabled={isSending} />
-                    </div>
-                  </div>
-                )}
-
-                {!isSending && schedulingStep === 'form' && selectedSlot && (
-                  <div className="flex items-end gap-2">
-                    <BotAvatar size={24} />
-                    <div className="max-w-[90%] flex-1">
-                      <BookingFormCard slot={selectedSlot} name={guestName} email={guestEmail}
-                        nameError={nameError} emailError={emailError} isSending={isSending}
-                        onName={setGuestName} onEmail={setGuestEmail}
-                        onBack={() => setSchedulingStep('slots')} onConfirm={submitBooking} />
-                    </div>
-                  </div>
-                )}
-
-                {!isSending && schedulingStep === 'confirmed' && confirmedBooking && (
-                  <div className="flex items-end gap-2">
-                    <BotAvatar size={24} />
-                    <div className="max-w-[90%] flex-1">
-                      <BookingConfirmedCard booking={confirmedBooking} onDone={resetScheduling} />
-                    </div>
-                  </div>
-                )}
-
-                {!isSending && schedulingStep === 'confirmed' && !confirmedBooking && fallbackUrl && (
-                  <div className="flex items-end gap-2">
-                    <BotAvatar size={24} />
-                    <div className="max-w-[90%] flex-1">
-                      <FallbackLinkCard url={fallbackUrl} />
-                    </div>
                   </div>
                 )}
 
