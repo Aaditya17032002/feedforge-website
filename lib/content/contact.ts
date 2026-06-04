@@ -9,7 +9,6 @@ export const CONTACT_SUPPORT_HOURS = 'Monday to Friday, 9:00 AM to 5:00 PM'
 
 /** Footer / contact surfaces — plain lines, no markup */
 export const CONTACT_ADDRESS_LINES = [
-  '280 Summer Street',
-  'Boston, MA 02210 USA',
+  'New York, USA',
 ] as const
 
