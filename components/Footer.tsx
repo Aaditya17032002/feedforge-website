@@ -35,8 +35,8 @@ export default function Footer() {
   return (
     <footer className="mt-auto border-t border-gray-200 bg-white">
       <div className="mx-auto max-w-7xl min-w-0 px-4 py-10 sm:px-6 sm:py-12 lg:py-14">
-        <div className="grid min-w-0 gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] lg:items-start xl:gap-16">
-          <div className="min-w-0">
+        <div className="flex min-w-0 flex-col gap-10 sm:gap-12 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0 lg:max-w-sm">
             <SiteLogo imgClassName="h-8 w-auto sm:h-9" />
             <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-600">
               AI-powered product feed management to import, optimize, validate, and export from one
@@ -44,76 +44,78 @@ export default function Footer() {
             </p>
           </div>
 
-          <section
-            className="min-w-0"
-            aria-labelledby="footer-contact-heading"
-          >
-            <h3
-              id="footer-contact-heading"
-              className="mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-500"
+          <div className="flex min-w-0 flex-wrap gap-x-16 gap-y-10 sm:gap-x-20">
+            <section
+              className="min-w-0"
+              aria-labelledby="footer-contact-heading"
             >
-              Contact
-            </h3>
-            <address className="not-italic">
-              <ul className="flex flex-col gap-2 text-sm leading-snug text-gray-700">
-                <li>
-                  <a
-                    href={telHref(CONTACT_SALES_PHONE)}
-                    className="w-fit rounded-sm font-medium text-gray-900 transition-colors hover:text-accent"
-                  >
-                    {CONTACT_SALES_PHONE}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={`mailto:${CONTACT_EMAIL}`}
-                    className="w-fit rounded-sm transition-colors hover:text-accent"
-                  >
-                    {CONTACT_EMAIL}
-                  </a>
-                </li>
-                <li className="leading-relaxed text-gray-700">
-                  {CONTACT_ADDRESS_LINES.map((line) => (
-                    <span key={line} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </li>
-              </ul>
-              <p className="mt-2 text-xs leading-relaxed text-gray-500">{CONTACT_SUPPORT_HOURS}</p>
-            </address>
-          </section>
-
-          <nav
-            className="nav-family flex min-w-0 flex-col items-start gap-0 lg:justify-self-start"
-            aria-labelledby="footer-quick-links-heading"
-          >
-            <h3
-              id="footer-quick-links-heading"
-              className="mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-500"
-            >
-              Quick Links
-            </h3>
-            <ul className="flex w-full flex-col gap-0">
-              {footerLinks.map(({ href, label }) => {
-                const active = linkIsActive(pathname, href)
-                return (
-                  <li key={`${href}-${label}`}>
-                    <Link
-                      href={href}
-                      className={`flex w-fit items-center rounded-md py-1 text-sm leading-snug transition-colors ${
-                        active
-                          ? 'font-semibold text-accent'
-                          : 'font-medium text-gray-700 hover:bg-gray-50 hover:text-accent'
-                      }`}
+              <h3
+                id="footer-contact-heading"
+                className="mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-500"
+              >
+                Contact
+              </h3>
+              <address className="not-italic">
+                <ul className="-mt-1 flex flex-col gap-2 text-sm leading-snug text-gray-700">
+                  <li>
+                    <a
+                      href={telHref(CONTACT_SALES_PHONE)}
+                      className="w-fit rounded-sm font-medium text-gray-900 transition-colors hover:text-accent"
                     >
-                      {label}
-                    </Link>
+                      {CONTACT_SALES_PHONE}
+                    </a>
                   </li>
-                )
-              })}
-            </ul>
-          </nav>
+                  <li>
+                    <a
+                      href={`mailto:${CONTACT_EMAIL}`}
+                      className="w-fit rounded-sm transition-colors hover:text-accent"
+                    >
+                      {CONTACT_EMAIL}
+                    </a>
+                  </li>
+                  <li className="leading-relaxed text-gray-700">
+                    {CONTACT_ADDRESS_LINES.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
+                  </li>
+                </ul>
+                <p className="mt-2 text-xs leading-relaxed text-gray-500">{CONTACT_SUPPORT_HOURS}</p>
+              </address>
+            </section>
+
+            <nav
+              className="nav-family flex min-w-0 flex-col items-start gap-0"
+              aria-labelledby="footer-quick-links-heading"
+            >
+              <h3
+                id="footer-quick-links-heading"
+                className="mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-500"
+              >
+                Quick Links
+              </h3>
+              <ul className="-mt-1 flex w-full flex-col gap-0">
+                {footerLinks.map(({ href, label }) => {
+                  const active = linkIsActive(pathname, href)
+                  return (
+                    <li key={`${href}-${label}`}>
+                      <Link
+                        href={href}
+                        className={`flex w-fit items-center rounded-md py-1 text-sm leading-snug transition-colors ${
+                          active
+                            ? 'font-semibold text-accent'
+                            : 'font-medium text-gray-700 hover:bg-gray-50 hover:text-accent'
+                        }`}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </nav>
+          </div>
         </div>
         <div className="mt-10 border-t border-gray-200 pt-5">
           <p className="text-xs text-gray-500">
