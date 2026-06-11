@@ -3,7 +3,10 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import ChatbotMount from '@/components/chatbot/ChatbotMount'
 import './globals.css'
 
-const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+const gaId =
+  process.env.NODE_ENV === 'production'
+    ? process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+    : undefined
 
 const siteTitle = 'FeedForge | AI-Optimized Product Feeds for Every Channel'
 const siteDescription =
