@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import {
   CONTACT_EMAIL,
   CONTACT_PAGE_HREF,
@@ -603,6 +604,13 @@ export default function ChatbotWidget() {
 
   const unreadCount = messages.filter((m) => m.kind !== 'scheduling' && m.role === 'assistant').length - 1
 
+  const toggleChat = () => {
+    setIsOpen((open) => {
+      if (!open) trackEvent(GA_EVENTS.CHATBOT_OPEN, { location: 'fab' })
+      return !open
+    })
+  }
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CHATBOT_WIDGET_STYLES }} />
@@ -767,7 +775,7 @@ export default function ChatbotWidget() {
         )}
 
         {/* FAB */}
-        <button type="button" onClick={() => setIsOpen((v) => !v)}
+        <button type="button" onClick={toggleChat}
           aria-label={isOpen ? 'Close chat' : 'Open chat'}
           className="ff-fab relative inline-flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95"
           style={{ background: isOpen ? '#374151' : 'linear-gradient(135deg, #0800A0 0%, #4c1d95 100%)' }}>

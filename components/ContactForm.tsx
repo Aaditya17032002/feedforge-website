@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import { postJson } from '@/lib/shared/http'
 import { sanitizeText } from '@/lib/shared/strings'
 
@@ -48,6 +49,7 @@ export default function ContactForm() {
 
       setStatusType('success')
       setStatusMessage('Thanks! Your message has been sent.')
+      trackEvent(GA_EVENTS.CONTACT_SUBMIT, { location: 'contact_page' })
       setFormData(INITIAL_DATA)
     } catch (error) {
       console.error('Contact submit failed', error)

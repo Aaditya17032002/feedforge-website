@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import ChatbotMount from '@/components/chatbot/ChatbotMount'
 import './globals.css'
+
+const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 const siteTitle = 'FeedForge | AI-Optimized Product Feeds for Every Channel'
 const siteDescription =
@@ -84,6 +87,7 @@ export default function RootLayout({
       <body>
         {children}
         <ChatbotMount />
+        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
     </html>
   )

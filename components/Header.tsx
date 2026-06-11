@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import SiteLogo from '@/components/SiteLogo'
+import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import { LOGIN_URL, SIGNUP_URL } from '@/lib/shared/app-urls'
 
 export default function Header() {
@@ -18,7 +19,8 @@ export default function Header() {
       pathname === href ? 'text-accent' : 'text-gray-700 hover:text-accent'
     }`
 
-  const navigateToFeedDemo = () => {
+  const navigateToFeedDemo = (location: 'header' | 'mobile_header' | 'mobile_nav') => {
+    trackEvent(GA_EVENTS.FEED_DEMO_CLICK, { location })
     if (pathname === '/') {
       window.history.pushState(null, '', '#try-your-product')
       document.getElementById('try-your-product')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -107,7 +109,7 @@ export default function Header() {
           </button>
           <button
             type="button"
-            onClick={navigateToFeedDemo}
+            onClick={() => navigateToFeedDemo('header')}
             className="flex h-10 shrink-0 items-center border border-r-0 border-gray-300 bg-white px-3 text-sm font-medium text-accent transition-colors hover:bg-accent/5 sm:px-4"
             aria-label="Open the AI product feed demo on the home page"
           >
@@ -117,6 +119,7 @@ export default function Header() {
             href={LOGIN_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent(GA_EVENTS.LOGIN_CLICK, { location: 'header' })}
             className="flex h-10 items-center border border-r-0 border-gray-300 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
           >
             Log in
@@ -125,6 +128,7 @@ export default function Header() {
             href={SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent(GA_EVENTS.SIGNUP_CLICK, { location: 'header' })}
             className="flex h-10 items-center border border-l-0 border-accent bg-accent px-4 text-sm font-medium text-white transition-colors hover:bg-[#070066]"
           >
             Sign up
@@ -161,7 +165,7 @@ export default function Header() {
           </button>
           <button
             type="button"
-            onClick={navigateToFeedDemo}
+            onClick={() => navigateToFeedDemo('mobile_header')}
             className="flex h-10 max-w-[7.5rem] shrink-0 items-center border border-gray-300 bg-white px-2 text-xs font-medium text-accent transition-colors hover:bg-accent/5 min-[400px]:max-w-none min-[400px]:px-3 sm:text-sm"
             aria-label="Open the AI product feed demo on the home page"
           >
@@ -171,6 +175,7 @@ export default function Header() {
             href={SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent(GA_EVENTS.SIGNUP_CLICK, { location: 'mobile_header' })}
             className="flex h-10 items-center border border-accent bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-[#070066] sm:px-4 sm:text-sm"
           >
             Sign up
@@ -216,7 +221,7 @@ export default function Header() {
               type="button"
               className="flex h-10 items-center justify-center border border-accent/40 bg-white text-sm font-medium text-accent transition-colors hover:bg-accent/5"
               onClick={() => {
-                navigateToFeedDemo()
+                navigateToFeedDemo('mobile_nav')
                 setMenuOpen(false)
               }}
             >
@@ -234,7 +239,10 @@ export default function Header() {
               target="_blank"
               rel="noopener noreferrer"
               className="flex h-10 items-center justify-center border border-gray-300 bg-white text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                trackEvent(GA_EVENTS.LOGIN_CLICK, { location: 'mobile_nav' })
+                setMenuOpen(false)
+              }}
             >
               Log in
             </a>

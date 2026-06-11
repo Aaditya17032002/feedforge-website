@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import { postJson } from '@/lib/shared/http'
 import { sanitizeText } from '@/lib/shared/strings'
 
@@ -46,6 +47,8 @@ export default function DemoRequest() {
 
       setStatusType('success')
       setStatusMessage('Thanks! Your demo request has been sent.')
+      trackEvent(GA_EVENTS.DEMO_REQUEST_SUBMIT, { location: 'home_page' })
+      trackEvent(GA_EVENTS.GENERATE_LEAD, { form_name: 'demo_request' })
       setFormData({ name: '', email: '', company: '', message: '' })
     } catch (error) {
       console.error('Demo request submit failed', error)
