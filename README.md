@@ -104,7 +104,7 @@ docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
 
 Requires **`edge_net`** and a running Application backend. The portal container reaches the API at `http://feedforge_backend:8000`.
 
-The image uses `output: 'standalone'`. Build arg **`NEXT_PUBLIC_CHATBOT_ENABLED`** is passed through Compose (default `false`).
+The image uses `output: 'standalone'`. Compose passes build args from `.env.prod`: **`NEXT_PUBLIC_CHATBOT_ENABLED`**, **`NEXT_PUBLIC_APP_URL`**, **`NEXT_PUBLIC_GA_MEASUREMENT_ID`**. GA also reads **`GA_MEASUREMENT_ID`** at container runtime (set both in `.env.prod` for production analytics).
 
 ---
 

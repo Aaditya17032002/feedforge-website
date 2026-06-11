@@ -15,6 +15,8 @@ services:
       target: production
       args:
         NEXT_PUBLIC_CHATBOT_ENABLED: ${NEXT_PUBLIC_CHATBOT_ENABLED:-false}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://app.feedforge.ai}
+        NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-}
     container_name: feedforge_portal
     restart: always
     env_file:

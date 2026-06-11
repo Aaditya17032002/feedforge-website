@@ -3,9 +3,12 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import ChatbotMount from '@/components/chatbot/ChatbotMount'
 import './globals.css'
 
+// GA_MEASUREMENT_ID is read at request time (Docker env_file). NEXT_PUBLIC_* is build-time only.
 const gaId =
   process.env.NODE_ENV === 'production'
-    ? process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+    ? process.env.GA_MEASUREMENT_ID?.trim() ||
+      process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() ||
+      undefined
     : undefined
 
 const siteTitle = 'FeedForge | AI-Optimized Product Feeds for Every Channel'
