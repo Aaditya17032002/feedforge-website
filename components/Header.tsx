@@ -20,7 +20,7 @@ export default function Header() {
     }`
 
   const navigateToFeedDemo = (location: 'header' | 'mobile_header' | 'mobile_nav') => {
-    trackEvent(GA_EVENTS.FEED_DEMO_CLICK, { location })
+    trackEvent(GA_EVENTS.TRY_DEMO_CLICK, { location })
     if (pathname === '/') {
       window.history.pushState(null, '', '#try-your-product')
       document.getElementById('try-your-product')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -128,7 +128,7 @@ export default function Header() {
             href={SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackEvent(GA_EVENTS.SIGNUP_CLICK, { location: 'header' })}
+            onClick={() => trackEvent(GA_EVENTS.SIGN_UP_CLICK, { location: 'header' })}
             className="flex h-10 items-center border border-l-0 border-accent bg-accent px-4 text-sm font-medium text-white transition-colors hover:bg-[#070066]"
           >
             Sign up
@@ -175,7 +175,7 @@ export default function Header() {
             href={SIGNUP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackEvent(GA_EVENTS.SIGNUP_CLICK, { location: 'mobile_header' })}
+            onClick={() => trackEvent(GA_EVENTS.SIGN_UP_CLICK, { location: 'mobile_header' })}
             className="flex h-10 items-center border border-accent bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-[#070066] sm:px-4 sm:text-sm"
           >
             Sign up
