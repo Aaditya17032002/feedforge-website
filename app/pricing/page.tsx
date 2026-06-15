@@ -5,62 +5,105 @@ import StartBuilding from '@/components/StartBuilding'
 
 export const metadata: Metadata = {
   title: 'Pricing · FeedForge',
-  description: 'Plans for optimizing product feeds with AI across every channel.',
+  description: 'Simple, catalog-based pricing for optimizing product feeds with AI across every channel.',
 }
 
-function FeatureCheck() {
-  return (
-    <span
-      className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-accent text-accent"
-      aria-hidden
-    >
-      <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
-    </span>
-  )
+type Tier = {
+  name: string
+  catalog: string
+  activationFee: string
+  monthly: string
+  includedRows: string
+  overage: string
+  popular?: boolean
+  cta: string
+  ctaStyle: 'solid' | 'outline'
 }
 
-/** Solid accent circle with white check — Starter workloads section */
-function SolidAccentCheck() {
-  return (
-    <span
-      className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent"
-      aria-hidden
-    >
-      <svg className="h-2.5 w-2.5 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
-    </span>
-  )
+const tiers: Tier[] = [
+  {
+    name: 'Starter',
+    catalog: '0–1,000 SKUs',
+    activationFee: '$99',
+    monthly: '$49',
+    includedRows: '15,000',
+    overage: '$8',
+    cta: 'Start with Starter',
+    ctaStyle: 'outline',
+  },
+  {
+    name: 'Growth',
+    catalog: '1,001–5,000 SKUs',
+    activationFee: '$299',
+    monthly: '$129',
+    includedRows: '60,000',
+    overage: '$6',
+    popular: true,
+    cta: 'Choose Growth',
+    ctaStyle: 'solid',
+  },
+  {
+    name: 'Scale',
+    catalog: '5,001–15,000 SKUs',
+    activationFee: '$799',
+    monthly: '$299',
+    includedRows: '250,000',
+    overage: '$5',
+    cta: 'Choose Scale',
+    ctaStyle: 'outline',
+  },
+  {
+    name: 'Pro',
+    catalog: '15,001–50,000 SKUs',
+    activationFee: '$1,999',
+    monthly: '$699',
+    includedRows: '800,000',
+    overage: '$4',
+    cta: 'Choose Pro',
+    ctaStyle: 'outline',
+  },
+  {
+    name: 'Enterprise',
+    catalog: '50,001+ SKUs',
+    activationFee: 'Custom',
+    monthly: 'Custom',
+    includedRows: 'Custom',
+    overage: 'Custom',
+    cta: 'Contact Sales',
+    ctaStyle: 'outline',
+  },
+]
+
+type FoundingTier = {
+  name: string
+  popular?: boolean
+  activationWas: string
+  monthlyFromMonth2: string
+  minCommitment: string
 }
 
-const starterWorkloads = [
-  {
-    title: 'Recommendation Engine',
-    contextLabel: 'Given an e-commerce site with:',
-    inputs: ['50K products', '10KB metadata per product', 'Using 1024 dimensions embeddings'],
-    outputs: ['~ 44K recommendations per day', '~ 2K product updates per day'],
-  },
-  {
-    title: 'Semantic Search',
-    contextLabel: 'Given a knowledge base of:',
-    inputs: ['~ 30K documents', '20KB document size on average', 'Using 1024 dimensions embeddings'],
-    outputs: ['~ 15k searches per day', '~ 660 document updates per day'],
-  },
-  {
-    title: 'Forum Answering Bot (RAG)',
-    contextLabel: 'Given a user forum with:',
-    inputs: ['~ 10 categories', '5KB post size on average', 'Using 1024 dimensions embeddings'],
-    outputs: ['~ 130K category-scoped chats per day', '~ 3K messages indexed per day'],
-  },
-] as const
+const foundingTiers: FoundingTier[] = [
+  { name: 'Starter', activationWas: '$99', monthlyFromMonth2: '$49/mo', minCommitment: '3 months' },
+  { name: 'Growth', popular: true, activationWas: '$299', monthlyFromMonth2: '$129/mo', minCommitment: '3 months' },
+  { name: 'Scale', activationWas: '$799', monthlyFromMonth2: '$299/mo', minCommitment: '3 months' },
+  { name: 'Pro', activationWas: '$1,999', monthlyFromMonth2: '$699/mo', minCommitment: '3 months' },
+]
 
-function ChevronDownIcon({ className }: { className?: string }) {
+function StarIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 7.1-1.01L12 2z" />
     </svg>
+  )
+}
+
+/** Compact labeled stat row used inside each pricing card */
+function StatRow({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 py-2.5">
+      <span className="text-sm text-gray-600">{label}</span>
+      <span className={`text-sm font-semibold ${accent ? 'text-accent' : 'text-gray-900'}`}>{value}</span>
+    </div>
   )
 }
 
@@ -71,274 +114,201 @@ export default function PricingPage() {
       <main className="flex-1">
         <section className="border-t border-gray-200 bg-white">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
+            {/* Hero */}
             <div className="mb-4 flex justify-center">
               <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-900">
                 • Pricing
               </span>
             </div>
             <h1 className="mb-4 text-center text-3xl font-bold leading-tight text-gray-900 lg:text-4xl">
-              Plans That Scale With Your{' '}
-              <span className="text-accent">Catalog</span>
+              Plans That Scale With Your <span className="text-accent">Catalog</span>
             </h1>
             <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-gray-600 lg:text-base">
-              Start free, then scale with pay-as-you-go pricing. Every tier includes FeedForge AI for
-              titles, descriptions, and channel-ready feeds.
+              Standard rack rates below. Pick the tier that matches your catalog size — every plan
+              includes FeedForge AI for titles, descriptions, and channel-ready feeds. Founding
+              Merchant pricing is available during the year-one acquisition window.
             </p>
 
-            {/* Three-column pricing table — grid rows align CTAs across tiers */}
-            <div className="mx-auto mt-12 max-w-6xl lg:mt-16">
-              <div className="grid grid-cols-1 border border-gray-200 bg-white lg:grid-cols-3">
-                {/* Starter — column 1 */}
-                <h2 className="order-1 max-lg:border-b-0 px-6 pt-8 text-2xl font-bold text-gray-900 sm:px-8 sm:pt-10 lg:order-none lg:col-start-1 lg:row-start-1 lg:border-r lg:border-gray-200 lg:pt-12">
-                  Starter
-                </h2>
-                <p className="order-2 max-lg:border-b-0 px-6 text-sm leading-relaxed text-gray-600 sm:px-8 lg:order-none lg:col-start-1 lg:row-start-2 lg:border-r lg:border-gray-200">
-                  For trying out FeedForge and small catalogs.
-                </p>
-                <div className="order-3 max-lg:border-b-0 px-6 pt-6 sm:px-8 lg:order-none lg:col-start-1 lg:row-start-3 lg:border-r lg:border-gray-200">
-                  <button
-                    type="button"
-                    className="w-full border border-gray-900 bg-white px-4 py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50"
-                  >
-                    Start For Free
-                  </button>
-                </div>
-                <div className="order-4 max-lg:border-b-0 px-6 sm:px-8 lg:order-none lg:col-start-1 lg:row-start-4 lg:border-r lg:border-gray-200">
-                  <p className="text-3xl font-bold text-accent lg:text-4xl">Free</p>
-                  <button
-                    type="button"
-                    className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
-                  >
-                    View included usage
-                    <ChevronDownIcon className="text-accent" />
-                  </button>
-                </div>
-                <div className="order-5 max-lg:border-b-0 px-6 sm:px-8 lg:order-none lg:col-start-1 lg:row-start-5 lg:border-r lg:border-gray-200">
-                  <hr className="my-8 border-gray-200" />
-                </div>
-                <ul className="order-6 flex max-lg:border-b-0 flex-col gap-4 px-6 text-sm leading-snug text-gray-800 sm:px-8 lg:order-none lg:col-start-1 lg:row-start-6 lg:border-r lg:border-gray-200">
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Core feed connections &amp; channel exports</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>AI title &amp; description suggestions</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>AI Readiness preview (limited SKUs)</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Dashboard metrics &amp; health overview</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Community support &amp; docs</span>
-                  </li>
-                </ul>
-                <div className="order-7 border-b border-gray-200 px-6 pb-8 sm:px-8 sm:pb-10 lg:order-none lg:col-start-1 lg:row-start-7 lg:border-b-0 lg:border-r lg:border-gray-200 lg:pb-12">
-                  <button
-                    type="button"
-                    className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline lg:mt-0"
-                  >
-                    See example Starter workloads
-                    <ChevronDownIcon className="text-accent" />
-                  </button>
-                </div>
+            {/* Founding program highlight banner */}
+            <div className="mx-auto mt-8 flex max-w-3xl items-center justify-center">
+              <a
+                href="#founding-merchant"
+                className="group inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full border border-accent/30 bg-accent/[0.06] px-4 py-2 text-center text-xs font-medium text-accent transition-colors hover:bg-accent/10 sm:text-sm"
+              >
+                <StarIcon className="h-3.5 w-3.5" />
+                Founding Merchant Program — activation fee free for the first 200 merchants
+                <span className="underline group-hover:no-underline">See offer ↓</span>
+              </a>
+            </div>
 
-                {/* Standard — column 2 */}
-                <div className="order-10 max-lg:border-b-0 bg-white px-6 pt-8 sm:px-8 sm:pt-10 lg:order-none lg:col-start-2 lg:row-start-1 lg:border-r lg:border-gray-200 lg:pt-12">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-2xl font-bold text-gray-900">Standard</h2>
-                    <span className="border border-gray-300 bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-900">
-                      Popular
-                    </span>
-                  </div>
-                </div>
-                <p className="order-11 max-lg:border-b-0 bg-white px-6 text-sm leading-relaxed text-gray-600 sm:px-8 lg:order-none lg:col-start-2 lg:row-start-2 lg:border-r lg:border-gray-200">
-                  For production feeds at any scale.
-                </p>
-                <div className="order-12 max-lg:border-b-0 bg-white px-6 pt-6 sm:px-8 lg:order-none lg:col-start-2 lg:row-start-3 lg:border-r lg:border-gray-200">
-                  <button
-                    type="button"
-                    className="w-full border border-accent bg-accent px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#070066]"
+            {/* ── Standard rack rates — pricing cards ── */}
+            <div className="mx-auto mt-12 max-w-7xl lg:mt-16">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                {tiers.map((tier) => (
+                  <div
+                    key={tier.name}
+                    className={`relative flex flex-col border bg-white p-6 transition-shadow ${
+                      tier.popular
+                        ? 'border-accent shadow-[0_12px_40px_-12px_rgba(9,0,136,0.35)]'
+                        : 'border-gray-200 hover:shadow-[0_12px_40px_-16px_rgba(0,0,0,0.18)]'
+                    }`}
                   >
-                    Start Free Trial
-                  </button>
-                </div>
-                <div className="order-13 max-lg:border-b-0 bg-white px-6 sm:px-8 lg:order-none lg:col-start-2 lg:row-start-4 lg:border-r lg:border-gray-200">
-                  <p className="text-2xl font-bold leading-tight text-accent sm:text-3xl lg:text-4xl">
-                    $50/month min. usage
-                  </p>
-                  <p className="mt-2 text-xs text-gray-500">3 week trial includes $300 credits</p>
-                </div>
-                <div className="order-14 max-lg:border-b-0 bg-white px-6 sm:px-8 lg:order-none lg:col-start-2 lg:row-start-5 lg:border-r lg:border-gray-200">
-                  <hr className="my-8 border-gray-200" />
-                </div>
-                <ul className="order-15 flex flex-col gap-4 border-b border-gray-200 bg-white px-6 pb-8 text-sm leading-snug text-gray-800 sm:px-8 sm:pb-10 lg:order-none lg:col-start-2 lg:row-start-6 lg:border-b-0 lg:border-r lg:border-gray-200 lg:pb-12">
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Pay-as-you-go beyond minimums</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Unlimited channels &amp; scheduled syncs</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Full AI Readiness Score &amp; remediation</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Import from sheets, PIM, and object storage</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Multiple projects, environments, and users</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>SAML SSO &amp; API key RBAC</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Backup &amp; restore for feed versions</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Prometheus / webhook metrics</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>HIPAA add-on available</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>
-                      Includes free support;{' '}
-                      <span className="font-medium text-accent">Developer</span> or{' '}
-                      <span className="font-medium text-accent">Pro support</span> add-ons for SLAs
-                    </span>
-                  </li>
-                </ul>
+                    {tier.popular && (
+                      <span className="absolute -top-3 left-6 inline-flex items-center gap-1 bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                        <StarIcon className="h-3 w-3" />
+                        Most popular
+                      </span>
+                    )}
 
-                {/* Enterprise — column 3 */}
-                <h2 className="order-20 max-lg:border-b-0 px-6 pt-8 text-2xl font-bold text-gray-900 sm:px-8 sm:pt-10 lg:order-none lg:col-start-3 lg:row-start-1 lg:pt-12">
-                  Enterprise
-                </h2>
-                <p className="order-21 max-lg:border-b-0 px-6 text-sm leading-relaxed text-gray-600 sm:px-8 lg:order-none lg:col-start-3 lg:row-start-2">
-                  For mission-critical commerce and AI search programs.
-                </p>
-                <div className="order-22 max-lg:border-b-0 px-6 pt-6 sm:px-8 lg:order-none lg:col-start-3 lg:row-start-3">
-                  <div className="grid grid-cols-1 gap-2 min-[400px]:grid-cols-2">
+                    <h2 className="text-xl font-bold text-gray-900">{tier.name}</h2>
+                    <p className="mt-1 text-xs font-medium text-gray-500">{tier.catalog}</p>
+
+                    {/* Headline monthly price */}
+                    <div className="mt-5 flex items-baseline gap-1">
+                      <span className="text-3xl font-bold text-accent">{tier.monthly}</span>
+                      {tier.monthly !== 'Custom' && (
+                        <span className="text-sm font-medium text-gray-500">/mo</span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">Monthly subscription</p>
+
+                    {/* Detail stats */}
+                    <div className="mt-5 divide-y divide-gray-100 border-y border-gray-100">
+                      <StatRow label="Activation fee" value={tier.activationFee} />
+                      <StatRow label="Included rows / mo" value={tier.includedRows} />
+                      <StatRow label="Overage / 1K rows" value={tier.overage} />
+                    </div>
+
+                    <div className="flex-1" />
+
                     <button
                       type="button"
-                      className="w-full bg-gray-900 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+                      className={`mt-6 w-full px-4 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 ${
+                        tier.ctaStyle === 'solid'
+                          ? 'bg-accent text-white hover:bg-[#070066] hover:shadow-[0_10px_24px_-8px_rgba(9,0,136,0.55)]'
+                          : 'border border-gray-900 bg-white text-gray-900 hover:border-accent hover:bg-accent hover:text-white hover:shadow-[0_10px_24px_-8px_rgba(9,0,136,0.45)]'
+                      }`}
                     >
-                      Get Started
-                    </button>
-                    <button
-                      type="button"
-                      className="w-full border border-gray-900 bg-white px-4 py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50"
-                    >
-                      Request Trial
+                      {tier.cta}
                     </button>
                   </div>
-                </div>
-                <div className="order-23 max-lg:border-b-0 px-6 sm:px-8 lg:order-none lg:col-start-3 lg:row-start-4">
-                  <p className="text-2xl font-bold leading-tight text-accent sm:text-3xl lg:text-4xl">
-                    $500/month min. usage
-                  </p>
-                </div>
-                <div className="order-24 max-lg:border-b-0 px-6 sm:px-8 lg:order-none lg:col-start-3 lg:row-start-5">
-                  <hr className="my-8 border-gray-200" />
-                </div>
-                <ul className="order-25 flex max-lg:border-b-0 flex-col gap-4 px-6 pb-8 text-sm leading-snug text-gray-800 sm:px-8 sm:pb-10 lg:order-none lg:col-start-3 lg:row-start-6 lg:pb-12">
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Everything in Standard</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>99.95% uptime SLA</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Private networking &amp; VPC options</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Customer-managed encryption keys</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Audit logs &amp; retention policies</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Service accounts &amp; admin APIs</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>HIPAA &amp; compliance packages</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <FeatureCheck />
-                    <span>Pro support included</span>
-                  </li>
-                </ul>
+                ))}
+              </div>
+
+              {/* Annual plan note */}
+              <div className="mt-6 flex items-start gap-3 border border-gray-200 bg-gray-50 px-5 py-4">
+                <span className="mt-0.5 inline-flex shrink-0 items-center bg-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                  Annual
+                </span>
+                <p className="text-sm leading-relaxed text-gray-700">
+                  <span className="font-semibold text-gray-900">Annual plan:</span> Activation fee
+                  waived for customers who commit to annual billing upfront.
+                </p>
               </div>
             </div>
 
-            {/* What you can build — Starter plan examples */}
-            <div className="mx-auto mt-16 max-w-6xl lg:mt-24">
-              <h2 className="mb-6 text-left text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">
-                What You Can Build On The Starter Plan
-              </h2>
-              <div className="border border-gray-200 bg-white">
-                <div className="grid grid-cols-1 divide-y divide-gray-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-                  {starterWorkloads.map((col) => (
-                    <div
-                      key={col.title}
-                      className="relative flex flex-col px-6 py-8 transition-[background-color,box-shadow,transform] duration-200 ease-out sm:px-8 sm:py-10 hover:z-[1] hover:bg-accent/[0.06] hover:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.12)] lg:hover:-translate-y-px"
-                    >
-                      <h3 className="text-base font-bold text-gray-900 sm:text-lg">{col.title}</h3>
-                      <p className="mt-4 text-sm text-gray-600">{col.contextLabel}</p>
-                      <ul className="mt-3 flex flex-col gap-3 text-sm text-gray-800">
-                        {col.inputs.map((line) => (
-                          <li key={line} className="flex gap-3">
-                            <SolidAccentCheck />
-                            <span>{line}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <hr className="my-6 border-gray-200" />
-                      <p className="text-xs font-medium text-gray-600">Starter plan gives you:</p>
-                      <ul className="mt-3 flex flex-col gap-3 text-sm text-gray-800">
-                        {col.outputs.map((line) => (
-                          <li key={line} className="flex gap-3">
-                            <SolidAccentCheck />
-                            <span>{line}</span>
-                          </li>
-                        ))}
-                      </ul>
+            {/* ── Founding Merchant Program — Year One ── */}
+            <div id="founding-merchant" className="mx-auto mt-16 max-w-7xl scroll-mt-24 lg:mt-24">
+              <div className="border border-accent/30 bg-accent/[0.04]">
+                <div className="border-b border-accent/20 px-6 py-7 sm:px-8">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="inline-flex items-center gap-1.5 bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                      <StarIcon className="h-3.5 w-3.5" />
+                      Year One
+                    </span>
+                    <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+                      Founding Merchant Program
+                    </h2>
+                  </div>
+                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-gray-700">
+                    Aggressive acquisition offer for the first 200 merchants or through the end of
+                    Q4 2026, whichever comes first.{' '}
+                    <span className="font-semibold text-gray-900">All tiers eligible.</span>
+                  </p>
+                </div>
+
+                {/* Desktop table */}
+                <div className="hidden overflow-x-auto md:block">
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="border-b border-accent/20 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <th className="px-6 py-4 sm:px-8">Tier</th>
+                        <th className="px-6 py-4">Activation fee</th>
+                        <th className="px-6 py-4">Month 1</th>
+                        <th className="px-6 py-4">Monthly from month 2</th>
+                        <th className="px-6 py-4">Min. commitment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {foundingTiers.map((tier) => (
+                        <tr
+                          key={tier.name}
+                          className={`border-b border-accent/10 last:border-b-0 ${
+                            tier.popular ? 'bg-accent/[0.05]' : ''
+                          }`}
+                        >
+                          <td className="px-6 py-5 sm:px-8">
+                            <span className="inline-flex items-center gap-1.5 font-bold text-gray-900">
+                              {tier.name}
+                              {tier.popular && <StarIcon className="h-3.5 w-3.5 text-accent" />}
+                            </span>
+                          </td>
+                          <td className="px-6 py-5">
+                            <span className="font-semibold text-accent">Free</span>{' '}
+                            <span className="text-xs text-gray-400 line-through">{tier.activationWas}</span>
+                          </td>
+                          <td className="px-6 py-5 font-semibold text-accent">Free</td>
+                          <td className="px-6 py-5 font-medium text-gray-900">{tier.monthlyFromMonth2}</td>
+                          <td className="px-6 py-5 text-gray-700">{tier.minCommitment}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile cards */}
+                <div className="divide-y divide-accent/10 md:hidden">
+                  {foundingTiers.map((tier) => (
+                    <div key={tier.name} className={`px-6 py-5 ${tier.popular ? 'bg-accent/[0.05]' : ''}`}>
+                      <div className="mb-3 flex items-center gap-1.5">
+                        <span className="font-bold text-gray-900">{tier.name}</span>
+                        {tier.popular && <StarIcon className="h-3.5 w-3.5 text-accent" />}
+                      </div>
+                      <dl className="grid grid-cols-2 gap-y-2 text-sm">
+                        <dt className="text-gray-600">Activation fee</dt>
+                        <dd className="text-right">
+                          <span className="font-semibold text-accent">Free</span>{' '}
+                          <span className="text-xs text-gray-400 line-through">{tier.activationWas}</span>
+                        </dd>
+                        <dt className="text-gray-600">Month 1</dt>
+                        <dd className="text-right font-semibold text-accent">Free</dd>
+                        <dt className="text-gray-600">From month 2</dt>
+                        <dd className="text-right font-medium text-gray-900">{tier.monthlyFromMonth2}</dd>
+                        <dt className="text-gray-600">Min. commitment</dt>
+                        <dd className="text-right text-gray-700">{tier.minCommitment}</dd>
+                      </dl>
                     </div>
                   ))}
                 </div>
               </div>
-              <p className="mt-4 max-w-6xl text-left text-[11px] leading-relaxed text-gray-500">
-                <span className="font-semibold text-gray-600">Disclaimer:</span> Examples are illustrative
-                only, not quotes or binding offers. Database usage only; excludes Inference
-                (embeddings/reranking) and Assistant usage, as well as initial data import. Subject to
-                change.
-              </p>
+
+              {/* Program cap note */}
+              <div className="mt-6 flex items-start gap-3 border border-gray-200 bg-gray-50 px-5 py-4">
+                <span className="mt-0.5 inline-flex shrink-0 items-center bg-gray-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                  Cap
+                </span>
+                <p className="text-sm leading-relaxed text-gray-700">
+                  <span className="font-semibold text-gray-900">Program cap:</span> Available to the
+                  first 200 merchants, or through 31 December 2026 — whichever comes first. After the
+                  program closes, standard activation fees apply.
+                </p>
+              </div>
             </div>
 
             <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-relaxed text-gray-500">
-              Minimums and credits are examples for layout; final pricing is set in your order form.
-              Taxes may apply. Enterprise agreements include custom terms and onboarding.
+              Prices shown are standard rack rates. Overage is billed per 1,000 additional feed rows
+              processed beyond your included monthly allotment. Taxes may apply. Enterprise
+              agreements include custom terms and onboarding.
             </p>
           </div>
 
