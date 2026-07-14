@@ -2,8 +2,8 @@
 # docker compose -f docker-compose.dev.yml up --build
 #
 # Portal runs independently — no shared Docker network with Platform required.
-# When Platform is up, backend is reached at host.docker.internal:8000 (published port).
-# When Platform is down, the site still loads; pricing shows a contact CTA.
+# When Platform is up, backend is reached at host.docker.internal:8000 (published port)
+# for contact/demo lead forms. Pricing on /pricing is static and does not call Platform.
 #
 # Runtime env: .env.local. For ${VAR} substitution:
 #   docker compose --env-file .env.local -f docker-compose.dev.yml up --build
