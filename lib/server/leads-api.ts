@@ -3,6 +3,8 @@
  * Never expose LANDING_PORTAL_API_KEY to the browser.
  */
 
+import { resolveBackendBaseUrl } from '@/lib/server/backend-url'
+
 export type LeadType = 'CONTACT' | 'DEMO_REQUEST'
 
 export type CreateLeadInput = {
@@ -14,14 +16,6 @@ export type CreateLeadInput = {
 }
 
 const LEAD_REQUEST_TIMEOUT_MS = 15_000
-
-function resolveBackendBaseUrl(): string {
-  const raw =
-    process.env.BACKEND_INTERNAL_URL?.trim() ||
-    process.env.BACKEND_API_URL?.trim() ||
-    'http://feedforge_backend:8000'
-  return raw.replace(/\/+$/, '')
-}
 
 export async function createLead(
   input: CreateLeadInput

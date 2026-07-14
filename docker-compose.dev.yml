@@ -1,9 +1,12 @@
 # Local: http://localhost:3000
 # docker compose -f docker-compose.dev.yml up --build
 #
-# Runtime env: .env.local (below). For ${VAR} substitution in this file, use:
+# Portal runs independently — no shared Docker network with Platform required.
+# When Platform is up, backend is reached at host.docker.internal:8000 (published port)
+# for contact/demo lead forms. Pricing on /pricing is static and does not call Platform.
+#
+# Runtime env: .env.local. For ${VAR} substitution:
 #   docker compose --env-file .env.local -f docker-compose.dev.yml up --build
-# Next.js also reads .env.local from the bind-mounted project root.
 
 name: feedforge-portal
 
@@ -20,22 +23,18 @@ services:
       - .env.local
     environment:
       - NODE_ENV=development
+      - RUNNING_IN_DOCKER=true
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=1000
-      # Lead API (optional): set in .env.local — use feedforge_backend when on edge_net
-      - BACKEND_INTERNAL_URL=${BACKEND_INTERNAL_URL:-http://feedforge_backend:8000}
+      # Reach Platform API via host port (no shared Docker network).
+      - BACKEND_INTERNAL_URL=http://host.docker.internal:8000
       - LANDING_PORTAL_API_KEY=${LANDING_PORTAL_API_KEY:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - .:/app
       - portal_node_modules:/app/node_modules
-    networks:
-      - edge_net
-
-networks:
-  edge_net:
-    external: true
-    name: edge_net
 
 volumes:
   portal_node_modules:
