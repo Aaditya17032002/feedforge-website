@@ -1,6 +1,8 @@
-# Production portal — internal only; public HTTP via Proxy stack on edge_net.
+# Production portal — pulls pre-built image from Docker Hub (built by GitHub Actions).
+# Public HTTP via Proxy stack on edge_net.
 #
-#   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml pull
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
 #
 # Public URL (via edge proxy): http://<SERVER_IP>/
 # Copy .env.prod.example → .env.prod and set LANDING_PORTAL_API_KEY (same as Application .env).
@@ -9,14 +11,7 @@ name: feedforge-portal
 
 services:
   portal:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
-      args:
-        NEXT_PUBLIC_CHATBOT_ENABLED: ${NEXT_PUBLIC_CHATBOT_ENABLED:-false}
-        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://app.feedforge.ai}
-        NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-}
+    image: sonishivam1402/feedforge-website:latest
     container_name: feedforge_portal
     restart: always
     env_file:

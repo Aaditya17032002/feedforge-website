@@ -94,17 +94,33 @@ Compose variable substitution uses the file passed with `--env-file`. The app co
 
 ### Production (via edge proxy on port 80)
 
-Build and run with **`.env.prod`** (`APP_URL` = public site URL, e.g. `http://<SERVER_IP>`):
+Production images are built by **GitHub Actions** on push to `main` and published to Docker Hub as **`sonishivam1402/feedforge-website`** (`:latest` and `:<short-sha>`). The server only pulls and runs the image — do not use `--build` on the server.
+
+**GitHub repo secrets / variables** (Settings → Secrets and variables → Actions):
+
+| Name | Type | Purpose |
+| ---- | ---- | ------- |
+| `DOCKERHUB_USERNAME` | secret | Docker Hub username (`sonishivam1402`) |
+| `DOCKERHUB_TOKEN` | secret | Docker Hub access token |
+| `NEXT_PUBLIC_CHATBOT_ENABLED` | variable | Build-arg baked into the client bundle |
+| `NEXT_PUBLIC_APP_URL` | variable | Build-arg (e.g. `https://app.feedforge.ai`) |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | variable | Build-arg for GA4 |
+
+Runtime secrets stay in server **`.env.prod`** only (SendGrid, `LANDING_PORTAL_API_KEY`, `BACKEND_INTERNAL_URL`, etc.).
+
+**Server deploy** (`APP_URL` = public site URL, e.g. `http://<SERVER_IP>`):
 
 ```bash
 cp .env.prod.example .env.prod
 # Edit .env.prod — set LANDING_PORTAL_API_KEY (same as Application) and SendGrid vars
-docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+# If the Docker Hub repo is private: docker login
+docker compose --env-file .env.prod -f docker-compose.prod.yml pull
+docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
 ```
 
 Requires **`edge_net`** and a running Application backend. The portal container reaches the API at `http://feedforge_backend:8000`.
 
-The image uses `output: 'standalone'`. Compose passes build args from `.env.prod`: **`NEXT_PUBLIC_CHATBOT_ENABLED`**, **`NEXT_PUBLIC_APP_URL`**, **`NEXT_PUBLIC_GA_MEASUREMENT_ID`**. GA also reads **`GA_MEASUREMENT_ID`** at container runtime (set both in `.env.prod` for production analytics).
+The image uses `output: 'standalone'`. **`NEXT_PUBLIC_*`** values are set at **CI build time** (GitHub variables above). GA also reads **`GA_MEASUREMENT_ID`** at container runtime (set it in `.env.prod` for production analytics).
 
 ---
 
