@@ -50,24 +50,26 @@ export default function Footer() {
                 Contact
               </h3>
               <address className="not-italic">
-                <ul className="-mt-1 flex flex-col gap-2 text-sm leading-snug text-gray-700">
+                <ul className="-mt-1 flex w-full flex-col gap-0 text-sm leading-snug text-gray-700">
                   <li>
                     <a
                       href={`mailto:${CONTACT_EMAIL}`}
-                      className="w-fit rounded-sm transition-colors hover:text-accent"
+                      className="flex w-fit items-center rounded-md py-1 font-medium transition-colors hover:bg-gray-50 hover:text-accent"
                     >
                       {CONTACT_EMAIL}
                     </a>
                   </li>
-                  <li className="leading-relaxed text-gray-700">
-                    {CONTACT_ADDRESS_LINES.map((line) => (
-                      <span key={line} className="block">
-                        {line}
-                      </span>
-                    ))}
+                  {CONTACT_ADDRESS_LINES.map((line) => (
+                    <li key={line}>
+                      <span className="flex w-fit items-center py-1">{line}</span>
+                    </li>
+                  ))}
+                  <li>
+                    <span className="flex w-fit items-center py-1 text-xs text-gray-500">
+                      {CONTACT_SUPPORT_HOURS}
+                    </span>
                   </li>
                 </ul>
-                <p className="mt-2 text-xs leading-relaxed text-gray-500">{CONTACT_SUPPORT_HOURS}</p>
               </address>
             </section>
 
