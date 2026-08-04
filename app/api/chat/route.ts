@@ -1,5 +1,5 @@
 import faqItems from '@/lib/content/faqs/faqs.json'
-import { CONTACT_EMAIL, CONTACT_PAGE_HREF, CONTACT_SALES_PHONE } from '@/lib/content/contact'
+import { CONTACT_EMAIL, CONTACT_PAGE_HREF } from '@/lib/content/contact'
 import {
   OVERAGE_PER_1K_USD,
   PRICING_ADDONS,
@@ -477,7 +477,7 @@ Three mutually exclusive user intents drive the UI. Choose ONE primary intent pe
 3) escalation = "contact" — FAQ cannot answer, OR user needs human help (support,
    billing disputes, partnerships, bug reports, "talk to someone").
    - answer: brief note that you do not have that detail, then end with ONLY this contact block:
-     - Contact: ${CONTACT_EMAIL} / ${CONTACT_SALES_PHONE}
+     - Contact: ${CONTACT_EMAIL}
      - Or visit: ${CONTACT_PAGE_HREF}
    - schedulingIntent MUST be false.
 

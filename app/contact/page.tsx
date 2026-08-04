@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ContactForm from '@/components/ContactForm'
-import { CONTACT_EMAIL, CONTACT_SALES_PHONE, CONTACT_SUPPORT_HOURS } from '@/lib/content/contact'
+import { CONTACT_EMAIL, CONTACT_SUPPORT_HOURS } from '@/lib/content/contact'
 
 export const metadata: Metadata = {
   title: 'Contact Us · FeedForge',
@@ -34,9 +34,6 @@ export default function ContactPage() {
               <div className="mt-8 space-y-4 text-sm text-gray-700">
                 <p>
                   <span className="font-semibold text-gray-900">Email:</span> {CONTACT_EMAIL}
-                </p>
-                <p>
-                  <span className="font-semibold text-gray-900">Sales:</span> {CONTACT_SALES_PHONE}
                 </p>
                 <p>
                   <span className="font-semibold text-gray-900">Support hours:</span> {CONTACT_SUPPORT_HOURS}

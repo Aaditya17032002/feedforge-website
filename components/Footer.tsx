@@ -6,7 +6,6 @@ import SiteLogo from '@/components/SiteLogo'
 import {
   CONTACT_ADDRESS_LINES,
   CONTACT_EMAIL,
-  CONTACT_SALES_PHONE,
   CONTACT_SUPPORT_HOURS,
 } from '@/lib/content/contact'
 
@@ -21,11 +20,6 @@ function linkIsActive(pathname: string, href: string) {
   if (href === '/') return pathname === '/'
   if (href.startsWith('/#')) return false
   return pathname === href || pathname.startsWith(`${href}/`)
-}
-
-function telHref(displayPhone: string) {
-  const digits = displayPhone.replace(/\D/g, '')
-  return digits ? `tel:+${digits}` : ''
 }
 
 export default function Footer() {
@@ -57,14 +51,6 @@ export default function Footer() {
               </h3>
               <address className="not-italic">
                 <ul className="-mt-1 flex flex-col gap-2 text-sm leading-snug text-gray-700">
-                  <li>
-                    <a
-                      href={telHref(CONTACT_SALES_PHONE)}
-                      className="w-fit rounded-sm font-medium text-gray-900 transition-colors hover:text-accent"
-                    >
-                      {CONTACT_SALES_PHONE}
-                    </a>
-                  </li>
                   <li>
                     <a
                       href={`mailto:${CONTACT_EMAIL}`}

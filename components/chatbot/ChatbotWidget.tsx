@@ -6,7 +6,6 @@ import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import {
   CONTACT_EMAIL,
   CONTACT_PAGE_HREF,
-  CONTACT_SALES_PHONE,
   CONTACT_SUPPORT_HOURS,
   DEMO_FORM_HREF,
 } from '@/lib/content/contact'
@@ -87,7 +86,7 @@ const cannedQuickReplies: Record<
     escalation: 'demo',
   },
   'Contact us': {
-    answer: `Happy to connect you with the team.\n- Contact: ${CONTACT_EMAIL} / ${CONTACT_SALES_PHONE}\n- Or visit: ${CONTACT_PAGE_HREF}`,
+    answer: `Happy to connect you with the team.\n- Contact: ${CONTACT_EMAIL}\n- Or visit: ${CONTACT_PAGE_HREF}`,
     escalation: 'contact',
   },
 }
@@ -848,8 +847,7 @@ export default function ChatbotWidget() {
                   <div className="ff-bubble rounded-2xl border px-4 py-3.5" style={{ borderColor: 'rgba(8,0,160,0.2)', background: 'rgba(8,0,160,0.04)' }}>
                     <p className="text-sm font-semibold text-gray-900">Need more help?</p>
                     <p className="mt-1 text-sm text-gray-600">
-                      Reach us at <span className="font-medium text-gray-800">{CONTACT_EMAIL}</span> or{' '}
-                      <span className="font-medium text-gray-800">{CONTACT_SALES_PHONE}</span>.
+                      Reach us at <span className="font-medium text-gray-800">{CONTACT_EMAIL}</span>.
                     </p>
                     <p className="mt-0.5 text-xs text-gray-500">{CONTACT_SUPPORT_HOURS}</p>
                     <div className="mt-3">
