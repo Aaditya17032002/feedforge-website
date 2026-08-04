@@ -10,6 +10,12 @@ import {
   CONTACT_SUPPORT_HOURS,
   DEMO_FORM_HREF,
 } from '@/lib/content/contact'
+import {
+  PRICING_TIERS,
+  formatRowCount,
+  formatUsd,
+  isActive,
+} from '@/lib/content/pricing'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -24,7 +30,7 @@ type ChatMessage = {
   kind?: 'scheduling'
 }
 
-type EscalationKind = 'none' | 'contact' | 'demo'
+type EscalationKind = 'none' | 'contact' | 'demo' | 'pricing'
 
 type Slot = { start: string; end: string }
 
@@ -49,6 +55,42 @@ const quickPrompts = [
   'Request a demo',
   'Contact us',
 ] as const
+
+type QuickPrompt = (typeof quickPrompts)[number]
+
+const PRICING_PAGE_HREF = '/pricing'
+
+const QUICK_TYPING_MS = 3000
+
+/** Deterministic replies for quick chips — no OpenRouter call. */
+const cannedQuickReplies: Record<
+  QuickPrompt,
+  { answer: string; escalation: EscalationKind; schedulingIntent?: boolean }
+> = {
+  'Pricing & plans': {
+    answer: 'Here are our active plans. Prices are monthly; activation fees are waived on annual billing.',
+    escalation: 'pricing',
+  },
+  Integrations: {
+    answer:
+      'You can import product data into FeedForge using CSV upload, Shopify integration, WooCommerce integration, SFTP/FTP, and HTTPS pull endpoints. Shopify also supports OAuth connection for faster catalog onboarding.',
+    escalation: 'none',
+  },
+  'Schedule a meeting': {
+    answer: 'Great — pick a time below and we’ll get you booked.',
+    escalation: 'none',
+    schedulingIntent: true,
+  },
+  'Request a demo': {
+    answer:
+      'Our demo is a quick walkthrough of how FeedForge enriches your catalog, the integrations we support, and pricing tailored to your stack.',
+    escalation: 'demo',
+  },
+  'Contact us': {
+    answer: `Happy to connect you with the team.\n- Contact: ${CONTACT_EMAIL} / ${CONTACT_SALES_PHONE}\n- Or visit: ${CONTACT_PAGE_HREF}`,
+    escalation: 'contact',
+  },
+}
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
@@ -115,7 +157,7 @@ function toEscalation(data: ChatApiResponse): EscalationKind {
   if (!data || data.success === false) return 'none'
   if ('escalation' in data) {
     const e = data.escalation
-    if (e === 'contact' || e === 'demo' || e === 'none') return e
+    if (e === 'contact' || e === 'demo' || e === 'pricing' || e === 'none') return e
   }
   return 'none'
 }
@@ -157,6 +199,66 @@ function TypingIndicator() {
         <span className="typing-dot" style={{ '--delay': '0ms' } as React.CSSProperties} />
         <span className="typing-dot" style={{ '--delay': '160ms' } as React.CSSProperties} />
         <span className="typing-dot" style={{ '--delay': '320ms' } as React.CSSProperties} />
+      </div>
+    </div>
+  )
+}
+
+function PricingPlansCard() {
+  const plans = PRICING_TIERS.filter(isActive)
+
+  return (
+    <div
+      className="ff-bubble rounded-2xl border px-4 py-3.5"
+      style={{ borderColor: 'rgba(8,0,160,0.2)', background: 'rgba(8,0,160,0.04)' }}
+    >
+      <p className="text-sm font-semibold text-gray-900">Pricing &amp; plans</p>
+      <p className="mt-0.5 text-xs text-gray-500">Monthly rates · activation waived on annual</p>
+
+      <ul className="mt-3 space-y-2">
+        {plans.map((tier) => (
+          <li
+            key={tier.key}
+            className="rounded-xl border border-gray-200/80 bg-white px-3 py-2.5"
+          >
+            <div className="flex items-baseline justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-1.5">
+                <span className="truncate text-sm font-semibold text-gray-900">{tier.name}</span>
+                {tier.popular ? (
+                  <span
+                    className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"
+                    style={{ background: 'var(--accent)' }}
+                  >
+                    Popular
+                  </span>
+                ) : null}
+              </div>
+              <span className="shrink-0 text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+                {formatUsd(tier.monthly)}
+                <span className="text-xs font-medium text-gray-500">/mo</span>
+              </span>
+            </div>
+            <p className="mt-1 text-xs leading-relaxed text-gray-600">
+              {tier.catalog} · {formatRowCount(tier.includedRows)} rows/mo
+              {tier.activationFee != null ? ` · ${formatUsd(tier.activationFee)} activation` : ''}
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-3">
+        <Link
+          href={PRICING_PAGE_HREF}
+          className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white transition-colors"
+          style={{ background: 'var(--accent)' }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent-hover)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--accent)')}
+        >
+          View full pricing details
+          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </Link>
       </div>
     </div>
   )
@@ -416,6 +518,7 @@ export default function ChatbotWidget() {
   const listRef     = useRef<HTMLDivElement | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const widgetRef   = useRef<HTMLDivElement | null>(null)
+  const quickPromptAbortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     if (!isOpen) return
@@ -432,6 +535,12 @@ export default function ChatbotWidget() {
       document.removeEventListener('touchstart', handleOutside, true)
     }
   }, [isOpen])
+
+  useEffect(() => {
+    return () => {
+      quickPromptAbortRef.current?.abort()
+    }
+  }, [])
 
   const apiHistory = useMemo(() => {
     const all = messages.filter((m) => m.kind !== 'scheduling' && (m.role === 'user' || m.role === 'assistant'))
@@ -530,6 +639,50 @@ export default function ChatbotWidget() {
       setError(e instanceof Error ? e.message : 'Booking failed. Please try again.')
     } finally {
       setIsSending(false)
+    }
+  }
+
+  async function sendQuickPrompt(prompt: QuickPrompt) {
+    const reply = cannedQuickReplies[prompt]
+
+    setError('')
+    setEscalation('none')
+    setIsSending(true)
+
+    const userMessage: ChatMessage = { id: makeId(), role: 'user', content: prompt }
+    setMessages((prev) => [...prev, userMessage])
+
+    quickPromptAbortRef.current?.abort()
+    const abort = new AbortController()
+    quickPromptAbortRef.current = abort
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(() => resolve(), QUICK_TYPING_MS)
+        abort.signal.addEventListener('abort', () => {
+          clearTimeout(timer)
+          reject(new DOMException('Aborted', 'AbortError'))
+        })
+      })
+
+      if (abort.signal.aborted) return
+
+      setEscalation(reply.escalation)
+      setMessages((prev) => [
+        ...prev,
+        { id: makeId(), role: 'assistant', content: reply.answer, escalation: reply.escalation },
+      ])
+
+      if (reply.schedulingIntent) {
+        setIsSending(false)
+        void triggerSchedulingFlow()
+        return
+      }
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') return
+      setError(e instanceof Error ? e.message : 'Something went wrong.')
+    } finally {
+      if (!abort.signal.aborted) setIsSending(false)
     }
   }
 
@@ -644,7 +797,7 @@ export default function ChatbotWidget() {
               {quickPrompts.map((prompt) => (
                 <button key={prompt} type="button"
                   className="ff-chip rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 disabled:opacity-40"
-                  onClick={() => void sendMessage(prompt)} disabled={isSending}>
+                  onClick={() => void sendQuickPrompt(prompt)} disabled={isSending}>
                   {prompt}
                 </button>
               ))}
@@ -683,6 +836,11 @@ export default function ChatbotWidget() {
                   <div className="ff-bubble rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
                     <span className="mr-1.5">⚠</span>{error}
                   </div>
+                )}
+
+                {/* Pricing plans card */}
+                {escalation === 'pricing' && schedulingStep === 'idle' && (
+                  <PricingPlansCard />
                 )}
 
                 {/* Contact escalation */}

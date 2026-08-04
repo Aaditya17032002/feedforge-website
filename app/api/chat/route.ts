@@ -1,5 +1,13 @@
 import faqItems from '@/lib/content/faqs/faqs.json'
-import { CONTACT_EMAIL, CONTACT_PAGE_HREF, CONTACT_SALES_PHONE, DEMO_FORM_HREF } from '@/lib/content/contact'
+import { CONTACT_EMAIL, CONTACT_PAGE_HREF, CONTACT_SALES_PHONE } from '@/lib/content/contact'
+import {
+  OVERAGE_PER_1K_USD,
+  PRICING_ADDONS,
+  PRICING_TIERS,
+  formatRowCount,
+  formatUsd,
+  isActive,
+} from '@/lib/content/pricing'
 import { sanitizeText } from '@/lib/shared/strings'
 import { jsonError, jsonOk, readJsonBody } from '@/lib/server/api'
 
@@ -195,11 +203,19 @@ function isRateLimited(key: string, nowMs: number): boolean {
   return bucket.count > MAX_REQUESTS
 }
 
-// ── FAQ helpers ────────────────────────────────────────────────────────────────
+// ── FAQ / pricing helpers ──────────────────────────────────────────────────────
+
+/** Stale FAQ pricing copy — superseded by pricing.ts catalog. */
+const FAQ_PRICING_QUESTION = 'What pricing plans does FeedForge offer?'
 
 function buildFaqContext(maxItems = 18): string {
-  const items = Array.isArray(faqItems) ? faqItems.slice(0, maxItems) : []
+  const items = Array.isArray(faqItems) ? faqItems : []
   return items
+    .filter((item) => {
+      const question = typeof item?.question === 'string' ? item.question.trim() : ''
+      return question !== FAQ_PRICING_QUESTION
+    })
+    .slice(0, maxItems)
     .map((item, index) => {
       const question = typeof item?.question === 'string' ? item.question.trim() : ''
       const answer   = typeof item?.answer   === 'string' ? item.answer.trim()   : ''
@@ -208,6 +224,39 @@ function buildFaqContext(maxItems = 18): string {
     })
     .filter(Boolean)
     .join('\n\n')
+}
+
+function addonPriceLabel(addon: (typeof PRICING_ADDONS)[number]): string {
+  if (addon.priceUnit === 'custom' || addon.monthly == null) return 'Custom'
+  if (addon.priceUnit === 'per_1k_rows') return `${formatUsd(addon.monthly)} per 1,000 rows`
+  return `${formatUsd(addon.monthly)}/month`
+}
+
+function buildPricingContext(): string {
+  const tiers = PRICING_TIERS.filter(isActive)
+    .map((tier) => {
+      const monthly = formatUsd(tier.monthly)
+      const activation =
+        tier.activationFee == null ? 'Custom activation' : `${formatUsd(tier.activationFee)} activation (waived annually)`
+      const rows = formatRowCount(tier.includedRows)
+      return `- ${tier.name} (${tier.catalog}): ${monthly}/month, ${activation}, ${rows} included rows/month`
+    })
+    .join('\n')
+
+  const addons = PRICING_ADDONS.filter(isActive)
+    .map((addon) => `- ${addon.label}: ${addonPriceLabel(addon)}. ${addon.description}`)
+    .join('\n')
+
+  return `
+Active plans:
+${tiers || '(none)'}
+
+Add-ons:
+${addons || '(none)'}
+
+Overage: ${formatUsd(OVERAGE_PER_1K_USD)} per 1,000 rows beyond plan allotment (same rate on every plan).
+Full pricing page: /pricing
+`.trim()
 }
 
 // ── Model output parsing ───────────────────────────────────────────────────────
@@ -390,12 +439,19 @@ export async function POST(request: Request) {
     })
 
     const faqContext = buildFaqContext()
+    const pricingContext = buildPricingContext()
 
     const system = `
 You are FeedForge's website assistant.
 
 You help answer questions about FeedForge (pricing, integrations, onboarding, feeds, enrichment, exports).
-Use ONLY the FAQ context below as ground truth.
+Do NOT invent product facts. Use ONLY the ground-truth sections below.
+
+Ground truth rules:
+- Pricing / plans / tiers / add-ons / overage / activation fees → use ONLY PRICING CONTEXT.
+- All other product questions → use ONLY FAQ CONTEXT.
+- If FAQ CONTEXT does not cover the question (or you are unsure), set escalation to "contact".
+  Do not guess. Short apology + point to human help; the UI shows a contact card.
 
 Output MUST be ONLY valid JSON with this exact shape:
 { "answer": "string", "escalation": "none"|"contact"|"demo", "schedulingIntent": true|false }
@@ -418,19 +474,25 @@ Three mutually exclusive user intents drive the UI. Choose ONE primary intent pe
      URLs, paths, or "visit" lines — the UI shows the demo card automatically.
    - schedulingIntent MUST be false.
 
-3) escalation = "contact" — user needs human help (support, billing, partnerships,
-   bug reports, "talk to someone", anything not covered by the FAQ).
-   - answer: address what you can from the FAQ, then end with ONLY this contact block:
+3) escalation = "contact" — FAQ cannot answer, OR user needs human help (support,
+   billing disputes, partnerships, bug reports, "talk to someone").
+   - answer: brief note that you do not have that detail, then end with ONLY this contact block:
      - Contact: ${CONTACT_EMAIL} / ${CONTACT_SALES_PHONE}
      - Or visit: ${CONTACT_PAGE_HREF}
    - schedulingIntent MUST be false.
 
-If none of the above apply and the FAQ answers the user directly, use escalation "none".
+Pricing questions answered from PRICING CONTEXT use escalation "none". You may mention /pricing.
+If PRICING CONTEXT answers the user directly, use escalation "none".
+If FAQ CONTEXT answers a non-pricing question directly, use escalation "none".
 
 Tie-breakers:
 - "book a demo", "schedule a demo" → schedulingIntent: true (booking wins over demo info).
 - "tell me about your demo" → escalation: "demo".
-- Billing / support / unclear / partnership → escalation: "contact" (even if demo also mentioned).
+- "Pricing & plans" / plan names / SKU bands / add-ons → PRICING CONTEXT, escalation "none".
+- Unclear / off-topic / not in FAQ → escalation: "contact".
+
+PRICING CONTEXT:
+${pricingContext}
 
 FAQ CONTEXT:
 ${faqContext}
