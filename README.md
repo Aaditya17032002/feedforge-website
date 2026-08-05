@@ -41,11 +41,7 @@ cp .env.example .env.local
 
 | Variable | Required for | Description |
 | -------- | ------------ | ----------- |
-| `SENDGRID_API_KEY` | Contact & demo emails | SendGrid API key |
-| `SENDGRID_FROM_EMAIL` | Same | Must be a **verified** sender in SendGrid (single sender or domain auth) |
-| `DEMO_TEAM_EMAIL` | Demo form | Inbox for demo request notifications |
-| `CONTACT_TEAM_EMAIL` | Contact form | Inbox for contact form notifications |
-| `APP_URL` | Email templates / links | Public site base URL (e.g. `http://localhost:3000` locally, or your deployed URL) |
+| `APP_URL` | Email links | Public site base URL passed to Platform email templates |
 | `OPENROUTER_API_KEY` | Chatbot API | Key from [OpenRouter](https://openrouter.ai/) |
 | `OPENROUTER_MODEL` | Chatbot API | Model id (default in example: `openai/gpt-oss-120b:free`) |
 | `NEXT_PUBLIC_CHATBOT_ENABLED` | Chatbot UI | `true` / `1` / `yes` / `on` to show the widget; otherwise hidden |
@@ -60,11 +56,11 @@ Optional:
 | `DOCS_URL` | Overrides docs link in emails (defaults to `${APP_URL}/docs`) |
 | `OPENROUTER_BASE_URL` | OpenRouter-compatible API base (default `https://openrouter.ai/api/v1`) |
 
-**SendGrid:** Unverified `SENDGRID_FROM_EMAIL` addresses are rejected. Each successful submission sends a team notification and a customer auto-reply.
+**Email:** Contact and demo forms enqueue mail on Application via `POST /api/v1/email/enqueue`. SendGrid keys and team inboxes live on Platform only.
 
 **Production:** Use **`.env.prod`** with Docker Compose (copy from **`.env.prod.example`**). Set `LANDING_PORTAL_API_KEY` to the **same value** as in Application `.env`. That file is gitignored; keep secrets out of version control.
 
-**Lead storage:** Contact and demo submissions call Application `POST /api/v1/leads` from server route handlers, then send email via SendGrid. The browser never sees the API key.
+**Lead storage:** Contact and demo submissions call Application `POST /api/v1/leads` from server route handlers, then enqueue emails. The browser never sees the API key.
 
 ---
 
@@ -106,13 +102,13 @@ Production images are built by **GitHub Actions** on push to `main` and publishe
 | `NEXT_PUBLIC_APP_URL` | variable | Build-arg (e.g. `https://app.feedforge.ai`) |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | variable | Build-arg for GA4 |
 
-Runtime secrets stay in server **`.env.prod`** only (SendGrid, `LANDING_PORTAL_API_KEY`, `BACKEND_INTERNAL_URL`, etc.).
+Runtime secrets stay in server **`.env.prod`** only (`LANDING_PORTAL_API_KEY`, `BACKEND_INTERNAL_URL`, etc.). SendGrid is configured on Platform.
 
 **Server deploy** (`APP_URL` = public site URL, e.g. `http://<SERVER_IP>`):
 
 ```bash
 cp .env.prod.example .env.prod
-# Edit .env.prod — set LANDING_PORTAL_API_KEY (same as Application) and SendGrid vars
+# Edit .env.prod — set LANDING_PORTAL_API_KEY (same as Application)
 # If the Docker Hub repo is private: docker login
 docker compose --env-file .env.prod -f docker-compose.prod.yml pull
 docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
@@ -127,7 +123,7 @@ The image uses `output: 'standalone'`. **`NEXT_PUBLIC_*`** values are set at **C
 ## Features
 
 - Marketing pages with hero, stats, product narrative, and demo CTA
-- **Contact** and **demo** flows: save to Application DB via `/api/v1/leads`, then email via SendGrid (`/api/contact`, `/api/demo-request`)
+- **Contact** and **demo** flows: save to Application DB via `/api/v1/leads`, then enqueue email via `/api/v1/email/enqueue`
 - Optional **AI chatbot** (`/api/chat`, OpenRouter) gated by `NEXT_PUBLIC_CHATBOT_ENABLED`
 - Responsive layout and charts (**Recharts**)
 
@@ -137,7 +133,7 @@ The image uses `output: 'standalone'`. **`NEXT_PUBLIC_*`** values are set at **C
 
 - Next.js 14, React 18, TypeScript
 - Tailwind CSS, PostCSS, Autoprefixer
-- `@sendgrid/mail`, Recharts
+- Recharts
 
 ---
 

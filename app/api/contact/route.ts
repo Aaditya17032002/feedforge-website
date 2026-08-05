@@ -45,6 +45,7 @@ export async function POST(request: Request) {
           company,
           message,
         },
+        leadId: lead.id,
       })
     } catch (emailErr) {
       console.error('Contact email notification failed (lead saved)', emailErr)
