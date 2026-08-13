@@ -16,6 +16,7 @@ import {
   type PricingTier,
   type PricingValueItem,
 } from '@/lib/content/pricing'
+import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import { SIGNUP_URL } from '@/lib/shared/app-urls'
 
 type BillingInterval = 'monthly' | 'annual'
@@ -64,11 +65,20 @@ function IntervalToggle({
   value: BillingInterval
   onChange: (v: BillingInterval) => void
 }) {
+  const select = (next: BillingInterval) => {
+    if (next === value) return
+    trackEvent(GA_EVENTS.BILLING_INTERVAL_TOGGLE, {
+      billing_interval: next,
+      location: 'pricing_page',
+    })
+    onChange(next)
+  }
+
   return (
     <div className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 p-1">
       <button
         type="button"
-        onClick={() => onChange('monthly')}
+        onClick={() => select('monthly')}
         className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
           value === 'monthly' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
         }`}
@@ -77,7 +87,7 @@ function IntervalToggle({
       </button>
       <button
         type="button"
-        onClick={() => onChange('annual')}
+        onClick={() => select('annual')}
         className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
           value === 'annual' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
         }`}
@@ -155,7 +165,13 @@ function FoundingBanner({
           </div>
           <button
             type="button"
-            onClick={onToggle}
+            onClick={() => {
+              trackEvent(GA_EVENTS.FOUNDING_BANNER_TOGGLE, {
+                action: detailsOpen ? 'close' : 'open',
+                location: 'pricing_page',
+              })
+              onToggle()
+            }}
             aria-expanded={detailsOpen}
             aria-controls="founding-merchant-details"
             className="inline-flex shrink-0 items-center justify-center gap-1 self-start rounded-full px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent/10 sm:self-center"
@@ -381,6 +397,14 @@ export default function PricingContent() {
 
                 <Link
                   href={tierHref(tier)}
+                  onClick={() =>
+                    trackEvent(GA_EVENTS.PRICING_PLAN_CLICK, {
+                      plan_key: tier.key,
+                      plan_name: tier.name,
+                      billing_interval: interval,
+                      location: 'pricing_page',
+                    })
+                  }
                   className={`mt-6 block w-full rounded-lg px-4 py-3 text-center text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 ${
                     tier.ctaStyle === 'solid'
                       ? 'bg-accent text-white hover:bg-[#070066] hover:shadow-[0_10px_24px_-8px_rgba(9,0,136,0.55)]'
@@ -452,6 +476,7 @@ export default function PricingContent() {
         </p>
         <Link
           href="/#try-your-product"
+          onClick={() => trackEvent(GA_EVENTS.TRY_DEMO_CLICK, { location: 'pricing_page' })}
           className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#070066] sm:w-auto"
         >
           Try It Free

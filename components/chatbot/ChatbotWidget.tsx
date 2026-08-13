@@ -476,7 +476,11 @@ function FallbackLinkCard({ url, onCancel }: { url: string; onCancel: () => void
         </button>
       </div>
       <p className="mt-1 text-sm text-gray-600">Use our booking page to pick a time that works for you.</p>
-      <a href={url} target="_blank" rel="noopener noreferrer"
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => trackEvent(GA_EVENTS.SCHEDULE_FALLBACK_CLICK, { location: 'chatbot' })}
         className="mt-3 inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white"
         style={{ background: 'var(--accent)' }}>
         Open booking page
@@ -596,6 +600,7 @@ export default function ChatbotWidget() {
         if (data.schedulingAction === 'show_slots') {
           setAvailableSlots(data.slots)
           setSchedulingStep('slots')
+          trackEvent(GA_EVENTS.SCHEDULE_START, { location: 'chatbot' })
         } else {
           setFallbackUrl('bookingUrl' in data ? data.bookingUrl : '')
           setSchedulingStep('confirmed')
@@ -629,6 +634,7 @@ export default function ChatbotWidget() {
         if (data.schedulingAction === 'booking_confirmed') {
           setConfirmedBooking(data.booking)
           setSchedulingStep('confirmed')
+          trackEvent(GA_EVENTS.SCHEDULE_BOOKING_CONFIRMED, { location: 'chatbot' })
         } else if (data.schedulingAction === 'fallback_link') {
           setFallbackUrl('bookingUrl' in data ? data.bookingUrl : '')
           setSchedulingStep('confirmed')
