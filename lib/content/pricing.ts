@@ -27,17 +27,24 @@ export type PricingTier = {
   ctaStyle: 'solid' | 'outline'
   recommendKey?: string
   status: PricingStatus
+  /**
+   * Concise plan bullets (shared product capabilities).
+   * Included rows are appended in the UI from `includedRows`.
+   */
+  features: string[]
 }
 
-export type PricingAddon = {
+export type PricingValueItem = {
+  key: string
+  emoji: string
+  label: string
+  description: string
+}
+
+export type PricingIncludedFeature = {
   key: string
   label: string
   description: string
-  /** Monthly list price; null = usage / custom. */
-  monthly: number | null
-  /** How the price is billed in copy (always shown as monthly / usage — not toggled annual). */
-  priceUnit: 'month' | 'per_1k_rows' | 'custom'
-  status: PricingStatus
 }
 
 export type FoundingTier = {
@@ -52,6 +59,23 @@ export type FoundingTier = {
 
 /** Flat overage rate for every plan ($ / 1K rows). */
 export const OVERAGE_PER_1K_USD = 6
+
+/** Program marketing caps — aligned with Platform seed (max_redemptions / end date). */
+export const FOUNDING_PROGRAM = {
+  maxMerchants: 200,
+  endsOnLabel: '31 December 2026',
+  /** Seeded rules: activation free + first month free + 3-month min. */
+  activationWaived: true,
+  firstMonthFree: true,
+  minCommitmentMonths: 3,
+} as const
+
+/** Shared capabilities included with every active plan (not per-tier gated in catalog). */
+export const SHARED_PLAN_FEATURES = [
+  'AI-powered product optimization',
+  'Feed management & validation',
+  'Channel-ready exports',
+] as const
 
 export function formatUsd(amount: number | null | undefined, fallback = 'Custom'): string {
   if (amount == null) return fallback
@@ -86,6 +110,7 @@ export const PRICING_TIERS: PricingTier[] = [
     ctaStyle: 'outline',
     recommendKey: LEGACY_PLAN_KEYS.starter,
     status: 'active',
+    features: [...SHARED_PLAN_FEATURES],
   },
   {
     key: 'growth',
@@ -99,6 +124,7 @@ export const PRICING_TIERS: PricingTier[] = [
     ctaStyle: 'solid',
     recommendKey: LEGACY_PLAN_KEYS.growth,
     status: 'active',
+    features: [...SHARED_PLAN_FEATURES],
   },
   {
     key: 'scale',
@@ -111,6 +137,7 @@ export const PRICING_TIERS: PricingTier[] = [
     ctaStyle: 'outline',
     recommendKey: LEGACY_PLAN_KEYS.scale,
     status: 'active',
+    features: [...SHARED_PLAN_FEATURES],
   },
   {
     key: 'pro',
@@ -123,6 +150,7 @@ export const PRICING_TIERS: PricingTier[] = [
     ctaStyle: 'outline',
     recommendKey: LEGACY_PLAN_KEYS.pro,
     status: 'active',
+    features: [...SHARED_PLAN_FEATURES],
   },
   {
     key: 'enterprise',
@@ -135,51 +163,65 @@ export const PRICING_TIERS: PricingTier[] = [
     ctaStyle: 'outline',
     recommendKey: LEGACY_PLAN_KEYS.enterprise,
     status: 'inactive',
+    features: [...SHARED_PLAN_FEATURES],
   },
 ]
 
-/** Optional catalog add-ons (prices always monthly / usage — not affected by Annual toggle). */
-export const PRICING_ADDONS: PricingAddon[] = [
+/** Included product capabilities — maps to real Platform surfaces. */
+export const PRICING_INCLUDED_FEATURES: PricingIncludedFeature[] = [
   {
-    key: 'addon_json_ld',
-    label: 'JSON-LD structured data',
-    description: 'Schema.org markup for richer product discovery.',
-    monthly: 19,
-    priceUnit: 'month',
-    status: 'active',
+    key: 'import',
+    label: 'Import & Manage Your Catalog',
+    description: 'Bring products in from Shopify, WooCommerce, CSV, or custom feeds.',
   },
   {
-    key: 'addon_enrichment',
-    label: 'AI enrichment add-on',
-    description: 'Extra AI enrichment capacity beyond your plan.',
-    monthly: 19,
-    priceUnit: 'month',
-    status: 'active',
+    key: 'ai_optimize',
+    label: 'AI-Powered Product Optimization',
+    description: 'Improve titles, descriptions, and attributes with FeedForge AI.',
   },
   {
-    key: 'addon_llms_txt',
-    label: 'LLMs.txt generation',
-    description: 'Publish an llms.txt map of your catalog for AI crawlers.',
-    monthly: 19,
-    priceUnit: 'month',
-    status: 'active',
+    key: 'mapping',
+    label: 'Feed Mapping & Validation',
+    description: 'Map fields correctly and catch feed issues before they go live.',
   },
   {
-    key: 'addon_channel_export',
-    label: 'Channel export add-on',
-    description: 'Additional export channels beyond your included set.',
-    monthly: 19,
-    priceUnit: 'month',
-    status: 'active',
+    key: 'generation',
+    label: 'Automated Feed Generation',
+    description: 'Generate and refresh channel-ready feeds on your schedule.',
   },
   {
-    key: 'overage_per_1k_rows',
-    label: 'Overage per 1,000 rows',
+    key: 'exports',
+    label: 'Multi-Channel Exports',
+    description: 'Distribute to Google Shopping, Bing, Meta, and more.',
+  },
+  {
+    key: 'insights',
+    label: 'Catalog Quality Insights',
+    description: 'See feed health and quality signals so you know what to fix next.',
+  },
+]
+
+/** Expansion value (customer outcomes — not priced add-on labels). */
+export const PRICING_VALUE_ITEMS: PricingValueItem[] = [
+  {
+    key: 'enhance_content',
+    emoji: '✨',
+    label: 'Enhance Product Content',
     description:
-      'Billed for feed rows processed beyond your plan’s included monthly allotment. Same rate on every plan.',
-    monthly: OVERAGE_PER_1K_USD,
-    priceUnit: 'per_1k_rows',
-    status: 'active',
+      'Improve titles, descriptions, attributes, and other product information with AI.',
+  },
+  {
+    key: 'ai_search_visibility',
+    emoji: '🤖',
+    label: 'Get Discovered Across AI & Search',
+    description:
+      'Make your products easier for AI platforms and search engines to discover and understand.',
+  },
+  {
+    key: 'reach_shoppers',
+    emoji: '🛍️',
+    label: 'Reach More Shoppers',
+    description: 'Expand your presence across Google Shopping, Bing, Meta, and more.',
   },
 ]
 

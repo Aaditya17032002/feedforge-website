@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import StartBuilding from '@/components/StartBuilding'
 import PricingContent from '@/components/pricing/PricingContent'
 
 export const metadata: Metadata = {
@@ -14,12 +13,11 @@ export default function PricingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <Header />
-      <main className="flex-1">
+      <main className="min-w-0 flex-1">
         <section className="border-t border-gray-200 bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
+          <div className="mx-auto max-w-7xl min-w-0 px-4 py-10 sm:px-6 lg:py-12">
             <PricingContent />
           </div>
-          <StartBuilding />
         </section>
       </main>
       <Footer />

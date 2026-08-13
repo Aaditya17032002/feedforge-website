@@ -2,8 +2,8 @@ import faqItems from '@/lib/content/faqs/faqs.json'
 import { CONTACT_EMAIL, CONTACT_PAGE_HREF } from '@/lib/content/contact'
 import {
   OVERAGE_PER_1K_USD,
-  PRICING_ADDONS,
   PRICING_TIERS,
+  PRICING_VALUE_ITEMS,
   formatRowCount,
   formatUsd,
   isActive,
@@ -226,12 +226,6 @@ function buildFaqContext(maxItems = 18): string {
     .join('\n\n')
 }
 
-function addonPriceLabel(addon: (typeof PRICING_ADDONS)[number]): string {
-  if (addon.priceUnit === 'custom' || addon.monthly == null) return 'Custom'
-  if (addon.priceUnit === 'per_1k_rows') return `${formatUsd(addon.monthly)} per 1,000 rows`
-  return `${formatUsd(addon.monthly)}/month`
-}
-
 function buildPricingContext(): string {
   const tiers = PRICING_TIERS.filter(isActive)
     .map((tier) => {
@@ -239,20 +233,25 @@ function buildPricingContext(): string {
       const activation =
         tier.activationFee == null ? 'Custom activation' : `${formatUsd(tier.activationFee)} activation (waived annually)`
       const rows = formatRowCount(tier.includedRows)
-      return `- ${tier.name} (${tier.catalog}): ${monthly}/month, ${activation}, ${rows} included rows/month`
+      const features = tier.features.join('; ')
+      return `- ${tier.name} (${tier.catalog}): ${monthly}/month, ${activation}, ${rows} included rows/month. Includes: ${features}`
     })
     .join('\n')
 
-  const addons = PRICING_ADDONS.filter(isActive)
-    .map((addon) => `- ${addon.label}: ${addonPriceLabel(addon)}. ${addon.description}`)
-    .join('\n')
+  const valueItems = PRICING_VALUE_ITEMS.map(
+    (item) => `- ${item.label}: ${item.description}`,
+  ).join('\n')
 
   return `
 Active plans:
 ${tiers || '(none)'}
 
-Add-ons:
-${addons || '(none)'}
+Catalog expansion value (customer outcomes — not separate priced add-ons on the marketing page):
+${valueItems || '(none)'}
+
+Founding Merchant Program: activation fee waived + first month free for the first 200 merchants (or through 31 December 2026, whichever comes first). 3-month minimum commitment. From month 2, standard monthly rates apply.
+
+Annual billing: 12× monthly MSRP with activation fee waived (no percentage discount).
 
 Overage: ${formatUsd(OVERAGE_PER_1K_USD)} per 1,000 rows beyond plan allotment (same rate on every plan).
 Full pricing page: /pricing
@@ -448,7 +447,7 @@ You help answer questions about FeedForge (pricing, integrations, onboarding, fe
 Do NOT invent product facts. Use ONLY the ground-truth sections below.
 
 Ground truth rules:
-- Pricing / plans / tiers / add-ons / overage / activation fees → use ONLY PRICING CONTEXT.
+- Pricing / plans / tiers / included value / overage / activation fees → use ONLY PRICING CONTEXT.
 - All other product questions → use ONLY FAQ CONTEXT.
 - If FAQ CONTEXT does not cover the question (or you are unsure), set escalation to "contact".
   Do not guess. Short apology + point to human help; the UI shows a contact card.
@@ -488,7 +487,7 @@ If FAQ CONTEXT answers a non-pricing question directly, use escalation "none".
 Tie-breakers:
 - "book a demo", "schedule a demo" → schedulingIntent: true (booking wins over demo info).
 - "tell me about your demo" → escalation: "demo".
-- "Pricing & plans" / plan names / SKU bands / add-ons → PRICING CONTEXT, escalation "none".
+- "Pricing & plans" / plan names / SKU bands / included capabilities → PRICING CONTEXT, escalation "none".
 - Unclear / off-topic / not in FAQ → escalation: "contact".
 
 PRICING CONTEXT:
