@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import SiteLogo from '@/components/SiteLogo'
+import SiteLogo from '@/components/layout/SiteLogo'
 import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import { LOGIN_URL, SIGNUP_URL } from '@/lib/shared/app-urls'
 

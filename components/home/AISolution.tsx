@@ -64,7 +64,7 @@ export default function AISolution() {
             <span className="text-accent">Complex, Error-Prone, And Time-Consuming</span>
           </h2>
           <p className="mx-auto max-w-2xl text-sm leading-relaxed text-gray-600">
-            Legacy rule-based systems can't keep up. FeedForge uses AI to build and optimize your product feeds across Google, Meta, and the AI search platforms where your customers are increasingly discovering products.
+            Legacy rule-based systems can&apos;t keep up. FeedForge uses AI to build and optimize your product feeds across Google, Meta, and the AI search platforms where your customers are increasingly discovering products.
           </p>
         </div>
 

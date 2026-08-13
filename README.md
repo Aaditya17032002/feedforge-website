@@ -66,13 +66,11 @@ Optional:
 
 ## Project structure (high level)
 
-- **`app/`** — Routes and layouts (`page.tsx`, `layout.tsx`)
+- **`app/(marketing)/`** — Public pages and shared Header/Footer layout (URLs: `/`, `/pricing`, `/faqs`, `/contact`, `/products`, `/customers`)
 - **`app/api/`** — Route handlers (`contact`, `demo-request`, `try-product`, `chat`)
-- **`components/`** — UI sections, header/footer, chatbot
-- **`lib/`** — Email, content, shared utilities, server helpers
+- **`components/`** — UI grouped by feature (`layout/`, `home/`, `forms/`, `chatbot/`, `pricing/`, `faqs/`, `ui/`)
+- **`lib/`** — Email, content, AI/chat helpers, shared utilities, server helpers
 - **`public/`** — Static assets (images, favicons)
-
-Main routes include home, **Pricing**, **FAQs**, **Contact**, **Products**, and **Customers** (see `app/` directory).
 
 ---
 

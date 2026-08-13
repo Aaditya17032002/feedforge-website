@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Customers · FeedForge',
@@ -58,7 +56,7 @@ const marqueeItems = [...testimonials, ...testimonials]
 
 export default function CustomersPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <>
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -80,10 +78,8 @@ export default function CustomersPage() {
           `,
         }}
       />
-      <Header />
-      <main className="flex-1">
-        <section className="border-t border-gray-200 bg-white">
-          <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20">
+      <section className="border-t border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:py-20">
             <div className="mb-4 flex justify-center">
               <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-900">
                 • Customers
@@ -161,8 +157,6 @@ export default function CustomersPage() {
             </div>
           </div>
         </section>
-      </main>
-      <Footer />
-    </div>
+    </>
   )
 }
