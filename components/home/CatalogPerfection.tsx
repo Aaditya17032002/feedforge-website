@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { createPortal } from 'react-dom'
+import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import { postJson } from '@/lib/shared/http'
 import { sanitizeText } from '@/lib/shared/strings'
 
@@ -136,6 +137,7 @@ export default function CatalogPerfection() {
   }
 
   const handleGenerate = async () => {
+    trackEvent(GA_EVENTS.GENERATE_AI_FEED_CLICK, { location: 'try_your_product' })
     setIsGenerating(true)
     setStatusMessage('')
     setStatusType('')
@@ -163,9 +165,10 @@ export default function CatalogPerfection() {
         { productTitle: string; description: string }
       >('/api/try-product', { productTitle: sanitizedTitle, description: sanitizedDescription })
 
+      const duration_ms = Date.now() - apiStart
+
       // FIX: enforce minimum display time so steps don't flash away on fast responses
-      const elapsed = Date.now() - apiStart
-      const remaining = MIN_GENERATION_MS - elapsed
+      const remaining = MIN_GENERATION_MS - duration_ms
       if (remaining > 0) {
         await new Promise((resolve) => setTimeout(resolve, remaining))
       }
@@ -173,6 +176,7 @@ export default function CatalogPerfection() {
       if (!result.ok) {
         setStatusType('error')
         setStatusMessage(result.message || 'Could not generate AI feed. Please try again.')
+        trackEvent(GA_EVENTS.GENERATE_AI_FEED_ERROR, { location: 'try_your_product', duration_ms })
         return
       }
 
@@ -190,10 +194,15 @@ export default function CatalogPerfection() {
 
       setStatusType('success')
       setStatusMessage('AI feed generated successfully.')
+      trackEvent(GA_EVENTS.GENERATE_AI_FEED_SUCCESS, { location: 'try_your_product', duration_ms })
     } catch (error) {
       console.error('Try product generation failed', error)
       setStatusType('error')
       setStatusMessage('Network error. Please try again.')
+      trackEvent(GA_EVENTS.GENERATE_AI_FEED_ERROR, {
+        location: 'try_your_product',
+        duration_ms: Date.now() - apiStart,
+      })
     } finally {
       setIsGenerating(false)
       setGenerationStepIndex(0)

@@ -19,6 +19,10 @@ export default function Header() {
       pathname === href ? 'text-accent' : 'text-gray-700 hover:text-accent'
     }`
 
+  const trackNav = (linkText: string, href: string, location: 'header' | 'mobile_nav') => {
+    trackEvent(GA_EVENTS.NAV_CLICK, { link_text: linkText, href, location })
+  }
+
   const navigateToFeedDemo = (location: 'header' | 'mobile_header' | 'mobile_nav') => {
     trackEvent(GA_EVENTS.TRY_DEMO_CLICK, { location })
     if (pathname === '/') {
@@ -61,20 +65,24 @@ export default function Header() {
     >
       <div className="mx-auto flex max-w-7xl min-w-0 items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
         {/* Logo */}
-        <SiteLogo className="flex min-w-0" imgClassName="h-[2.625rem] w-auto sm:h-[2.625rem]" />
+        <SiteLogo
+          className="flex min-w-0"
+          imgClassName="h-[2.625rem] w-auto sm:h-[2.625rem]"
+          location="header"
+        />
 
         {/* Navigation */}
         <nav className="hidden items-center gap-8 md:flex nav-family">
-          <Link href="/" className={navLinkClass('/')}>
+          <Link href="/" className={navLinkClass('/')} onClick={() => trackNav('Home', '/', 'header')}>
             Home
           </Link>
-          <Link href="/faqs" className={navLinkClass('/faqs')}>
+          <Link href="/faqs" className={navLinkClass('/faqs')} onClick={() => trackNav('FAQs', '/faqs', 'header')}>
             FAQs
           </Link>
-          <Link href="/pricing" className={navLinkClass('/pricing')}>
+          <Link href="/pricing" className={navLinkClass('/pricing')} onClick={() => trackNav('Pricing', '/pricing', 'header')}>
             Pricing
           </Link>
-          <Link href="/contact" className={navLinkClass('/contact')}>
+          <Link href="/contact" className={navLinkClass('/contact')} onClick={() => trackNav('Contact Us', '/contact', 'header')}>
             Contact Us
           </Link>
         </nav>
@@ -203,16 +211,44 @@ export default function Header() {
       {menuOpen && (
         <div className="border-t border-gray-200 bg-white px-4 py-4 shadow-lg md:hidden">
           <nav className="flex flex-col gap-3 nav-family">
-            <Link href="/" className={navLinkClass('/')} onClick={() => setMenuOpen(false)}>
+            <Link
+              href="/"
+              className={navLinkClass('/')}
+              onClick={() => {
+                trackNav('Home', '/', 'mobile_nav')
+                setMenuOpen(false)
+              }}
+            >
               Home
             </Link>
-            <Link href="/faqs" className={navLinkClass('/faqs')} onClick={() => setMenuOpen(false)}>
+            <Link
+              href="/faqs"
+              className={navLinkClass('/faqs')}
+              onClick={() => {
+                trackNav('FAQs', '/faqs', 'mobile_nav')
+                setMenuOpen(false)
+              }}
+            >
               FAQs
             </Link>
-            <Link href="/pricing" className={navLinkClass('/pricing')} onClick={() => setMenuOpen(false)}>
+            <Link
+              href="/pricing"
+              className={navLinkClass('/pricing')}
+              onClick={() => {
+                trackNav('Pricing', '/pricing', 'mobile_nav')
+                setMenuOpen(false)
+              }}
+            >
               Pricing
             </Link>
-            <Link href="/contact" className={navLinkClass('/contact')} onClick={() => setMenuOpen(false)}>
+            <Link
+              href="/contact"
+              className={navLinkClass('/contact')}
+              onClick={() => {
+                trackNav('Contact Us', '/contact', 'mobile_nav')
+                setMenuOpen(false)
+              }}
+            >
               Contact Us
             </Link>
           </nav>

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import SiteLogo from '@/components/layout/SiteLogo'
+import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import {
   CONTACT_ADDRESS_LINES,
   CONTACT_EMAIL,
@@ -31,7 +32,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl min-w-0 px-4 py-10 sm:px-6 sm:py-12 lg:py-14">
         <div className="flex min-w-0 flex-col gap-10 sm:gap-12 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0 lg:max-w-sm">
-            <SiteLogo imgClassName="h-8 w-auto sm:h-9" />
+            <SiteLogo imgClassName="h-8 w-auto sm:h-9" location="footer" />
             <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-600">
               AI-powered product feed management to import, optimize, validate, and export from one
               dashboard.
@@ -90,6 +91,13 @@ export default function Footer() {
                     <li key={`${href}-${label}`}>
                       <Link
                         href={href}
+                        onClick={() =>
+                          trackEvent(GA_EVENTS.NAV_CLICK, {
+                            link_text: label,
+                            href,
+                            location: 'footer',
+                          })
+                        }
                         className={`flex w-fit items-center rounded-md py-1 text-sm leading-snug transition-colors ${
                           active
                             ? 'font-semibold text-accent'

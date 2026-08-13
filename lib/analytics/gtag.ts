@@ -11,9 +11,22 @@ export const GA_EVENTS = {
   TRY_DEMO_CLICK: 'try_demo_click',
   SIGN_UP_CLICK: 'sign_up_click',
   LOGIN_CLICK: 'login_click',
+  PRICING_PLAN_CLICK: 'pricing_plan_click',
+  BILLING_INTERVAL_TOGGLE: 'billing_interval_toggle',
+  FOUNDING_BANNER_TOGGLE: 'founding_banner_toggle',
+  NAV_CLICK: 'nav_click',
+  LOGO_CLICK: 'logo_click',
+
+  // --- Try your product (Generate AI feed) ---
+  GENERATE_AI_FEED_CLICK: 'generate_ai_feed_click',
+  GENERATE_AI_FEED_SUCCESS: 'generate_ai_feed_success',
+  GENERATE_AI_FEED_ERROR: 'generate_ai_feed_error',
 
   // --- Chatbot ---
   CHATBOT_OPEN: 'chatbot_open',
+  SCHEDULE_START: 'schedule_start',
+  SCHEDULE_BOOKING_CONFIRMED: 'schedule_booking_confirmed',
+  SCHEDULE_FALLBACK_CLICK: 'schedule_fallback_click',
 } as const
 
 export type GaEventName = (typeof GA_EVENTS)[keyof typeof GA_EVENTS]
