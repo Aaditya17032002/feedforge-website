@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import {
   FOUNDING_PROGRAM,
@@ -75,25 +75,28 @@ function IntervalToggle({
   }
 
   return (
-    <div className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 p-1">
-      <button
-        type="button"
-        onClick={() => select('monthly')}
-        className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
-          value === 'monthly' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
-        }`}
-      >
-        Monthly
-      </button>
-      <button
-        type="button"
-        onClick={() => select('annual')}
-        className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
-          value === 'annual' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
-        }`}
-      >
-        Annual — activation waived
-      </button>
+    <div className="inline-flex items-center gap-2.5">
+      <div className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 p-1">
+        <button
+          type="button"
+          onClick={() => select('monthly')}
+          className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+            value === 'monthly' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Monthly
+        </button>
+        <button
+          type="button"
+          onClick={() => select('annual')}
+          className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+            value === 'annual' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Annual
+        </button>
+      </div>
+      <span className="text-[11px] font-medium text-accent sm:text-xs">Activation fee waived</span>
     </div>
   )
 }
@@ -174,7 +177,7 @@ function FoundingBanner({
             }}
             aria-expanded={detailsOpen}
             aria-controls="founding-merchant-details"
-            className="inline-flex shrink-0 items-center justify-center gap-1 self-start rounded-full px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent/10 sm:self-center"
+            className="inline-flex shrink-0 items-center justify-center gap-1 self-start rounded-full border border-accent/30 bg-white px-3 py-1.5 text-xs font-semibold text-accent shadow-[0_0_12px_rgba(9,0,136,0.28)] transition-all hover:bg-accent/10 hover:shadow-[0_0_18px_rgba(9,0,136,0.4)] sm:self-center"
           >
             {detailsOpen ? 'Hide offer' : 'View offer'}
             <ChevronIcon open={detailsOpen} className="h-4 w-4" />
@@ -193,18 +196,9 @@ function FoundingDetails({ open }: { open: boolean }) {
   return (
     <div
       id="founding-merchant-details"
-      className="mx-auto mt-4 w-full max-w-3xl scroll-mt-24"
+      className="mx-auto mt-4 w-full max-w-7xl scroll-mt-24"
     >
       <div className="overflow-hidden rounded-xl border border-accent/20 bg-white">
-        <div className="border-b border-accent/15 px-4 py-3 sm:px-5">
-          <p className="text-xs leading-relaxed text-gray-600 sm:text-sm">
-            Eligible active tiers. Minimum commitment:{' '}
-            {FOUNDING_PROGRAM.minCommitmentMonths} months. Available to the first{' '}
-            {FOUNDING_PROGRAM.maxMerchants} merchants, or through {FOUNDING_PROGRAM.endsOnLabel} —
-            whichever comes first.
-          </p>
-        </div>
-
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[32rem] border-collapse text-left">
             <thead>
@@ -274,6 +268,17 @@ function FoundingDetails({ open }: { open: boolean }) {
             </div>
           ))}
         </div>
+
+        <ul className="list-disc space-y-1.5 border-t border-accent/15 bg-accent/[0.03] px-4 py-4 pl-8 text-xs leading-relaxed text-gray-600 marker:text-accent sm:px-5 sm:pl-9 sm:text-sm">
+          <li className="pl-0.5">Eligible active tiers</li>
+          <li className="pl-0.5">
+            Minimum commitment: {FOUNDING_PROGRAM.minCommitmentMonths} months
+          </li>
+          <li className="pl-0.5">
+            Available to the first {FOUNDING_PROGRAM.maxMerchants} merchants, or through{' '}
+            {FOUNDING_PROGRAM.endsOnLabel} - whichever comes first
+          </li>
+        </ul>
       </div>
     </div>
   )
@@ -295,11 +300,57 @@ function IncludedFeatureCard({ item }: { item: PricingIncludedFeature }) {
   )
 }
 
+function SparklesIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+      />
+    </svg>
+  )
+}
+
+function SearchDiscoverIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
+    </svg>
+  )
+}
+
+function ShoppingBagIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+      />
+    </svg>
+  )
+}
+
+const VALUE_ICONS: Record<string, (props: { className?: string }) => ReactNode> = {
+  enhance_content: SparklesIcon,
+  ai_search_visibility: SearchDiscoverIcon,
+  reach_shoppers: ShoppingBagIcon,
+}
+
 function ValueCard({ item }: { item: PricingValueItem }) {
+  const Icon = VALUE_ICONS[item.key] ?? SparklesIcon
   return (
     <div className="flex h-full min-w-0 flex-col items-center rounded-xl bg-white/80 px-5 py-7 text-center">
-      <span className="text-2xl leading-none" aria-hidden>
-        {item.emoji}
+      <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 text-accent">
+        <Icon className="h-6 w-6" />
       </span>
       <h3 className="mt-4 text-sm font-bold text-gray-900 sm:text-base">{item.label}</h3>
       <p className="mt-2 text-xs leading-relaxed text-gray-600 sm:text-sm">{item.description}</p>
@@ -329,13 +380,8 @@ export default function PricingContent() {
         optimization, feed management, and channel-ready exports.
       </p>
 
-      <div className="mx-auto mt-6 flex flex-col items-center gap-3">
+      <div className="mx-auto mt-6 flex justify-center">
         <IntervalToggle value={interval} onChange={setInterval} />
-        {interval === 'annual' ? (
-          <p className="text-center text-xs font-medium text-accent">
-            Annual plans are billed as 12× monthly. Activation fee is waived.
-          </p>
-        ) : null}
       </div>
 
       {/* Founding banner (compact) */}

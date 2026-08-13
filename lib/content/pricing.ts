@@ -36,7 +36,6 @@ export type PricingTier = {
 
 export type PricingValueItem = {
   key: string
-  emoji: string
   label: string
   description: string
 }
@@ -205,21 +204,18 @@ export const PRICING_INCLUDED_FEATURES: PricingIncludedFeature[] = [
 export const PRICING_VALUE_ITEMS: PricingValueItem[] = [
   {
     key: 'enhance_content',
-    emoji: '✨',
     label: 'Enhance Product Content',
     description:
       'Improve titles, descriptions, attributes, and other product information with AI.',
   },
   {
     key: 'ai_search_visibility',
-    emoji: '🤖',
     label: 'Get Discovered Across AI & Search',
     description:
       'Make your products easier for AI platforms and search engines to discover and understand.',
   },
   {
     key: 'reach_shoppers',
-    emoji: '🛍️',
     label: 'Reach More Shoppers',
     description: 'Expand your presence across Google Shopping, Bing, Meta, and more.',
   },
