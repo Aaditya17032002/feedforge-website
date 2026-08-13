@@ -75,28 +75,28 @@ function IntervalToggle({
   }
 
   return (
-    <div className="inline-flex items-center gap-2.5">
-      <div className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 p-1">
-        <button
-          type="button"
-          onClick={() => select('monthly')}
-          className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
-            value === 'monthly' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Monthly
-        </button>
-        <button
-          type="button"
-          onClick={() => select('annual')}
-          className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
-            value === 'annual' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Annual
-        </button>
-      </div>
-      <span className="text-[11px] font-medium text-accent sm:text-xs">Activation fee waived</span>
+    <div className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 p-1">
+      <button
+        type="button"
+        onClick={() => select('monthly')}
+        className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+          value === 'monthly' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+        }`}
+      >
+        Monthly
+      </button>
+      <button
+        type="button"
+        onClick={() => select('annual')}
+        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-4 sm:text-sm ${
+          value === 'annual' ? 'bg-accent text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+        }`}
+      >
+        Annual
+        <span className="rounded-full border border-accent/15 bg-white px-2 py-0.5 text-[12px] font-medium leading-none text-accent sm:text-[13px]">
+          Activation fee waived
+        </span>
+      </button>
     </div>
   )
 }
