@@ -172,30 +172,38 @@ docker compose --env-file .env.local -f docker-compose.dev.yml up --build
 
 ## Production
 
-Images are built by GitHub Actions on push to `main` and pushed to Docker Hub as `sonishivam1402/feedforge-website` (`:latest` and `:<short-sha>`). The server **pulls** the image — do not `--build` on the server.
+Push `dev` or `prod` → GitHub Actions builds `{namespace}/feedforge-website:{tag}` (+ `{tag}-{sha}`) → SSH → server **pulls** the image. Do not `--build` on the server. `main` does not deploy.
+
+Full playbook: [docs/cicd/CI_CD_SETUP.md](docs/cicd/CI_CD_SETUP.md).
 
 `NEXT_PUBLIC_*` is baked in at CI build time. Runtime secrets stay in server `.env.prod`.
 
 ### GitHub Actions (Settings → Secrets and variables → Actions)
 
+Same secret **names** as the application repo. See [docs/cicd/GITHUB_CICD.md](docs/cicd/GITHUB_CICD.md).
+
 | Name | Type | Purpose |
 | ---- | ---- | ------- |
+| `DOCKERHUB_NAMESPACE` | variable | Hub org/user (fallback `sonishivam1402`) |
 | `DOCKERHUB_USERNAME` | secret | Docker Hub user |
-| `DOCKERHUB_TOKEN` | secret | Docker Hub token |
+| `DOCKERHUB_TOKEN` | secret | Hub **write** token (Actions only) |
+| `DEPLOY_HOST` / `DEPLOY_USER` / `DEPLOY_SSH_KEY` | secret | DEV SSH |
+| `DEPLOY_HOST_PROD` / `DEPLOY_USER_PROD` / `DEPLOY_SSH_KEY_PROD` | secret | PROD SSH (optional) |
 | `NEXT_PUBLIC_CHATBOT_ENABLED` | variable | Client bundle |
 | `NEXT_PUBLIC_APP_URL` | variable | e.g. `https://app.feedforge.ai` |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | variable | GA4 |
 
 ### Server
 
-Needs `edge_net` and a running Application backend.
+Needs `edge_net` and a running Application backend. Live path: `/opt/feedforge/website`.
 
 ```bash
 cp .env.prod.example .env.prod
 # Edit .env.prod — LANDING_PORTAL_API_KEY must match Application
-# docker login   # if the Hub repo is private
-docker compose --env-file .env.prod -f docker-compose.prod.yml pull
-docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+# docker login with a read-only Hub token
+export DOCKERHUB_NAMESPACE=…   # company Hub org
+export IMAGE_TAG=dev           # or prod
+bash scripts/server/deploy-from-hub.sh
 ```
 
 The portal container calls Application at `http://feedforge_backend:8000`. Public HTTP is via the edge proxy.

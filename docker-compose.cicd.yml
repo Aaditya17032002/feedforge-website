@@ -1,0 +1,33 @@
+# Pull-only portal — CI builds the website image on GitHub Actions.
+# NEVER run `docker compose ... --build` for portal on the server.
+#
+# Same Hub repo for every environment; only IMAGE_TAG changes:
+#   DEV  IMAGE_TAG=dev
+#   PROD IMAGE_TAG=prod
+# Namespace: set DOCKERHUB_NAMESPACE to the company Hub org when ready
+# (default below keeps current DEV working).
+#
+#   export DOCKERHUB_NAMESPACE="${DOCKERHUB_NAMESPACE:-sonishivam1402}"
+#   export IMAGE_TAG=dev    # or prod
+#   docker compose --env-file .env.prod -f docker-compose.cicd.yml pull portal
+#   docker compose --env-file .env.prod -f docker-compose.cicd.yml up -d --no-build --no-deps portal
+#
+# Requires: .env.prod in this directory + external Docker network `edge_net`
+# Copy .env.prod.example → .env.prod and set LANDING_PORTAL_API_KEY (same as Application .env).
+
+name: feedforge-portal
+
+services:
+  portal:
+    image: ${DOCKERHUB_NAMESPACE:-sonishivam1402}/feedforge-website:${IMAGE_TAG:-dev}
+    container_name: feedforge_portal
+    restart: always
+    env_file:
+      - .env.prod
+    networks:
+      - edge_net
+
+networks:
+  edge_net:
+    external: true
+    name: edge_net

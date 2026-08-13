@@ -1,17 +1,19 @@
 # Production portal — pulls pre-built image from Docker Hub (built by GitHub Actions).
+# Canonical CI/server file is docker-compose.cicd.yml. This file stays for leftover
+# VPS commands; image vars match cicd so it does not pull the old :latest tag.
 # Public HTTP via Proxy stack on edge_net.
 #
-#   docker compose --env-file .env.prod -f docker-compose.prod.yml pull
-#   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+# Prefer:
+#   export DOCKERHUB_NAMESPACE=… IMAGE_TAG=dev   # or prod
+#   bash scripts/server/deploy-from-hub.sh
 #
-# Public URL (via edge proxy): http://<SERVER_IP>/
 # Copy .env.prod.example → .env.prod and set LANDING_PORTAL_API_KEY (same as Application .env).
 
 name: feedforge-portal
 
 services:
   portal:
-    image: sonishivam1402/feedforge-website:latest
+    image: ${DOCKERHUB_NAMESPACE:-sonishivam1402}/feedforge-website:${IMAGE_TAG:-dev}
     container_name: feedforge_portal
     restart: always
     env_file:
