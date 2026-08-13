@@ -195,6 +195,8 @@ async function chatCompletion(
     },
     body: JSON.stringify({
       model,
+      max_tokens: 2000,
+      response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userContent },
@@ -224,7 +226,7 @@ export async function generateTryProductFeed(input: TryProductInput): Promise<Tr
 
   const candidateModels = [
     OPENROUTER_MODEL,
-    'openai/gpt-oss-120b:free',
+    'google/gemini-2.5-flash-lite',
   ].filter((value, index, arr): value is string => Boolean(value) && arr.indexOf(value) === index)
 
   // User turn contains only the product data — instructions live in system prompt
@@ -342,7 +344,7 @@ export async function generateTryProductComparison(
 
   const candidateModels = [
     OPENROUTER_MODEL,
-    'openai/gpt-oss-120b:free',
+    'google/gemini-2.5-flash-lite',
   ].filter((value, index, arr): value is string => Boolean(value) && arr.indexOf(value) === index)
 
   const userContent = `Title: ${input.productTitle}\nDescription: ${input.description || '(not provided)'}`

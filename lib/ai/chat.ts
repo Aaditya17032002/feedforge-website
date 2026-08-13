@@ -249,7 +249,7 @@ export function fallbackFromRawText(text: string): ChatbotModelOutput {
 }
 
 export function candidateChatModels(): string[] {
-  return [OPENROUTER_MODEL, 'openai/gpt-oss-120b:free'].filter(
+  return [OPENROUTER_MODEL, 'google/gemini-2.5-flash-lite'].filter(
     (value, index, arr): value is string => Boolean(value) && arr.indexOf(value) === index
   )
 }
@@ -261,7 +261,12 @@ export async function chatCompletion(model: string, messages: ChatMessage[]): Pr
       Authorization: `Bearer ${OPENROUTER_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ model, messages }),
+    body: JSON.stringify({
+      model,
+      messages,
+      max_tokens: 800,
+      response_format: { type: 'json_object' },
+    }),
   })
 
   const data = (await res.json()) as OpenRouterChatResponse
