@@ -1,7 +1,7 @@
 'use client'
 
 import { SIGNUP_URL } from '@/lib/shared/app-urls'
-import DashboardCards from './DashboardCards'
+import DashboardCards from '@/components/ui/DashboardCards'
 
 export default function Hero() {
   return (

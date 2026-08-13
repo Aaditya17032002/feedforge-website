@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import SiteLogo from '@/components/SiteLogo'
+import SiteLogo from '@/components/layout/SiteLogo'
 import {
   CONTACT_ADDRESS_LINES,
   CONTACT_EMAIL,

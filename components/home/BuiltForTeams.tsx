@@ -61,7 +61,7 @@ export default function BuiltForTeams() {
         </h2>
         
         <p className="mx-auto mb-12 max-w-2xl text-center text-sm text-gray-600 sm:text-base">
-          Your team shouldn't spend hours fixing feeds. FeedForge automates data quality work so your products perform better everywhere. Get time back to focus on growing revenue.
+          Your team shouldn&apos;t spend hours fixing feeds. FeedForge automates data quality work so your products perform better everywhere. Get time back to focus on growing revenue.
         </p>
 
         {/* Large Container with Grid */}

@@ -36,7 +36,7 @@ export default function UseCases() {
           Trusted In Production
         </h2>
         <p className="mx-auto max-w-2xl text-lg text-gray-600">
-          The world's most innovative companies are already in production with FeedForge.
+          The world&apos;s most innovative companies are already in production with FeedForge.
         </p>
       </div>
 

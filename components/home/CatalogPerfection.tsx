@@ -211,7 +211,7 @@ export default function CatalogPerfection() {
             </h2>
 
             <p className="mb-6 text-sm leading-relaxed text-gray-700">
-              Don't let poor data kill your ads. Our built-in AI automatically rewrites titles, fixes
+              Don&apos;t let poor data kill your ads. Our built-in AI automatically rewrites titles, fixes
               descriptions, and tags products for maximum visibility.
             </p>
 
@@ -249,7 +249,7 @@ export default function CatalogPerfection() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  <span className="text-sm text-gray-700">Better matching for "near me" searches</span>
+                  <span className="text-sm text-gray-700">Better matching for &quot;near me&quot; searches</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <svg
