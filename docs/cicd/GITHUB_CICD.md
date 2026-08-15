@@ -10,7 +10,7 @@ Developer push
   → GitHub org (feedforge-llc / FeedForge-Website)
   → GitHub Actions
        ├─ path filter (website tree)
-       ├─ build + push Docker Hub (company namespace when set)
+       ├─ build + push Docker Hub (company namespace)
        └─ SSH → server: scripts/server/deploy-from-hub.sh  (pull only, never --build)
 ```
 
@@ -31,7 +31,7 @@ There are **not** separate Hub repos per environment. Dev vs prod is the tag.
 |----------------|------|
 | `{namespace}/feedforge-website` | `dev`, `dev-<sha>`, `prod`, `prod-<sha>`, `buildcache` |
 
-`namespace` comes from the GitHub Actions **variable** `DOCKERHUB_NAMESPACE`. If unset, CI falls back to `sonishivam1402` (current Hub account for this image) until the company Hub org is wired.
+`namespace` comes from the required GitHub Actions **variable** `DOCKERHUB_NAMESPACE`. CI fails if it is unset.
 
 Server compose: `docker-compose.cicd.yml` (`IMAGE_TAG=dev` or `prod`). Live path: `/opt/feedforge/website`.
 
@@ -45,7 +45,7 @@ Repo → **Settings → Secrets and variables → Actions**.
 
 | Variable | Purpose |
 |----------|---------|
-| `DOCKERHUB_NAMESPACE` | Hub org/user, e.g. `feedforge-llc`. Optional until org Hub exists. |
+| `DOCKERHUB_NAMESPACE` | Hub org/user, e.g. `feedforge-llc`. Required. |
 | `NEXT_PUBLIC_CHATBOT_ENABLED` | Client bundle |
 | `NEXT_PUBLIC_APP_URL` | e.g. `https://app.feedforge.ai` |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 |

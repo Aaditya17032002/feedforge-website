@@ -4,8 +4,7 @@ name: Build, push, deploy
 # Image tags (same Hub repo, different tags — not separate repos):
 #   dev  → namespace/feedforge-website:dev  and :dev-<sha>
 #   prod → namespace/feedforge-website:prod and :prod-<sha>
-# Namespace: repo variable DOCKERHUB_NAMESPACE (org Hub when Miguel sets it).
-# Fallback: sonishivam1402 (current Hub account for this image) until the org Hub is ready.
+# Namespace: required repo/org variable DOCKERHUB_NAMESPACE.
 
 on:
   push:
@@ -43,7 +42,8 @@ jobs:
         run: |
           NS="${{ vars.DOCKERHUB_NAMESPACE }}"
           if [ -z "$NS" ]; then
-            NS="sonishivam1402"
+            echo "DOCKERHUB_NAMESPACE GitHub variable is not configured" >&2
+            exit 1
           fi
           echo "namespace=${NS}" >> "$GITHUB_OUTPUT"
 

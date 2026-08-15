@@ -6,8 +6,9 @@ set -euo pipefail
 
 cd /opt/feedforge/website
 
-# Hub org namespace (override when Miguel's Docker Hub org is ready).
-export DOCKERHUB_NAMESPACE="${DOCKERHUB_NAMESPACE:-sonishivam1402}"
+# Company Docker Hub organization is required.
+: "${DOCKERHUB_NAMESPACE:?DOCKERHUB_NAMESPACE is required}"
+export DOCKERHUB_NAMESPACE
 # Branch channel: `dev` or `prod` (same image name, different tags).
 export IMAGE_TAG="${IMAGE_TAG:-dev}"
 # Must match the live VPS project so the existing feedforge_portal container is reused.

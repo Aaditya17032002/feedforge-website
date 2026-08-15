@@ -184,7 +184,7 @@ Same secret **names** as the application repo. See [docs/cicd/GITHUB_CICD.md](do
 
 | Name | Type | Purpose |
 | ---- | ---- | ------- |
-| `DOCKERHUB_NAMESPACE` | variable | Hub org/user (fallback `sonishivam1402`) |
+| `DOCKERHUB_NAMESPACE` | variable | Hub org/user (required) |
 | `DOCKERHUB_USERNAME` | secret | Docker Hub user |
 | `DOCKERHUB_TOKEN` | secret | Hub **write** token (Actions only) |
 | `DEPLOY_HOST` / `DEPLOY_USER` / `DEPLOY_SSH_KEY` | secret | DEV SSH |

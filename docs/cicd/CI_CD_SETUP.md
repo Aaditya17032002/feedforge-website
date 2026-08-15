@@ -34,9 +34,7 @@ One Hub repo under the company namespace (`DOCKERHUB_NAMESPACE`):
 
 The image also uses a `buildcache` tag for BuildKit registry cache.
 
-Until the company Hub org is set, CI falls back to namespace `sonishivam1402` (the personal Hub account where this image already lives). Set the GitHub **variable** `DOCKERHUB_NAMESPACE` to the org name when Hub repos exist.
-
-Application’s fallback is `aditya17032002`. Once `DOCKERHUB_NAMESPACE` is set, both repos use that org. Do not rename the website image away from `feedforge-website`.
+`DOCKERHUB_NAMESPACE` is required (GitHub Actions variable, and exported on the VPS). CI fails if it is unset. Do not rename the website image away from `feedforge-website`.
 
 ## GitHub variable and secrets (same names on every repo)
 
@@ -160,7 +158,7 @@ Workflow behaviour:
 Images must be:
 
 ```yaml
-image: ${DOCKERHUB_NAMESPACE:-sonishivam1402}/feedforge-website:${IMAGE_TAG:-dev}
+image: ${DOCKERHUB_NAMESPACE}/feedforge-website:${IMAGE_TAG:-dev}
 ```
 
 Never `build:` for the app image on the VPS. Attach the portal service to external network `edge_net`. Runtime env stays in `.env.prod` on the server.

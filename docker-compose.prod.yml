@@ -13,7 +13,7 @@ name: feedforge-portal
 
 services:
   portal:
-    image: ${DOCKERHUB_NAMESPACE:-sonishivam1402}/feedforge-website:${IMAGE_TAG:-dev}
+    image: ${DOCKERHUB_NAMESPACE}/feedforge-website:${IMAGE_TAG:-dev}
     container_name: feedforge_portal
     restart: always
     env_file:

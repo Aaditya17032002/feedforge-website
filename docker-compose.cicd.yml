@@ -4,10 +4,9 @@
 # Same Hub repo for every environment; only IMAGE_TAG changes:
 #   DEV  IMAGE_TAG=dev
 #   PROD IMAGE_TAG=prod
-# Namespace: set DOCKERHUB_NAMESPACE to the company Hub org when ready
-# (default below keeps current DEV working).
+# Namespace: DOCKERHUB_NAMESPACE is required and must point to the company Docker Hub organization.
 #
-#   export DOCKERHUB_NAMESPACE="${DOCKERHUB_NAMESPACE:-sonishivam1402}"
+#   export DOCKERHUB_NAMESPACE="${DOCKERHUB_NAMESPACE}"
 #   export IMAGE_TAG=dev    # or prod
 #   docker compose --env-file .env.prod -f docker-compose.cicd.yml pull portal
 #   docker compose --env-file .env.prod -f docker-compose.cicd.yml up -d --no-build --no-deps portal
@@ -19,7 +18,7 @@ name: feedforge-portal
 
 services:
   portal:
-    image: ${DOCKERHUB_NAMESPACE:-sonishivam1402}/feedforge-website:${IMAGE_TAG:-dev}
+    image: ${DOCKERHUB_NAMESPACE}/feedforge-website:${IMAGE_TAG:-dev}
     container_name: feedforge_portal
     restart: always
     env_file:
