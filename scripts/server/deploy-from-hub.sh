@@ -6,8 +6,12 @@ set -euo pipefail
 
 cd /opt/feedforge/website
 
-# Company Docker Hub organization is required.
+# Company-owned Docker Hub namespace is required. No personal namespace fallback.
 : "${DOCKERHUB_NAMESPACE:?DOCKERHUB_NAMESPACE is required}"
+if [[ "$DOCKERHUB_NAMESPACE" != "feedforgellc" ]]; then
+  echo "DOCKERHUB_NAMESPACE must be 'feedforgellc'; got '$DOCKERHUB_NAMESPACE'." >&2
+  exit 1
+fi
 export DOCKERHUB_NAMESPACE
 # Branch channel: `dev` or `prod` (same image name, different tags).
 export IMAGE_TAG="${IMAGE_TAG:-dev}"
