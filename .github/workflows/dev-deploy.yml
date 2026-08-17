@@ -4,7 +4,8 @@ name: Build, push, deploy
 # Image tags (same Hub repo, different tags — not separate repos):
 #   dev  → namespace/feedforge-website:dev  and :dev-<sha>
 #   prod → namespace/feedforge-website:prod and :prod-<sha>
-# Namespace: required repo/org variable DOCKERHUB_NAMESPACE.
+# Namespace: organization variable DOCKERHUB_NAMESPACE.
+# Required value: feedforgellc. No personal Docker Hub namespace fallback is allowed.
 
 on:
   push:
@@ -42,7 +43,11 @@ jobs:
         run: |
           NS="${{ vars.DOCKERHUB_NAMESPACE }}"
           if [ -z "$NS" ]; then
-            echo "DOCKERHUB_NAMESPACE GitHub variable is not configured" >&2
+            echo "DOCKERHUB_NAMESPACE organization variable is required." >&2
+            exit 1
+          fi
+          if [ "$NS" != "feedforgellc" ]; then
+            echo "DOCKERHUB_NAMESPACE must be 'feedforgellc'; got '$NS'." >&2
             exit 1
           fi
           echo "namespace=${NS}" >> "$GITHUB_OUTPUT"
@@ -116,6 +121,7 @@ jobs:
         run: |
           # compose references env_file: .env.prod; CI checkout has no server secrets file.
           touch .env.prod
+          export DOCKERHUB_NAMESPACE="feedforgellc"
           docker compose -f docker-compose.cicd.yml config >/dev/null
       - name: Package lock present
         run: test -f package.json && test -f package-lock.json
@@ -180,17 +186,15 @@ jobs:
       (needs.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') &&
       (needs.build.result == 'success' || needs.build.result == 'skipped')
     runs-on: ubuntu-latest
-    env:
-      DEPLOY_HOST_PROD: ${{ secrets.DEPLOY_HOST_PROD }}
     steps:
       - name: Skip notice when prod SSH secrets are missing
-        if: needs.channel.outputs.is_prod == 'true' && env.DEPLOY_HOST_PROD == ''
+        if: needs.channel.outputs.is_prod == 'true' && secrets.DEPLOY_HOST_PROD == ''
         run: |
           echo "Image tagged :prod. DEPLOY_HOST_PROD is not set — skipping SSH."
           echo "Add DEPLOY_HOST_PROD, DEPLOY_USER_PROD, DEPLOY_SSH_KEY_PROD when the prod server is ready."
 
       - name: Deploy over SSH
-        if: needs.channel.outputs.is_prod != 'true' || env.DEPLOY_HOST_PROD != ''
+        if: needs.channel.outputs.is_prod != 'true' || secrets.DEPLOY_HOST_PROD != ''
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ needs.channel.outputs.is_prod == 'true' && secrets.DEPLOY_HOST_PROD || secrets.DEPLOY_HOST }}
