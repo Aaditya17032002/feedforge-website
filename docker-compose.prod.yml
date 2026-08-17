@@ -4,16 +4,17 @@
 # Public HTTP via Proxy stack on edge_net.
 #
 # Prefer:
-#   export DOCKERHUB_NAMESPACE=… IMAGE_TAG=dev   # or prod
+#   export DOCKERHUB_NAMESPACE=feedforgellc IMAGE_TAG=prod
 #   bash scripts/server/deploy-from-hub.sh
 #
+# DOCKERHUB_NAMESPACE is required and must be feedforgellc.
 # Copy .env.prod.example → .env.prod and set LANDING_PORTAL_API_KEY (same as Application .env).
 
 name: feedforge-portal
 
 services:
   portal:
-    image: ${DOCKERHUB_NAMESPACE}/feedforge-website:${IMAGE_TAG:-dev}
+    image: ${DOCKERHUB_NAMESPACE:?DOCKERHUB_NAMESPACE is required}/feedforge-website:${IMAGE_TAG:-prod}
     container_name: feedforge_portal
     restart: always
     env_file:
