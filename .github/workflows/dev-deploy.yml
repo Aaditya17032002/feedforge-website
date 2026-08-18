@@ -168,7 +168,7 @@ jobs:
             ${{ needs.channel.outputs.namespace }}/feedforge-website:${{ needs.channel.outputs.image_tag }}-${{ steps.meta.outputs.short }}
           build-args: |
             NEXT_PUBLIC_CHATBOT_ENABLED=${{ vars.NEXT_PUBLIC_CHATBOT_ENABLED || 'false' }}
-            NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL || 'https://app.feedforge.ai' }}
+            NEXT_PUBLIC_APP_URL=${{ needs.channel.outputs.is_prod == 'true' && 'https://app.feedforge.ai' || 'https://devapplication.feedforge.ai' }}
             NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID || '' }}
           cache-from: type=registry,ref=${{ needs.channel.outputs.namespace }}/feedforge-website:buildcache
           cache-to: type=registry,ref=${{ needs.channel.outputs.namespace }}/feedforge-website:buildcache,mode=max
