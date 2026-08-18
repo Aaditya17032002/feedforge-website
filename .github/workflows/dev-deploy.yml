@@ -4,7 +4,8 @@ name: Build, push, deploy
 # Image tags (same Hub repo, different tags — not separate repos):
 #   dev  → namespace/feedforge-website:dev  and :dev-<sha>
 #   prod → namespace/feedforge-website:prod and :prod-<sha>
-# Namespace: required repo/org variable DOCKERHUB_NAMESPACE.
+# Namespace: organization variable DOCKERHUB_NAMESPACE.
+# Required value: feedforgellc. No personal Docker Hub namespace fallback is allowed.
 
 on:
   push:
@@ -42,7 +43,11 @@ jobs:
         run: |
           NS="${{ vars.DOCKERHUB_NAMESPACE }}"
           if [ -z "$NS" ]; then
-            echo "DOCKERHUB_NAMESPACE GitHub variable is not configured" >&2
+            echo "DOCKERHUB_NAMESPACE organization variable is required." >&2
+            exit 1
+          fi
+          if [ "$NS" != "feedforgellc" ]; then
+            echo "DOCKERHUB_NAMESPACE must be 'feedforgellc'; got '$NS'." >&2
             exit 1
           fi
           echo "namespace=${NS}" >> "$GITHUB_OUTPUT"
@@ -116,6 +121,7 @@ jobs:
         run: |
           # compose references env_file: .env.prod; CI checkout has no server secrets file.
           touch .env.prod
+          export DOCKERHUB_NAMESPACE="feedforgellc"
           docker compose -f docker-compose.cicd.yml config >/dev/null
       - name: Package lock present
         run: test -f package.json && test -f package-lock.json
@@ -168,43 +174,70 @@ jobs:
           cache-to: type=registry,ref=${{ needs.channel.outputs.namespace }}/feedforge-website:buildcache,mode=max
           provenance: false
 
-  deploy:
-    name: Deploy to server
+  deploy-dev:
+    name: Deploy DEV to server
     needs: [channel, changes, checks, build]
     if: |
       always() &&
       !cancelled() &&
+      needs.channel.result == 'success' &&
+      needs.channel.outputs.is_prod != 'true' &&
       needs.checks.result == 'success' &&
       needs.changes.result == 'success' &&
-      needs.channel.result == 'success' &&
       (needs.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') &&
       (needs.build.result == 'success' || needs.build.result == 'skipped')
     runs-on: ubuntu-latest
-    env:
-      DEPLOY_HOST_PROD: ${{ secrets.DEPLOY_HOST_PROD }}
     steps:
-      - name: Skip notice when prod SSH secrets are missing
-        if: needs.channel.outputs.is_prod == 'true' && env.DEPLOY_HOST_PROD == ''
-        run: |
-          echo "Image tagged :prod. DEPLOY_HOST_PROD is not set — skipping SSH."
-          echo "Add DEPLOY_HOST_PROD, DEPLOY_USER_PROD, DEPLOY_SSH_KEY_PROD when the prod server is ready."
-
-      - name: Deploy over SSH
-        if: needs.channel.outputs.is_prod != 'true' || env.DEPLOY_HOST_PROD != ''
+      - name: Deploy DEV over SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ needs.channel.outputs.is_prod == 'true' && secrets.DEPLOY_HOST_PROD || secrets.DEPLOY_HOST }}
-          username: ${{ needs.channel.outputs.is_prod == 'true' && secrets.DEPLOY_USER_PROD || secrets.DEPLOY_USER }}
-          key: ${{ needs.channel.outputs.is_prod == 'true' && secrets.DEPLOY_SSH_KEY_PROD || secrets.DEPLOY_SSH_KEY }}
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
           command_timeout: 10m
           script: |
             set -euo pipefail
             cd /opt/feedforge/website
             export DOCKERHUB_NAMESPACE=${{ needs.channel.outputs.namespace }}
             export IMAGE_TAG=${{ needs.channel.outputs.image_tag }}
-            # Do not export DOCKERHUB_TOKEN (write) onto the server.
-            # Server should already be docker-logged-in with a read-only pull token.
             chmod +x scripts/server/deploy-from-hub.sh || true
-            # Strip Windows CRLF if present (breaks `set -o pipefail` on Linux).
             sed -i 's/\r$//' scripts/server/deploy-from-hub.sh || true
             bash scripts/server/deploy-from-hub.sh
+
+  deploy-prod:
+    name: Deploy PROD to server
+    needs: [channel, changes, checks, build]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.channel.result == 'success' &&
+      needs.channel.outputs.is_prod == 'true' &&
+      needs.checks.result == 'success' &&
+      needs.changes.result == 'success' &&
+      (needs.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') &&
+      (needs.build.result == 'success' || needs.build.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Verify PROD deployment secrets
+        shell: bash
+        run: |
+          test -n "${{ secrets.DEPLOY_HOST_PROD }}" || { echo "DEPLOY_HOST_PROD is required" >&2; exit 1; }
+          test -n "${{ secrets.DEPLOY_USER_PROD }}" || { echo "DEPLOY_USER_PROD is required" >&2; exit 1; }
+          test -n "${{ secrets.DEPLOY_SSH_KEY_PROD }}" || { echo "DEPLOY_SSH_KEY_PROD is required" >&2; exit 1; }
+
+      - name: Deploy PROD over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST_PROD }}
+          username: ${{ secrets.DEPLOY_USER_PROD }}
+          key: ${{ secrets.DEPLOY_SSH_KEY_PROD }}
+          command_timeout: 10m
+          script: |
+            set -euo pipefail
+            cd /opt/feedforge/website
+            export DOCKERHUB_NAMESPACE=${{ needs.channel.outputs.namespace }}
+            export IMAGE_TAG=${{ needs.channel.outputs.image_tag }}
+            chmod +x scripts/server/deploy-prod-from-hub.sh || true
+            sed -i 's/\r$//' scripts/server/deploy-prod-from-hub.sh || true
+            bash scripts/server/deploy-prod-from-hub.sh

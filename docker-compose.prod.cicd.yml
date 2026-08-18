@@ -1,0 +1,25 @@
+# FeedForge PROD website pull-only stack.
+# GitHub Actions builds/pushes the image; PROD only pulls it.
+#
+# Required:
+#   DOCKERHUB_NAMESPACE=feedforgellc
+#   IMAGE_TAG=prod or immutable prod-<short-sha>
+#   .env.prod
+#   external network feedforge_edge
+
+name: feedforge-portal-prod
+
+services:
+  portal:
+    image: ${DOCKERHUB_NAMESPACE:?DOCKERHUB_NAMESPACE is required}/feedforge-website:${IMAGE_TAG:?IMAGE_TAG is required}
+    container_name: feedforge_prod_portal
+    restart: always
+    env_file:
+      - .env.prod
+    networks:
+      - feedforge_edge
+
+networks:
+  feedforge_edge:
+    external: true
+    name: feedforge_edge
