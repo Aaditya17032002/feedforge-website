@@ -186,15 +186,17 @@ jobs:
       (needs.changes.outputs.deploy == 'true' || github.event_name == 'workflow_dispatch') &&
       (needs.build.result == 'success' || needs.build.result == 'skipped')
     runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST_PROD: ${{ secrets.DEPLOY_HOST_PROD }}
     steps:
       - name: Skip notice when prod SSH secrets are missing
-        if: needs.channel.outputs.is_prod == 'true' && secrets.DEPLOY_HOST_PROD == ''
+        if: needs.channel.outputs.is_prod == 'true' && env.DEPLOY_HOST_PROD == ''
         run: |
           echo "Image tagged :prod. DEPLOY_HOST_PROD is not set — skipping SSH."
           echo "Add DEPLOY_HOST_PROD, DEPLOY_USER_PROD, DEPLOY_SSH_KEY_PROD when the prod server is ready."
 
       - name: Deploy over SSH
-        if: needs.channel.outputs.is_prod != 'true' || secrets.DEPLOY_HOST_PROD != ''
+        if: needs.channel.outputs.is_prod != 'true' || env.DEPLOY_HOST_PROD != ''
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ needs.channel.outputs.is_prod == 'true' && secrets.DEPLOY_HOST_PROD || secrets.DEPLOY_HOST }}
