@@ -95,7 +95,7 @@ export function buildPricingContext(): string {
         tier.activationFee == null ? 'Custom activation' : `${formatUsd(tier.activationFee)} activation (waived annually)`
       const rows = formatRowCount(tier.includedRows)
       const features = tier.features.join('; ')
-      return `- ${tier.name} (${tier.catalog}): ${monthly}/month, ${activation}, ${rows} included rows/month. Includes: ${features}`
+      return `- ${tier.name} (${tier.catalog}): ${monthly}/month, ${activation}, ${rows} included SKUs/month. Includes: ${features}`
     })
     .join('\n')
 
@@ -114,7 +114,7 @@ Founding Merchant Program: activation fee waived + first month free for the firs
 
 Annual billing: 12× monthly MSRP with activation fee waived (no percentage discount).
 
-Overage: ${formatUsd(OVERAGE_PER_1K_USD)} per 1,000 rows beyond plan allotment (same rate on every plan).
+Overage: ${formatUsd(OVERAGE_PER_1K_USD)} per 1,000 SKUs beyond plan allotment (same rate on every plan).
 Full pricing page: /pricing
 `.trim()
 }
