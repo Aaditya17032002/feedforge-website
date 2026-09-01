@@ -238,7 +238,7 @@ function PricingPlansCard() {
               </span>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-gray-600">
-              {tier.catalog} · {formatRowCount(tier.includedRows)} rows/mo
+              {tier.catalog} · {formatRowCount(tier.includedRows)} SKUs/mo
               {tier.activationFee != null ? ` · ${formatUsd(tier.activationFee)} activation` : ''}
             </p>
           </li>

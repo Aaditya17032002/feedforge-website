@@ -29,7 +29,7 @@ export type PricingTier = {
   status: PricingStatus
   /**
    * Concise plan bullets (shared product capabilities).
-   * Included rows are appended in the UI from `includedRows`.
+   * Included SKUs are appended in the UI from `includedRows`.
    */
   features: string[]
 }
@@ -56,7 +56,7 @@ export type FoundingTier = {
   status: PricingStatus
 }
 
-/** Flat overage rate for every plan ($ / 1K rows). */
+/** Flat overage rate for every plan ($ / 1K SKUs). */
 export const OVERAGE_PER_1K_USD = 6
 
 /** Program marketing caps — aligned with Platform seed (max_redemptions / end date). */

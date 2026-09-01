@@ -137,7 +137,7 @@ function activationLabel(tier: PricingTier, interval: BillingInterval): string |
 function planFeatureBullets(tier: PricingTier): string[] {
   const bullets = [...tier.features]
   if (tier.includedRows != null) {
-    bullets.push(`${formatRowCount(tier.includedRows)} rows/month`)
+    bullets.push(`${formatRowCount(tier.includedRows)} SKUs/month`)
   }
   return bullets
 }
@@ -470,7 +470,7 @@ export default function PricingContent() {
 
         <p className="mx-auto mt-5 max-w-2xl text-center text-xs leading-relaxed text-gray-500">
           Need more capacity? Additional feed processing is available at{' '}
-          {formatUsd(OVERAGE_PER_1K_USD)} per 1,000 rows.
+          {formatUsd(OVERAGE_PER_1K_USD)} per 1,000 SKUs.
         </p>
       </div>
 
@@ -479,10 +479,10 @@ export default function PricingContent() {
         <div className="rounded-2xl bg-gray-50 px-4 py-10 sm:px-8 lg:px-10 lg:py-12">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-              Everything You Need to Manage Your Product Feeds
+              Automate Your Product Feeds From One Place
             </h2>
             <p className="mt-2 text-sm text-gray-600 sm:text-base">
-              Import, optimize, validate, and distribute your catalog from one place.
+              Import, optimize, validate, and distribute your catalog automatically.
             </p>
           </div>
           <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3 lg:gap-4">
