@@ -11,9 +11,9 @@ const gaId =
       undefined
     : undefined
 
-const siteTitle = 'FeedForge | AI-Optimized Product Feeds for Every Channel'
+const siteTitle = 'FeedForge | AI-Optimized Product Feeds'
 const siteDescription =
-  'Transform your product catalog into high-performing listings across Google, Meta, marketplaces, and AI-powered discovery channels.'
+  'Turn your catalog into Google Merchant Center and Meta feeds, with AI-written titles and descriptions. Export CSV or JSON over SFTP or HTTPS.'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://feedforge.ai'),

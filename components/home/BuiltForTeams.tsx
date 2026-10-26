@@ -8,11 +8,11 @@ const teamTypes = [
       </svg>
     ),
     title: 'Brands & Retailers',
-    description: 'Stop losing sales to competitors. Increase revenue across Google, Meta, Amazon, and AI search without hiring more staff.',
+    description: 'Give your catalog clearer titles and descriptions for shopping feeds, without hiring more staff.',
     bullets: [
-      'More customers find your products when they search',
-      'Better ad performance with less manual work',
-      'Products show up in AI shopping results automatically',
+      'Clearer titles and descriptions for shopping feeds',
+      'Less manual rewriting of product copy',
+      'CSV, JSON, Google Merchant Center, and Meta exports over SFTP or HTTPS',
     ],
   },
   {
@@ -61,7 +61,7 @@ export default function BuiltForTeams() {
         </h2>
         
         <p className="mx-auto mb-12 max-w-2xl text-center text-sm text-gray-600 sm:text-base">
-          Your team shouldn&apos;t spend hours fixing feeds. FeedForge automates data quality work so your products perform better everywhere. Get time back to focus on growing revenue.
+          Your team shouldn&apos;t spend hours fixing feeds. FeedForge rewrites product copy and exports CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.
         </p>
 
         {/* Large Container with Grid */}

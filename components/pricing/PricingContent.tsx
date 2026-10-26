@@ -377,7 +377,7 @@ export default function PricingContent() {
       </h1>
       <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-gray-600 lg:text-base">
         Simple pricing based on your catalog size. Every plan includes AI-powered product
-        optimization, feed management, and channel-ready exports.
+        optimization, feed management, and CSV, JSON, Google, and Meta exports.
       </p>
 
       <div className="mx-auto mt-6 flex justify-center">
@@ -482,7 +482,7 @@ export default function PricingContent() {
               Automate Your Product Feeds From One Place
             </h2>
             <p className="mt-2 text-sm text-gray-600 sm:text-base">
-              Import, optimize, validate, and distribute your catalog automatically.
+              Import, optimize, validate, and export CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.
             </p>
           </div>
           <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3 lg:gap-4">

@@ -31,13 +31,13 @@ export default function FaqsPage() {
             Ready To Scale Your <span className="text-accent">Product Feeds</span>?
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-600">
-            Book a guided demo to see how FeedForge can improve feed quality, reduce manual
-            work, and automate delivery across your channels.
+            Book a guided demo to see how FeedForge improves feed quality and exports a
+            CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-gray-700 sm:gap-3">
             <span className="rounded-full border border-gray-200 bg-white px-3 py-1">Import In Minutes</span>
             <span className="rounded-full border border-gray-200 bg-white px-3 py-1">AI Enrichment</span>
-            <span className="rounded-full border border-gray-200 bg-white px-3 py-1">Automated Delivery</span>
+            <span className="rounded-full border border-gray-200 bg-white px-3 py-1">CSV, JSON, SFTP, or HTTPS</span>
           </div>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link

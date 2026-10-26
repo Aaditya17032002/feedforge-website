@@ -1,6 +1,5 @@
 import Hero from '@/components/home/Hero'
 import LogoCarousel from '@/components/home/LogoCarousel'
-import StatsBanner from '@/components/home/StatsBanner'
 import SearchChanging from '@/components/home/SearchChanging'
 import AISolution from '@/components/home/AISolution'
 import SimpleProcess from '@/components/home/SimpleProcess'
@@ -14,7 +13,6 @@ export default function Home() {
     <>
       <Hero />
       <LogoCarousel />
-      <StatsBanner />
       <SearchChanging />
       <CatalogPerfection />
       <AISolution />

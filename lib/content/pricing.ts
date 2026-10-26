@@ -73,7 +73,7 @@ export const FOUNDING_PROGRAM = {
 export const SHARED_PLAN_FEATURES = [
   'AI-powered product optimization',
   'Feed management & validation',
-  'Channel-ready exports',
+  'CSV, JSON, Google, and Meta exports',
 ] as const
 
 export function formatUsd(amount: number | null | undefined, fallback = 'Custom'): string {
@@ -171,7 +171,7 @@ export const PRICING_INCLUDED_FEATURES: PricingIncludedFeature[] = [
   {
     key: 'import',
     label: 'Import & Manage Your Catalog',
-    description: 'Bring products in from Shopify, WooCommerce, CSV, or custom feeds.',
+    description: 'Bring products in from Shopify, WooCommerce, Magento, or CSV upload.',
   },
   {
     key: 'ai_optimize',
@@ -186,12 +186,12 @@ export const PRICING_INCLUDED_FEATURES: PricingIncludedFeature[] = [
   {
     key: 'generation',
     label: 'Automated Feed Generation',
-    description: 'Generate and refresh channel-ready feeds on your schedule.',
+    description: 'Refresh CSV, JSON, Google Merchant Center, and Meta exports on your schedule.',
   },
   {
     key: 'exports',
-    label: 'Multi-Channel Exports',
-    description: 'Distribute to Google Shopping, Bing, Meta, and more.',
+    label: 'Channel-Ready Exports',
+    description: 'Export CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.',
   },
   {
     key: 'insights',
@@ -210,14 +210,14 @@ export const PRICING_VALUE_ITEMS: PricingValueItem[] = [
   },
   {
     key: 'ai_search_visibility',
-    label: 'Get Discovered Across AI & Search',
+    label: 'Clearer Copy For Shopping And AI Search',
     description:
-      'Make your products easier for AI platforms and search engines to discover and understand.',
+      'Write titles and descriptions that shopping feeds and AI search can read more clearly.',
   },
   {
     key: 'reach_shoppers',
-    label: 'Reach More Shoppers',
-    description: 'Expand your presence across Google Shopping, Bing, Meta, and more.',
+    label: 'Channel-Ready Feeds',
+    description: 'Export CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.',
   },
 ]
 

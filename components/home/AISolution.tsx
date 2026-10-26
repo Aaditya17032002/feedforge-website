@@ -38,13 +38,13 @@ const solutions = [
   },
   {
     title: 'Multi-Channel Excellence',
-    description: 'Seamlessly manage feeds across Google, Meta, and every marketplace from one platform.',
-    highlight: 'Google, Meta, and every marketplace',
+    description: 'Export CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.',
+    highlight: 'Google Merchant Center',
   },
   {
     title: 'Future-Ready Optimization',
-    description: 'Your feeds are optimized for AI search platforms where your customers are increasingly discovering products.',
-    highlight: 'AI search platforms',
+    description: 'Titles and descriptions are written so shopping feeds and AI search can read them more clearly.',
+    highlight: 'read them more clearly.',
   },
 ]
 
@@ -64,7 +64,7 @@ export default function AISolution() {
             <span className="text-accent">Complex, Error-Prone, And Time-Consuming</span>
           </h2>
           <p className="mx-auto max-w-2xl text-sm leading-relaxed text-gray-600">
-            Legacy rule-based systems can&apos;t keep up. FeedForge uses AI to build and optimize your product feeds across Google, Meta, and the AI search platforms where your customers are increasingly discovering products.
+            Legacy rule-based systems can&apos;t keep up. FeedForge enriches titles and descriptions, then exports CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.
           </p>
         </div>
 
@@ -141,8 +141,8 @@ export default function AISolution() {
             </svg>
           </span>
           <p className="min-w-0 text-center text-sm font-semibold text-gray-900 sm:text-left">
-            <span className="text-accent">AI Search Optimization</span>
-            <span className="text-gray-600"> — A key proof point of why our AI is more sophisticated than competitors.</span>
+            <span className="text-accent">CSV, JSON, Google, and Meta</span>
+            <span className="text-gray-600"> — Deliver over SFTP or HTTPS. New channel templates are added on an ongoing basis.</span>
           </p>
         </div>
       </div>

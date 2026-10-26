@@ -4,7 +4,7 @@ import PricingContent from '@/components/pricing/PricingContent'
 export const metadata: Metadata = {
   title: 'Pricing · FeedForge',
   description:
-    'Simple, catalog-based pricing for optimizing product feeds with AI across every channel.',
+    'Simple, catalog-based pricing for AI-optimized feeds in CSV, JSON, Google Merchant Center, and Meta formats, delivered over SFTP or HTTPS.',
 }
 
 export default function PricingPage() {

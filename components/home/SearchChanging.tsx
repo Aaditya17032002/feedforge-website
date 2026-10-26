@@ -1,10 +1,9 @@
 'use client'
 
-const stats = [
+const points = [
   {
-    value: '800M',
-    category: 'CHATGPT WEEKLY USERS',
-    details: 'Doubled from 400M in Feb 2025',
+    title: 'AI discovery',
+    details: 'Shoppers look for products in AI assistants, not only in ads.',
     icon: (
       <svg className="h-5 w-5 text-gray-900" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -12,9 +11,8 @@ const stats = [
     ),
   },
   {
-    value: '83%',
-    category: 'SHOPPERS ABANDON SITES',
-    details: 'with insufficient product information',
+    title: 'Thin product data',
+    details: 'Shoppers leave when titles and descriptions leave out what the product is.',
     icon: (
       <svg className="h-5 w-5 text-gray-900" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -22,9 +20,8 @@ const stats = [
     ),
   },
   {
-    value: '92%',
-    category: 'TOP-PERFORMING ECOMMERCE',
-    details: 'USE AI for dynamic, personalized product feeds',
+    title: 'Feed quality',
+    details: 'The same catalog has to read clearly in shopping feeds and in AI search.',
     icon: (
       <svg className="h-5 w-5 text-gray-900" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -50,31 +47,23 @@ export default function SearchChanging() {
               <span className="text-accent">Matters</span>
             </h2>
             <p className="text-pretty text-sm leading-relaxed text-gray-700">
-              Your product feed touches every channel — Google Shopping, Meta ads, Amazon, and now AI assistants. Bad data means missed sales everywhere.
+              Shoppers find products through Google Shopping, Meta ads, and AI assistants. Thin product data means missed sales.
             </p>
           </div>
 
-          {/* Right Column - Stats Cards (md+ three-column so fixed circles do not overflow) */}
-          <div className="grid w-full min-w-0 grid-cols-1 justify-items-center gap-6 md:grid-cols-3 md:justify-items-center md:gap-4 lg:gap-6">
-            {stats.map((stat, index) => (
+          <div className="grid w-full min-w-0 grid-cols-1 gap-4 md:grid-cols-3 md:gap-4 lg:gap-6">
+            {points.map((point, index) => (
               <div
                 key={index}
-                className="relative box-border flex aspect-square w-full max-w-[11rem] items-center justify-center rounded-full border border-accent bg-white px-3 py-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#070066] hover:shadow-md sm:max-w-[13rem] sm:px-4 sm:py-5 md:max-w-full md:px-3 md:py-4 lg:max-w-[12rem] lg:px-4 lg:py-5"
+                className="flex min-w-0 flex-col items-center border border-accent bg-white px-4 py-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#070066] hover:shadow-md"
               >
-                <div className="flex max-w-[90%] flex-col items-center justify-center text-center">
-                  <div className="mb-1.5 shrink-0 text-gray-900" aria-hidden>
-                    {stat.icon}
-                  </div>
-                  <div className="mb-1 text-lg font-bold leading-tight text-gray-900 lg:text-xl">
-                    {stat.value}
-                  </div>
-                  <div className="mb-1 text-[0.6875rem] font-semibold uppercase leading-snug tracking-wide text-gray-900">
-                    {stat.category}
-                  </div>
-                  <div className="text-[0.6875rem] leading-snug text-gray-600">
-                    {stat.details}
-                  </div>
+                <div className="mb-2 shrink-0 text-gray-900" aria-hidden>
+                  {point.icon}
                 </div>
+                <div className="mb-1 text-xs font-semibold uppercase leading-snug tracking-wide text-gray-900">
+                  {point.title}
+                </div>
+                <p className="text-xs leading-snug text-gray-600">{point.details}</p>
               </div>
             ))}
           </div>
@@ -96,10 +85,10 @@ export default function SearchChanging() {
 
               <div className="mb-4 min-h-[5.5rem] lg:min-h-[6rem]">
                 <h4 className="mb-2 text-lg font-bold text-gray-900">
-                  Your Strategy Is Losing Revenue Every Day.
+                  Rule-Based Feeds Are Hard To Maintain.
                 </h4>
                 <p className="text-sm text-gray-600">
-                  Legacy feed tools are rule-based, manual, and brittle. FeedForge uses AI to manage complexity automatically; no more constant maintenance.
+                  Legacy feed tools are rule-based, manual, and brittle. FeedForge uses AI to rewrite product copy so it stays clearer as your catalog changes.
                 </p>
               </div>
 
@@ -125,27 +114,27 @@ export default function SearchChanging() {
               <div className="mt-auto flex min-h-0 flex-1 flex-col pt-2">
                 <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 md:grid-cols-3 md:gap-3">
                   <div className="group flex h-full min-h-[10.5rem] flex-col items-center border border-accent bg-accent/5 p-4 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent/10 hover:shadow-md md:min-h-0">
-                    <div className="shrink-0 text-xl font-bold text-accent">46%</div>
+                    <div className="shrink-0 text-sm font-semibold text-accent">AI answers</div>
                     <p className="my-2 flex flex-1 items-center text-xs leading-snug text-gray-700">
-                      Revenue drop when AI search appears
+                      Shoppers may click a link less often when an AI answer appears above it
                     </p>
                     <svg className="h-4 w-4 shrink-0 text-accent transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
                   <div className="group flex h-full min-h-[10.5rem] flex-col items-center border border-accent bg-accent/5 p-4 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent/10 hover:shadow-md md:min-h-0">
-                    <div className="shrink-0 text-xl font-bold text-accent">77%</div>
+                    <div className="shrink-0 text-sm font-semibold text-accent">AI discovery</div>
                     <p className="my-2 flex flex-1 items-center text-xs leading-snug text-gray-700">
-                      Customers use AI for discovery
+                      More shoppers use AI assistants to find products
                     </p>
                     <svg className="h-4 w-4 shrink-0 text-accent transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
                   <div className="group flex h-full min-h-[10.5rem] flex-col items-center border border-accent bg-accent/5 p-4 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent/10 hover:shadow-md md:min-h-0">
-                    <div className="shrink-0 text-xl font-bold text-accent">90M+</div>
+                    <div className="shrink-0 text-sm font-semibold text-accent">Shifting search</div>
                     <p className="my-2 flex flex-1 items-center text-xs leading-snug text-gray-700">
-                      Will rely on AI search by 2027
+                      Product discovery is moving into AI search
                     </p>
                     <svg className="h-4 w-4 shrink-0 text-accent transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -168,10 +157,10 @@ export default function SearchChanging() {
 
               <div className="mb-4 min-h-[5.5rem] lg:min-h-[6rem]">
                 <h4 className="mb-2 text-lg font-bold text-gray-900">
-                  Future-Proof Your Revenue Stream
+                  Clearer Product Copy
                 </h4>
                 <p className="text-sm text-gray-600">
-                  FeedForge optimizes your product data for conversational context. We ensure your products are the answer when AI asks.
+                  FeedForge writes titles and descriptions that shopping feeds and AI search can read more clearly.
                 </p>
               </div>
 

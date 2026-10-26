@@ -4,7 +4,7 @@ const steps = [
   {
     number: 1,
     title: 'Connect',
-    description: 'Connect your product data from any source—no migration headaches.',
+    description: 'Connect product data from Shopify, WooCommerce, Magento, or a CSV upload.',
     icon: (
       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
@@ -36,8 +36,8 @@ const steps = [
   },
   {
     number: 4,
-    title: 'Publish',
-    description: 'Send optimized feeds to all sales channels automatically.',
+    title: 'Export',
+    description: 'Export CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.',
     icon: (
       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -62,7 +62,7 @@ export default function SimpleProcess() {
             Powerful Results, <span className="text-accent">Simple Process</span>
           </h2>
           <p className="mx-auto max-w-2xl text-sm text-gray-600">
-            Connect your data once. FeedForge automatically keeps it optimized for every sales channel. Your team gets time back to focus on strategy.
+            Connect your data once. FeedForge enriches your catalog and exports CSV, JSON, Google Merchant Center, and Meta catalogs over SFTP or HTTPS.
           </p>
         </div>
 

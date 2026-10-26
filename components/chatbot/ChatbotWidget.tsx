@@ -72,7 +72,7 @@ const cannedQuickReplies: Record<
   },
   Integrations: {
     answer:
-      'You can import product data into FeedForge using CSV upload, Shopify integration, WooCommerce integration, SFTP/FTP, and HTTPS pull endpoints. Shopify also supports OAuth connection for faster catalog onboarding.',
+      'You can import product data into FeedForge using CSV upload, Shopify integration, WooCommerce integration, Magento integration, SFTP/FTP, and HTTPS pull endpoints. Shopify also supports OAuth connection for faster catalog onboarding.',
     escalation: 'none',
   },
   'Schedule a meeting': {

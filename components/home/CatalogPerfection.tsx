@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { usePathname } from 'next/navigation'
 import { createPortal } from 'react-dom'
 import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import { postJson } from '@/lib/shared/http'
@@ -31,8 +30,6 @@ function toSlug(value: string): string {
 }
 
 export default function CatalogPerfection() {
-  const pathname = usePathname()
-  const [activeTab, setActiveTab] = useState<'examples' | 'try'>('examples')
   const [productTitle, setProductTitle] = useState('')
   const [description, setDescription] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
@@ -86,31 +83,6 @@ export default function CatalogPerfection() {
   }, [])
 
   useEffect(() => {
-    const applyHash = () => {
-      if (typeof window === 'undefined') return
-      if (window.location.hash === '#try-your-product') {
-        setActiveTab('try')
-      }
-    }
-    applyHash()
-    window.addEventListener('hashchange', applyHash)
-    const onNavTryProduct = () => setActiveTab('try')
-    window.addEventListener('feedforge:nav-try-product', onNavTryProduct)
-    return () => {
-      window.removeEventListener('hashchange', applyHash)
-      window.removeEventListener('feedforge:nav-try-product', onNavTryProduct)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (pathname !== '/') return
-    if (typeof window === 'undefined') return
-    if (window.location.hash === '#try-your-product') {
-      setActiveTab('try')
-    }
-  }, [pathname])
-
-  useEffect(() => {
     if (!isModalOpen) return
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsModalOpen(false)
@@ -126,15 +98,6 @@ export default function CatalogPerfection() {
     })
     return () => cancelAnimationFrame(id)
   }, [generatedOutput, isGenerating, statusType])
-
-  const exampleData = {
-    rawTitle: 'Blue Shirt L',
-    rawDescription: 'Cotton shirt blue color.',
-    optimizedTitle: 'Premium Oxford Cotton Button-Down Shirt | Navy Blue | Slim Fit Large',
-    optimizedDescription:
-      'Elevate your formal wardrobe with this 100% organic cotton Oxford shirt. Features moisture-wicking fabric, reinforced stitching, and a modern slim fit.',
-    tags: ["MEN'S FASHION", 'FORMAL WEAR', 'SUMMER COLLECTION', 'SUSTAINABLE'],
-  }
 
   const handleGenerate = async () => {
     trackEvent(GA_EVENTS.GENERATE_AI_FEED_CLICK, { location: 'try_your_product' })
@@ -242,7 +205,7 @@ export default function CatalogPerfection() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  <span className="text-sm text-gray-700">35% higher click-through rates</span>
+                  <span className="text-sm text-gray-700">Higher click-through rates</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <svg
@@ -283,94 +246,10 @@ export default function CatalogPerfection() {
           {/* Right Column */}
           <div className="flex min-w-0 items-center justify-center">
             <div className="w-full min-w-0 max-w-2xl border border-gray-200 bg-white shadow-sm transition-all duration-700 ease-in-out hover:border-accent hover:shadow-2xl hover:-translate-y-1">
-              {/* Tabs */}
-              <div className="flex min-w-0 border-b border-gray-200">
-                <button
-                  onClick={() => setActiveTab('examples')}
-                  className={`min-w-0 flex-1 px-3 py-3 text-xs font-medium transition-colors duration-300 sm:px-6 sm:py-4 sm:text-sm ${
-                    activeTab === 'examples'
-                      ? 'border-b-2 border-accent text-accent'
-                      : 'text-gray-500 hover:text-accent'
-                  }`}
-                >
-                  Examples
-                </button>
-                <button
-                  onClick={() => setActiveTab('try')}
-                  className={`min-w-0 flex-1 px-3 py-3 text-xs font-medium transition-colors duration-300 sm:px-6 sm:py-4 sm:text-sm ${
-                    activeTab === 'try'
-                      ? 'border-b-2 border-accent text-accent'
-                      : 'text-gray-500 hover:text-accent'
-                  }`}
-                >
-                  Try Your Product
-                </button>
+              <div className="border-b-2 border-accent px-6 py-4 text-center text-sm font-medium text-accent">
+                Try Your Product
               </div>
-
-              {/* Tab Content */}
               <div className="min-w-0 p-4 sm:p-6">
-                {activeTab === 'examples' ? (
-                  <div className="space-y-6">
-                    {/* Raw Data Input */}
-                    <div>
-                      <label className="mb-2 block text-xs font-semibold tracking-wider text-gray-400">
-                        Raw Data Input
-                      </label>
-                      <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 transition-all duration-500 hover:border-gray-300 hover:bg-gray-100">
-                        <div>
-                          <div className="mb-1 text-xs font-medium text-gray-600">Title</div>
-                          <div className="text-sm text-gray-900">{exampleData.rawTitle}</div>
-                        </div>
-                        <div>
-                          <div className="mb-1 text-xs font-medium text-gray-600">Description</div>
-                          <div className="text-sm text-gray-900">{exampleData.rawDescription}</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* AI Optimized Output */}
-                    <div>
-                      <div className="mb-2 flex items-center gap-2">
-                        <svg
-                          className="h-4 w-4 text-accent"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 10V3L4 14h7v7l9-11h-7z"
-                          />
-                        </svg>
-                        <label className="text-xs font-semibold tracking-wider text-accent">
-                          AI Optimized Output
-                        </label>
-                      </div>
-                      <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 transition-all duration-500 hover:border-gray-300 hover:bg-gray-100 hover:shadow-md">
-                        <div>
-                          <div className="mb-2 break-words text-base font-bold text-accent sm:text-lg">
-                            {exampleData.optimizedTitle}
-                          </div>
-                          <div className="mb-4 text-sm leading-relaxed text-gray-700">
-                            {exampleData.optimizedDescription}
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {exampleData.tags.map((tag) => (
-                              <span
-                                key={tag}
-                                className="rounded-md bg-accent/10 px-3 py-1 text-xs font-medium text-accent transition-all duration-300 hover:bg-accent hover:text-white hover:scale-105 cursor-default"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
                   <div className="space-y-6">
                     <div>
                       <label className="mb-2 block text-xs font-semibold tracking-wider text-gray-400">
@@ -530,7 +409,6 @@ export default function CatalogPerfection() {
                       </div>
                     ) : null}
                   </div>
-                )}
               </div>
             </div>
           </div>
