@@ -200,9 +200,21 @@ jobs:
             cd /opt/feedforge/website
             export DOCKERHUB_NAMESPACE=${{ needs.channel.outputs.namespace }}
             export IMAGE_TAG=${{ needs.channel.outputs.image_tag }}
+            export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+            # Prefer a read-only pull token; fall back to the Hub token used to push.
+            export DOCKERHUB_PULL_TOKEN="${{ secrets.DOCKERHUB_PULL_TOKEN }}"
+            if [ -z "${DOCKERHUB_PULL_TOKEN}" ]; then
+              export DOCKERHUB_PULL_TOKEN="${{ secrets.DOCKERHUB_TOKEN }}"
+            fi
+            if [ -n "${DOCKERHUB_USERNAME}" ] && [ -n "${DOCKERHUB_PULL_TOKEN}" ]; then
+              echo "${DOCKERHUB_PULL_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+            else
+              echo "WARN: no Docker Hub pull credentials in Actions secrets; pull may fail if images are private" >&2
+            fi
             chmod +x scripts/server/deploy-from-hub.sh || true
             sed -i 's/\r$//' scripts/server/deploy-from-hub.sh || true
             bash scripts/server/deploy-from-hub.sh
+            docker logout || true
 
   deploy-prod:
     name: Deploy PROD to server
@@ -238,6 +250,18 @@ jobs:
             cd /opt/feedforge/website
             export DOCKERHUB_NAMESPACE=${{ needs.channel.outputs.namespace }}
             export IMAGE_TAG=${{ needs.channel.outputs.image_tag }}
+            export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+            # Prefer a read-only pull token; fall back to the Hub token used to push.
+            export DOCKERHUB_PULL_TOKEN="${{ secrets.DOCKERHUB_PULL_TOKEN }}"
+            if [ -z "${DOCKERHUB_PULL_TOKEN}" ]; then
+              export DOCKERHUB_PULL_TOKEN="${{ secrets.DOCKERHUB_TOKEN }}"
+            fi
+            if [ -n "${DOCKERHUB_USERNAME}" ] && [ -n "${DOCKERHUB_PULL_TOKEN}" ]; then
+              echo "${DOCKERHUB_PULL_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+            else
+              echo "WARN: no Docker Hub pull credentials in Actions secrets; pull may fail if images are private" >&2
+            fi
             chmod +x scripts/server/deploy-prod-from-hub.sh || true
             sed -i 's/\r$//' scripts/server/deploy-prod-from-hub.sh || true
             bash scripts/server/deploy-prod-from-hub.sh
+            docker logout || true
