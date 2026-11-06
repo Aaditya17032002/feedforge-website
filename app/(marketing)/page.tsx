@@ -7,6 +7,14 @@ import BuiltForTeams from '@/components/home/BuiltForTeams'
 import CatalogPerfection from '@/components/home/CatalogPerfection'
 import StartBuilding from '@/components/home/StartBuilding'
 import DemoRequest from '@/components/forms/DemoRequest'
+import { pageMetadata, SITE_DESCRIPTION, SITE_TITLE } from '@/lib/seo'
+
+export const metadata = pageMetadata({
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  path: '/',
+  absoluteTitle: true,
+})
 
 export default function Home() {
   return (

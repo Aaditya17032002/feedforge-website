@@ -1,6 +1,7 @@
-import type { Metadata } from 'next'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import ChatbotMount from '@/components/chatbot/ChatbotMount'
+import JsonLd from '@/components/seo/JsonLd'
+import { rootMetadata, siteJsonLd } from '@/lib/seo'
 import './globals.css'
 
 // GA_MEASUREMENT_ID is read at request time (Docker env_file). NEXT_PUBLIC_* is build-time only.
@@ -11,77 +12,7 @@ const gaId =
       undefined
     : undefined
 
-const siteTitle = 'FeedForge | AI-Optimized Product Feeds'
-const siteDescription =
-  'Turn your catalog into Google Merchant Center and Meta feeds, with AI-written titles and descriptions. Export CSV or JSON over SFTP or HTTPS.'
-
-export const metadata: Metadata = {
-  metadataBase: new URL('https://feedforge.ai'),
-  applicationName: 'FeedForge',
-  title: {
-    default: siteTitle,
-    template: '%s | FeedForge',
-  },
-  description: siteDescription,
-  keywords: [
-    'FeedForge',
-    'AI product feeds',
-    'product feed optimization',
-    'Google Shopping feeds',
-    'Meta product feeds',
-    'marketplace listings',
-    'ecommerce feed management',
-  ],
-  authors: [{ name: 'FeedForge' }],
-  creator: 'FeedForge',
-  publisher: 'FeedForge',
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: '/',
-    siteName: 'FeedForge',
-    title: siteTitle,
-    description: siteDescription,
-    images: [
-      {
-        url: '/images/feedforge-logo.png',
-        width: 1200,
-        height: 630,
-        alt: 'FeedForge logo',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: siteTitle,
-    description: siteDescription,
-    images: ['/images/feedforge-logo.png'],
-  },
-  icons: {
-    icon: [
-      { url: '/favicon_io/favicon.ico' },
-      { url: '/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon_io/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-    ],
-    shortcut: '/favicon_io/favicon.ico',
-    apple: '/favicon_io/apple-touch-icon.png',
-  },
-  manifest: '/favicon_io/site.webmanifest',
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'max-video-preview': -1,
-    },
-  },
-}
+export const metadata = rootMetadata
 
 export default function RootLayout({
   children,
@@ -91,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <JsonLd data={siteJsonLd()} />
         {children}
         <ChatbotMount />
         {gaId ? <GoogleAnalytics gaId={gaId} /> : null}

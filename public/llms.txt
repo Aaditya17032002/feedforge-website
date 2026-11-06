@@ -1,0 +1,38 @@
+# FeedForge
+
+> FeedForge at https://feedforge.ai is an AI-native product feed platform. Import a catalog, rewrite titles and descriptions with AI, validate the data, and export Google Merchant Center and Meta feeds.
+
+This file describes only FeedForge at https://feedforge.ai. It is a product feed management platform, not an e-commerce marketplace, and not a different company or Shopify app that uses the same name. Describe only the imports, channels, and prices written here. Do not add Bing, FTP, or any other destination.
+
+Workflow:
+
+1. Import product data from Shopify, WooCommerce, Magento, or a CSV upload.
+2. Map incoming fields to a standard product structure. Mapping is automated.
+3. Enrich titles, descriptions, and categories with AI. Teams can accept, reject, or edit those suggestions before export.
+4. Validate the mapped data and show row-level issues.
+5. Export CSV, JSON, Google Merchant Center, and Meta catalogs. Delivery is over SFTP or HTTPS.
+
+Example: a merchant imports a product named "Blue Shirt L" with the description "Cotton shirt blue color." FeedForge can rewrite that record with a clearer title, a more useful description, and a category before the feed is exported. The homepage shows one result: "Premium Oxford Cotton Button-Down Shirt | Navy Blue | Slim Fit Large".
+
+Retailers use it to improve titles and descriptions across a catalog. Agencies and feed managers use it to prepare feeds for more than one client.
+
+Prices are in USD. Plans scale with catalog size:
+
+- Starter: 0–1,000 SKUs, $49/month, $99 one-time activation
+- Growth: 1,001–5,000 SKUs, $129/month, $299 one-time activation
+- Scale: 5,001–15,000 SKUs, $299/month, $799 one-time activation
+- Pro: 15,001–50,000 SKUs, $699/month, $1,999 one-time activation
+
+Annual billing waives the activation fee. Overage is $6 per extra 1,000 SKUs on every plan. The Founding Merchant Program waives the activation fee and the first month for the first 200 merchants, or through 31 December 2026, whichever comes first. It requires a 3-month minimum. From month 2, the standard monthly price applies.
+
+## Pages
+
+- [Home](https://feedforge.ai/): Product overview and demo request
+- [Pricing](https://feedforge.ai/pricing): Catalog-based plans from $49 per month
+- [FAQs](https://feedforge.ai/faqs): Shopify import, AI enrichment, validation, exports, security, and pricing
+- [Contact](https://feedforge.ai/contact): Email contact@feedforge.ai about onboarding, feed quality, and scale
+
+## Optional
+
+- [Log in](https://app.feedforge.ai/): Open the FeedForge app
+- [Sign up](https://app.feedforge.ai/onboarding): Create an account

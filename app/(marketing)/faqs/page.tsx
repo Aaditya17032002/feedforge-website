@@ -1,12 +1,15 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import FaqAccordion from '@/components/faqs/FaqAccordion'
+import JsonLd from '@/components/seo/JsonLd'
 import faqItems from '@/lib/content/faqs/faqs.json'
+import { faqPageJsonLd, pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'FAQs · FeedForge',
-  description: 'Answers to common questions about FeedForge product feeds, integrations, AI enrichment, and pricing.',
-}
+export const metadata = pageMetadata({
+  title: 'FAQs',
+  description:
+    'Answers to common questions about FeedForge product feeds, integrations, AI enrichment, and pricing.',
+  path: '/faqs',
+})
 
 export default function FaqsPage() {
   return (
@@ -24,6 +27,7 @@ export default function FaqsPage() {
           Quick answers about setup, channels, pricing, and day-to-day usage.
         </p>
 
+        <JsonLd data={faqPageJsonLd(faqItems)} />
         <FaqAccordion items={faqItems} />
 
         <div className="mx-auto mt-20 max-w-4xl overflow-hidden rounded-xl border border-accent/25 bg-gradient-to-br from-accent/[0.07] via-white to-accent/[0.04] px-8 py-12 text-center shadow-sm transition-shadow duration-500 hover:shadow-lg hover:shadow-accent/10 md:px-12">

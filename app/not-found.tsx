@@ -1,12 +1,15 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import Footer from '@/components/layout/Footer'
 import Header from '@/components/layout/Header'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Page not found',
   description: 'This page does not exist on FeedForge.',
-}
+  path: '/',
+  canonical: false,
+  index: false,
+})
 
 export default function NotFound() {
   return (

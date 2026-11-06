@@ -1,10 +1,12 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Products · FeedForge',
+export const metadata = pageMetadata({
+  title: 'Products',
   description: 'FeedForge products are coming soon.',
-}
+  path: '/products',
+  index: false,
+})
 
 export default function ProductsPage() {
   return (

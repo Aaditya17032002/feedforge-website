@@ -263,13 +263,16 @@ export default function Header() {
             >
              Try It Free
             </button>
-            <a
-              href="#"
+            <Link
+              href="/contact"
               className="flex h-10 items-center justify-center border border-gray-300 bg-white text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                trackNav('Contact', '/contact', 'mobile_nav')
+                setMenuOpen(false)
+              }}
             >
               Contact
-            </a>
+            </Link>
             <a
               href={LOGIN_URL}
               target="_blank"

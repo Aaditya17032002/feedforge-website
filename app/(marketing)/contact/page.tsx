@@ -1,13 +1,14 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import ContactForm from '@/components/forms/ContactForm'
 import { CONTACT_EMAIL, CONTACT_SUPPORT_HOURS, DEMO_FORM_HREF } from '@/lib/content/contact'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Contact Us · FeedForge',
+export const metadata = pageMetadata({
+  title: 'Contact',
   description:
     'Contact the FeedForge team for help with onboarding, feed quality, channel delivery, and scale planning.',
-}
+  path: '/contact',
+})
 
 const EXPECTATIONS = [
   {

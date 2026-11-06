@@ -43,11 +43,13 @@ export default function FaqAccordion({ items }: FaqAccordionProps) {
                 </svg>
               </span>
             </button>
-            {isOpen && (
-              <div id={`faq-panel-${index}`} className="border-t border-gray-100 px-5 pb-5 sm:px-6 sm:pb-6">
-                <p className="pt-3 text-sm leading-relaxed text-gray-600">{item.answer}</p>
-              </div>
-            )}
+            <div
+              id={`faq-panel-${index}`}
+              hidden={!isOpen}
+              className="border-t border-gray-100 px-5 pb-5 sm:px-6 sm:pb-6"
+            >
+              <p className="pt-3 text-sm leading-relaxed text-gray-600">{item.answer}</p>
+            </div>
           </article>
         )
       })}
