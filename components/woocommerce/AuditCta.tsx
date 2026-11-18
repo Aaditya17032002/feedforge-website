@@ -7,11 +7,12 @@ const primaryClass =
 type AuditCtaProps = {
   children: React.ReactNode
   className?: string
+  href?: string
 }
 
-export default function AuditCta({ children, className }: AuditCtaProps) {
+export default function AuditCta({ children, className, href = WOOCOMMERCE_AUDIT_PATH }: AuditCtaProps) {
   return (
-    <Link href={WOOCOMMERCE_AUDIT_PATH} className={className ? `${primaryClass} ${className}` : primaryClass}>
+    <Link href={href} className={className ? `${primaryClass} ${className}` : primaryClass}>
       {children}
     </Link>
   )

@@ -120,7 +120,7 @@ export const rootMetadata: Metadata = {
 }
 
 /** Public pages that should appear in the sitemap. `/products` stays out until it has real content. */
-export const INDEXABLE_PATHS = ['/', '/pricing', '/faqs', '/contact', '/woocommerce'] as const
+export const INDEXABLE_PATHS = ['/', '/pricing', '/faqs', '/contact', '/woocommerce', '/magento'] as const
 
 export function breadcrumbJsonLd(items: readonly { name: string; path: string }[]) {
   return {

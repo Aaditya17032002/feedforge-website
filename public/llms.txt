@@ -32,6 +32,7 @@ Annual billing waives the activation fee. Overage is $6 per extra 1,000 SKUs on 
 - [FAQs](https://feedforge.ai/faqs): Shopify import, AI enrichment, validation, exports, security, and pricing
 - [Contact](https://feedforge.ai/contact): Email contact@feedforge.ai about onboarding, feed quality, and scale
 - [WooCommerce](https://feedforge.ai/woocommerce): WooCommerce catalog import, AI enrichment, validation, and feeds for Google Merchant Center, Meta, Bing Shopping, and ChatGPT
+- [Magento](https://feedforge.ai/magento): Magento and Adobe Commerce catalog import, AI enrichment, validation, and feeds for Google Merchant Center, Meta, Bing Shopping, and ChatGPT
 
 ## Optional
 

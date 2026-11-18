@@ -33,9 +33,8 @@ const PLATFORMS: IntegrationLink[] = [
   },
   {
     label: 'Magento',
-    description: 'Connect in FeedForge',
-    href: SIGNUP_URL,
-    external: true,
+    description: 'Import, optimize, and export',
+    href: '/magento',
     mark: 'magento',
   },
 ]
@@ -269,7 +268,10 @@ export default function Header() {
           >
             <button
               type="button"
-              className={triggerClass(openMenu === 'integrations', pathname.startsWith('/woocommerce'))}
+              className={triggerClass(
+                openMenu === 'integrations',
+                pathname.startsWith('/woocommerce') || pathname.startsWith('/magento'),
+              )}
               aria-expanded={openMenu === 'integrations'}
               aria-haspopup="true"
               onClick={(event) => toggleDesktopMenu('integrations', event)}
