@@ -234,6 +234,20 @@ export default function Header() {
                     <span className="block text-sm font-semibold text-gray-900">Overview</span>
                     <span className="mt-0.5 block text-xs text-gray-600">AI-optimized product feeds</span>
                   </Link>
+                  <Link
+                    href="/audit-tool"
+                    className="block rounded-lg px-3 py-2.5 hover:bg-gray-50"
+                    onClick={() => {
+                      trackNav('Free AI readiness audit', '/audit-tool', 'header')
+                      setOpenMenu(null)
+                    }}
+                  >
+                    <span className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                      Free AI readiness audit
+                      <NewPill />
+                    </span>
+                    <span className="mt-0.5 block text-xs text-gray-600">Score your feed for Google, ChatGPT, Copilot and Meta</span>
+                  </Link>
                   <button
                     type="button"
                     className="block w-full rounded-lg px-3 py-2.5 text-left hover:bg-gray-50"
@@ -389,6 +403,18 @@ export default function Header() {
           >
             Pricing
           </Link>
+
+          <Link
+            href="/audit-tool"
+            className={`${triggerClass(false, pathname === '/audit-tool')} ml-1 border border-accent/25`}
+            onClick={() => trackNav('Free Audit', '/audit-tool', 'header')}
+          >
+            <span className="relative flex h-2 w-2" aria-hidden>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:animate-none" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+            </span>
+            Free Audit
+          </Link>
         </nav>
 
         <div className="hidden items-center lg:flex">
@@ -511,6 +537,14 @@ export default function Header() {
                 <Link href="/" className={navLinkClass('/')} onClick={() => { trackNav('Overview', '/', 'mobile_nav'); closeMenus() }}>
                   Overview
                 </Link>
+                <Link
+                  href="/audit-tool"
+                  className={`flex items-center gap-2 ${navLinkClass('/audit-tool')}`}
+                  onClick={() => { trackNav('Free AI readiness audit', '/audit-tool', 'mobile_nav'); closeMenus() }}
+                >
+                  Free AI readiness audit
+                  <NewPill />
+                </Link>
                 <button
                   type="button"
                   className="text-left text-sm font-medium text-gray-700"
@@ -562,6 +596,16 @@ export default function Header() {
             </div>
           </nav>
           <div className="mt-4 flex flex-col gap-2 border-t border-gray-200 pt-4">
+            <Link
+              href="/audit-tool"
+              className="flex h-10 items-center justify-center border border-accent bg-accent text-sm font-medium text-white transition-colors hover:bg-[#070066]"
+              onClick={() => {
+                trackNav('Run the free audit', '/audit-tool', 'mobile_nav')
+                closeMenus()
+              }}
+            >
+              Run the free AI readiness audit
+            </Link>
             <button
               type="button"
               className="flex h-10 items-center justify-center border border-accent/40 bg-white text-sm font-medium text-accent transition-colors hover:bg-accent/5"
@@ -588,6 +632,14 @@ export default function Header() {
         </div>
       )}
     </header>
+  )
+}
+
+function NewPill() {
+  return (
+    <span className="rounded-full bg-accent px-1.5 py-0.5 text-[0.625rem] font-bold uppercase leading-none tracking-wide text-white">
+      New
+    </span>
   )
 }
 

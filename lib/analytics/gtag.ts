@@ -28,6 +28,10 @@ export const GA_EVENTS = {
   AUDIT_PREVIEW_SHOWN: 'audit_preview_shown',
   AUDIT_ERROR: 'audit_error',
   AUDIT_REPORT_PRINT: 'audit_report_print',
+  AUDIT_CTA_CLICK: 'audit_cta_click',
+  AUDIT_NUDGE_SHOWN: 'audit_nudge_shown',
+  AUDIT_NUDGE_ENGAGE: 'audit_nudge_engage',
+  AUDIT_NUDGE_DISMISS: 'audit_nudge_dismiss',
 
   // --- Chatbot ---
   CHATBOT_OPEN: 'chatbot_open',

@@ -1,3 +1,4 @@
+import AuditPromo from '@/components/home/AuditPromo'
 import Hero from '@/components/home/Hero'
 import LogoCarousel from '@/components/home/LogoCarousel'
 import SearchChanging from '@/components/home/SearchChanging'
@@ -21,6 +22,7 @@ export default function Home() {
     <>
       <Hero />
       <LogoCarousel />
+      <AuditPromo />
       <SearchChanging />
       <CatalogPerfection />
       <AISolution />
