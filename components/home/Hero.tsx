@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+import { GA_EVENTS, trackEvent } from '@/lib/analytics/gtag'
 import { SIGNUP_URL } from '@/lib/shared/app-urls'
 
 const example = {
@@ -55,6 +57,18 @@ export default function Hero() {
               <span className="relative">Get Started</span>
             </a>
           </div>
+
+          <Link
+            href="/audit-tool"
+            onClick={() => trackEvent(GA_EVENTS.AUDIT_CTA_CLICK, { location: 'hero' })}
+            className="group mt-6 inline-flex max-w-full items-center gap-3 self-start rounded-full border border-accent/25 bg-accent/[0.05] py-1.5 pl-1.5 pr-4 text-sm transition-colors hover:border-accent/50 hover:bg-accent/[0.09]"
+          >
+            <span className="rounded-full bg-accent px-2 py-0.5 text-[0.6875rem] font-bold uppercase tracking-wide text-white">Free</span>
+            <span className="min-w-0 font-medium text-gray-800">
+              Is your feed AI-ready? <span className="text-accent">Get your score in 30 seconds</span>
+            </span>
+            <span className="text-accent transition-transform group-hover:translate-x-0.5" aria-hidden>→</span>
+          </Link>
         </div>
 
         <div className="flex min-w-0 items-center justify-center">

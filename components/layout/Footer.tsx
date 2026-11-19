@@ -12,6 +12,7 @@ import {
 
 const footerLinks = [
   { href: '/', label: 'Home' },
+  { href: '/audit-tool', label: 'Free AI Readiness Audit' },
   { href: '/faqs', label: 'FAQs' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/contact', label: 'Contact Us' },

@@ -7,6 +7,7 @@ import AnalyzingPanel from '@/components/audit/AnalyzingPanel'
 import FullReport from '@/components/audit/FullReport'
 import PreviewPanel from '@/components/audit/PreviewPanel'
 import UploadPanel from '@/components/audit/UploadPanel'
+import { AUDIT_DONE_KEY, hasPendingAuditFile, takePendingAuditFile } from '@/lib/audit/handoff'
 
 type Stage =
   | { kind: 'upload' }
@@ -80,6 +81,8 @@ export default function AuditTool() {
       return
     }
 
+    // A file dropped on another page starts a fresh audit instead of restoring the old one.
+    if (hasPendingAuditFile()) return
     const saved = readSaved()
     if (!saved?.auditId) return
     if (saved.token) {
@@ -123,6 +126,11 @@ export default function AuditTool() {
     }
   }, [])
 
+  useEffect(() => {
+    const file = takePendingAuditFile()
+    if (file) analyze(file)
+  }, [analyze])
+
   const unlock = useCallback(
     async (input: { email: string; storeUrl: string; fullName: string }) => {
       if (stage.kind !== 'preview') return
@@ -142,6 +150,11 @@ export default function AuditTool() {
         }
         writeSaved({ auditId: stage.preview.audit_id, token: body.token })
         trackLead('audit', 'audit_tool')
+        try {
+          localStorage.setItem(AUDIT_DONE_KEY, '1')
+        } catch {
+          /* only stops the site popup from asking again */
+        }
         setStage({ kind: 'report', report: body.report as AuditReport, emailedTo: body.emailed ? input.email : undefined })
         scrollTop()
       } catch {
