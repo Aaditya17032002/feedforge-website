@@ -6,6 +6,7 @@ export const GA_EVENTS = {
   // --- Lead form submissions (granular; fired alongside generate_lead) ---
   DEMO_REQUEST_SUBMIT: 'demo_request_submit',
   CONTACT_FORM_SUBMIT: 'contact_form_submit',
+  AUDIT_UNLOCK_SUBMIT: 'audit_unlock_submit',
 
   // --- CTA / engagement clicks ---
   TRY_DEMO_CLICK: 'try_demo_click',
@@ -22,6 +23,12 @@ export const GA_EVENTS = {
   GENERATE_AI_FEED_SUCCESS: 'generate_ai_feed_success',
   GENERATE_AI_FEED_ERROR: 'generate_ai_feed_error',
 
+  // --- AI Channel Readiness Audit ---
+  AUDIT_UPLOAD: 'audit_upload',
+  AUDIT_PREVIEW_SHOWN: 'audit_preview_shown',
+  AUDIT_ERROR: 'audit_error',
+  AUDIT_REPORT_PRINT: 'audit_report_print',
+
   // --- Chatbot ---
   CHATBOT_OPEN: 'chatbot_open',
   SCHEDULE_START: 'schedule_start',
@@ -34,7 +41,7 @@ export type GaEventName = (typeof GA_EVENTS)[keyof typeof GA_EVENTS]
 export type GaEventParams = Record<string, string | number | boolean | undefined>
 
 /** Identifies which lead form produced a generate_lead event. */
-export type LeadFormType = 'demo_request' | 'contact'
+export type LeadFormType = 'demo_request' | 'contact' | 'audit'
 
 declare global {
   interface Window {
@@ -66,7 +73,9 @@ export function trackLead(formType: LeadFormType, location: string): void {
   const submitEvent =
     formType === 'demo_request'
       ? GA_EVENTS.DEMO_REQUEST_SUBMIT
-      : GA_EVENTS.CONTACT_FORM_SUBMIT
+      : formType === 'audit'
+        ? GA_EVENTS.AUDIT_UNLOCK_SUBMIT
+        : GA_EVENTS.CONTACT_FORM_SUBMIT
 
   trackEvent(submitEvent, { location })
   trackEvent(GA_EVENTS.GENERATE_LEAD, { form_type: formType, location })

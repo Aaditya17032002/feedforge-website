@@ -261,3 +261,14 @@ html.dark .bg-gray-300 {
 html.dark .bg-gray-900 {
   background-color: #e5e7eb !important;
 }
+
+/* AI Channel Readiness Audit: "Save as PDF" prints the report without site chrome. */
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+}
