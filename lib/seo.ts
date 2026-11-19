@@ -2,7 +2,27 @@ import type { Metadata } from 'next'
 import { CONTACT_EMAIL } from '@/lib/content/contact'
 import { isActive, PRICING_TIERS } from '@/lib/content/pricing'
 
-export const SITE_URL = 'https://feedforge.ai'
+/** Public marketing origin — set per deploy so one codebase covers DEV and PROD. */
+function resolveSiteUrl(): string {
+  const explicit = (
+    process.env.PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.APP_URL ||
+    ''
+  )
+    .trim()
+    .replace(/\/+$/, '')
+  if (explicit) return explicit
+
+  // Infer from the platform app URL when PUBLIC_SITE_URL is omitted.
+  const app = (process.env.NEXT_PUBLIC_APP_URL || '').trim().toLowerCase()
+  if (app.includes('devapplication') || app.includes('localhost') || app.includes('127.0.0.1')) {
+    return 'https://devwebsite.feedforge.ai'
+  }
+  return 'https://feedforge.ai'
+}
+
+export const SITE_URL = resolveSiteUrl()
 export const SITE_NAME = 'FeedForge'
 export const SITE_TITLE = 'FeedForge | AI-Optimized Product Feeds'
 export const SITE_DESCRIPTION =
